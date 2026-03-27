@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>James Sommen 🎮</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    :root {
+      --roblox-red:    #E8232A;
+      --roblox-dark:   #1a1a1a;
+      --roblox-gray:   #2d2d2d;
+      --roblox-light:  #3d3d3d;
+      --roblox-white:  #ffffff;
+      --roblox-yellow: #FFD700;
+      --roblox-green:  #00b06a;
+      --roblox-blue:   #0077FF;
+    }
+
+    body {
+      font-family: 'Arial Black', 'Arial Bold', 'Trebuchet MS', Arial, sans-serif;
+      background: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 12px 28px;
+      gap: 12px;
+      background-image:
+        radial-gradient(ellipse at top, #2a0a0a 0%, #1a1a1a 60%);
+    }
+
+    /* ── ROBLOX logo bar ── */
+    .roblox-topbar {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 6px 0 2px;
+    }
+
+    .roblox-logo {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .roblox-logo span {
+      color: var(--roblox-red);
+    }
+
+    /* ── Header: screen time ── */
+    .header-card {
+      background: var(--roblox-gray);
+      border: 3px solid var(--roblox-red);
+      border-radius: 12px;
+      padding: 12px 28px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(232,35,42,0.35), 0 6px 18px rgba(0,0,0,0.5);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .header-label {
+      font-size: 0.85rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 2px;
+    }
+
+    .header-minutes {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: var(--roblox-yellow);
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(255,215,0,0.5);
+    }
+
+    .header-sublabel {
+      font-size: 0.9rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── XP Progress bar ── */
+    .progress-card {
+      background: var(--roblox-gray);
+      border: 2px solid #444;
+      border-radius: 12px;
+      padding: 12px 20px 14px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .progress-label {
+      font-size: 0.85rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .xp-bar-wrap {
+      background: #111;
+      border-radius: 8px;
+      height: 28px;
+      width: 100%;
+      border: 2px solid #555;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #E8232A, #ff6b35);
+      border-radius: 6px;
+      transition: width 0.5s cubic-bezier(.34,1.56,.64,1);
+      position: relative;
+    }
+
+    .xp-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 6px; right: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 3px;
+    }
+
+    .xp-circles {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .xp-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 2px solid #555;
+      background: #111;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .xp-dot.lit {
+      background: var(--roblox-red);
+      border-color: var(--roblox-red);
+      box-shadow: 0 0 10px rgba(232,35,42,0.6);
+      font-size: 1.1rem;
+    }
+
+    /* ── Question card ── */
+    .question-card {
+      background: var(--roblox-gray);
+      border: 2px solid #444;
+      border-radius: 14px;
+      padding: 24px 24px 20px;
+      text-align: center;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .question-text {
+      font-size: 4rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+      line-height: 1.1;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .answer-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 140px;
+      min-height: 72px;
+      background: #111;
+      border: 4px solid #555;
+      border-radius: 10px;
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: #fff;
+      padding: 6px 22px;
+      transition: border-color 0.25s, background 0.25s, color 0.25s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+
+    .answer-box.correct {
+      border-color: var(--roblox-green);
+      background: #003322;
+      color: var(--roblox-green);
+      box-shadow: 0 0 18px rgba(0,176,106,0.4);
+    }
+
+    .answer-box.wrong {
+      border-color: var(--roblox-red);
+      background: #330000;
+      color: var(--roblox-red);
+      box-shadow: 0 0 18px rgba(232,35,42,0.4);
+    }
+
+    .feedback-text {
+      margin-top: 10px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      min-height: 32px;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .feedback-text.correct { color: var(--roblox-green); }
+    .feedback-text.wrong   { color: var(--roblox-red); }
+
+    /* ── Number pad ── */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .pad-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 0;
+      height: 80px;
+      font-size: 2.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.5);
+      transition: transform 0.08s, box-shadow 0.08s;
+      color: #fff;
+      -webkit-appearance: none;
+      border: 2px solid transparent;
+    }
+
+    .pad-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+    }
+
+    .pad-btn.n0  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n1  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n2  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n3  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n4  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n5  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n6  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n7  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n8  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+    .pad-btn.n9  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
+
+    .pad-btn.backspace {
+      background: #E8232A;
+      border-color: #ff4444;
+      color: white;
+      font-size: 1.8rem;
+      box-shadow: 0 6px 0 #8b0000;
+    }
+
+    .pad-btn.check {
+      background: var(--roblox-green);
+      border-color: #00e88a;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 6px 0 #006040;
+    }
+
+    /* ── Parent button ── */
+    .parent-btn {
+      background: transparent;
+      border: 2px solid #444;
+      color: #666;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .parent-btn:active { border-color: #888; color: #aaa; }
+
+    /* ── Roblox Character CSS Art ── */
+    .roblox-char {
+      position: relative;
+      width: 80px;
+      height: 110px;
+      animation: char-dance 0.4s infinite alternate ease-in-out;
+    }
+
+    @keyframes char-dance {
+      0%   { transform: rotate(-8deg) translateY(0); }
+      100% { transform: rotate(8deg) translateY(-10px); }
+    }
+
+    .char-head {
+      width: 52px;
+      height: 52px;
+      background: #ffcc00;
+      border: 4px solid #000;
+      border-radius: 8px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .char-eye-l, .char-eye-r {
+      width: 10px;
+      height: 10px;
+      background: #000;
+      border-radius: 2px;
+      position: absolute;
+      top: 16px;
+    }
+    .char-eye-l { left: 10px; }
+    .char-eye-r { right: 10px; }
+
+    .char-smile {
+      width: 22px;
+      height: 10px;
+      border-bottom: 4px solid #000;
+      border-radius: 0 0 10px 10px;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .char-body {
+      width: 44px;
+      height: 36px;
+      background: #0077FF;
+      border: 4px solid #000;
+      border-radius: 4px;
+      margin: 0 auto;
+      margin-top: -2px;
+    }
+
+    .char-legs {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 0px;
+    }
+
+    .char-leg {
+      width: 18px;
+      height: 28px;
+      background: #1a1a1a;
+      border: 3px solid #000;
+      border-radius: 3px;
+    }
+
+    .char-leg:first-child {
+      animation: leg-l 0.4s infinite alternate ease-in-out;
+    }
+    .char-leg:last-child {
+      animation: leg-r 0.4s infinite alternate ease-in-out;
+    }
+
+    @keyframes leg-l {
+      0%   { transform: rotate(-20deg); }
+      100% { transform: rotate(10deg); }
+    }
+    @keyframes leg-r {
+      0%   { transform: rotate(20deg); }
+      100% { transform: rotate(-10deg); }
+    }
+
+    /* ── Roblox blocks animation layer ── */
+    .blocks-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 900;
+      overflow: hidden;
+    }
+
+    .rblock {
+      position: absolute;
+      border: 2px solid rgba(0,0,0,0.4);
+      border-radius: 4px;
+      animation: block-fall linear forwards;
+    }
+
+    @keyframes block-fall {
+      0%   { transform: translateY(-40px) rotate(0deg); opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── Shake ── */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-12px); }
+      40%     { transform: translateX(12px); }
+      60%     { transform: translateX(-8px); }
+      80%     { transform: translateX(8px); }
+    }
+    .shaking { animation: shake 0.4s ease; }
+
+    /* ── Pop correct ── */
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.14); }
+      70%  { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+    .popping { animation: pop 0.45s ease; }
+
+    /* ── Minute earned overlay ── */
+    .earned-overlay {
+      position: fixed;
+      inset: 0;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 1200;
+      animation: overlayIn 0.4s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .earned-overlay.hidden { display: none; }
+
+    @keyframes overlayIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .earned-badge {
+      background: var(--roblox-red);
+      border: 4px solid #ff6666;
+      border-radius: 16px;
+      padding: 12px 28px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      box-shadow: 0 0 40px rgba(232,35,42,0.6);
+      animation: badge-pulse 0.8s infinite alternate;
+    }
+
+    @keyframes badge-pulse {
+      from { box-shadow: 0 0 20px rgba(232,35,42,0.4); }
+      to   { box-shadow: 0 0 50px rgba(232,35,42,0.9); }
+    }
+
+    .earned-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      line-height: 1.3;
+      padding: 0 20px;
+      text-shadow: 2px 2px 0 var(--roblox-red);
+    }
+
+    .earned-total {
+      font-size: 1.2rem;
+      color: var(--roblox-yellow);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .earned-continue {
+      margin-top: 8px;
+      background: var(--roblox-red);
+      border: 3px solid #ff6666;
+      border-radius: 8px;
+      padding: 16px 44px;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 6px 0 #8b0000;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+
+    .earned-continue:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #8b0000;
+    }
+
+    /* ── PIN modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal-box {
+      background: var(--roblox-gray);
+      border: 3px solid var(--roblox-red);
+      border-radius: 14px;
+      padding: 28px 24px 24px;
+      text-align: center;
+      width: 90%;
+      max-width: 340px;
+      box-shadow: 0 0 40px rgba(232,35,42,0.3), 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pin-dots {
+      font-size: 2rem;
+      letter-spacing: 14px;
+      margin-bottom: 16px;
+      color: var(--roblox-red);
+    }
+
+    .modal-numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .mpb {
+      border: 2px solid #444;
+      border-radius: 8px;
+      height: 58px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      background: #2d2d2d;
+      color: #fff;
+      box-shadow: 0 4px 0 #111;
+      transition: transform 0.07s, box-shadow 0.07s;
+    }
+
+    .mpb:active { transform: translateY(3px); box-shadow: 0 1px 0 #111; }
+    .mpb.m-cancel { background: #E8232A; border-color: #ff4444; box-shadow: 0 4px 0 #8b0000; }
+    .mpb.m-del    { background: #555; border-color: #777; box-shadow: 0 4px 0 #222; }
+
+    .pin-error {
+      font-size: 0.9rem;
+      color: var(--roblox-red);
+      min-height: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-height: 700px) {
+      .header-minutes { font-size: 2.4rem; }
+      .question-text  { font-size: 3rem; }
+      .answer-box     { font-size: 2.8rem; min-height: 60px; }
+      .pad-btn        { height: 66px; font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Blocks layer -->
+  <div class="blocks-layer" id="blocksLayer"></div>
+
+  <!-- Minute earned overlay -->
+  <div class="earned-overlay hidden" id="earnedOverlay">
+    <!-- Roblox character dancing -->
+    <div class="roblox-char">
+      <div class="char-head">
+        <div class="char-eye-l"></div>
+        <div class="char-eye-r"></div>
+        <div class="char-smile"></div>
+      </div>
+      <div class="char-body"></div>
+      <div class="char-legs">
+        <div class="char-leg"></div>
+        <div class="char-leg"></div>
+      </div>
+    </div>
+    <div class="earned-badge">🏆 Level Up!</div>
+    <div class="earned-title">GG James! 🎮<br>Je verdiende<br>1 minuut!</div>
+    <div class="earned-total" id="earnedTotal"></div>
+    <button class="earned-continue" onclick="closeEarned()">Play again!</button>
+  </div>
+
+  <!-- Parent PIN modal -->
+  <div class="modal-overlay hidden" id="pinModal">
+    <div class="modal-box">
+      <div class="modal-title">🔐 Ouder Reset</div>
+      <div class="modal-sub">Voer PIN in</div>
+      <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
+      <div class="modal-numpad" id="pinPad"></div>
+      <div class="pin-error" id="pinError"></div>
+    </div>
+  </div>
+
+  <!-- Roblox topbar -->
+  <div class="roblox-topbar">
+    <div class="roblox-logo">ROB<span>O</span>X<span style="color:#fff">🎮</span> SOMMEN</div>
+  </div>
+
+  <!-- Header -->
+  <div class="header-card">
+    <div class="header-label">⏱ Schermtijd verdiend</div>
+    <div class="header-minutes" id="minutesDisplay">0</div>
+    <div class="header-sublabel" id="minutesLabel">minuten</div>
+  </div>
+
+  <!-- XP Progress -->
+  <div class="progress-card">
+    <div class="progress-label">XP – Nog <span id="leftCount">3</span> voor 1 minuut</div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+    </div>
+    <div class="xp-circles" id="xpCircles"></div>
+  </div>
+
+  <!-- Question -->
+  <div class="question-card" id="questionCard">
+    <div class="question-text" id="questionText">…</div>
+    <div class="answer-box" id="answerBox">_</div>
+    <div class="feedback-text" id="feedbackText"></div>
+  </div>
+
+  <!-- Numpad -->
+  <div class="numpad" id="numpad"></div>
+
+  <!-- Parent button -->
+  <button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let totalMinutes = parseInt(localStorage.getItem('jamesMinutes') || '0');
+let streak       = parseInt(localStorage.getItem('jamesStreak')  || '0');
+let typedAnswer  = '';
+let currentQ     = null;
+let locked       = false;
+let pinBuffer    = '';
+
+const PIN  = '1234';
+const GOAL = 3;
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+buildNumpad();
+buildPinPad();
+renderXP();
+renderHeader();
+nextQuestion();
+
+// ── Persistence ───────────────────────────────────────────────────────────────
+function save() {
+  localStorage.setItem('jamesMinutes', totalMinutes);
+  localStorage.setItem('jamesStreak',  streak);
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+function renderHeader() {
+  document.getElementById('minutesDisplay').textContent = totalMinutes;
+  document.getElementById('minutesLabel').textContent =
+    totalMinutes === 1 ? 'minuut' : 'minuten';
+}
+
+// ── XP bar + dots ─────────────────────────────────────────────────────────────
+function renderXP() {
+  const pct = (streak / GOAL) * 100;
+  document.getElementById('xpBarFill').style.width = pct + '%';
+
+  const circles = document.getElementById('xpCircles');
+  circles.innerHTML = '';
+  for (let i = 0; i < GOAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'xp-dot' + (i < streak ? ' lit' : '');
+    d.textContent = i < streak ? '🎮' : '';
+    circles.appendChild(d);
+  }
+  document.getElementById('leftCount').textContent = GOAL - streak;
+}
+
+// ── Question ──────────────────────────────────────────────────────────────────
+function nextQuestion() {
+  typedAnswer = '';
+  locked = false;
+
+  const answerBox  = document.getElementById('answerBox');
+  const feedbackEl = document.getElementById('feedbackText');
+  answerBox.textContent  = '_';
+  answerBox.className    = 'answer-box';
+  feedbackEl.textContent = '';
+  feedbackEl.className   = 'feedback-text';
+
+  const isPlus = Math.random() < 0.5;
+  let a, b;
+  if (isPlus) {
+    a = rand(1, 19);
+    b = rand(1, 20 - a);
+  } else {
+    a = rand(2, 20);
+    b = rand(1, a - 1);
+  }
+
+  currentQ = { a, b, op: isPlus ? '+' : '−', answer: isPlus ? a + b : a - b };
+  document.getElementById('questionText').textContent =
+    `${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
+}
+
+function rand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// ── Numpad ────────────────────────────────────────────────────────────────────
+function buildNumpad() {
+  const pad  = document.getElementById('numpad');
+  const keys = [7,8,9, 4,5,6, 1,2,3, '⌫', 0, '✓'];
+
+  keys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className   = 'pad-btn';
+    btn.textContent = k;
+
+    if (k === '⌫') {
+      btn.classList.add('backspace');
+      btn.addEventListener('click', doBackspace);
+    } else if (k === '✓') {
+      btn.classList.add('check');
+      btn.addEventListener('click', doCheck);
+    } else {
+      btn.classList.add('n' + k);
+      btn.addEventListener('click', () => doDigit(String(k)));
+    }
+    pad.appendChild(btn);
+  });
+}
+
+function doDigit(d) {
+  if (locked) return;
+  if (typedAnswer.length >= 2) return;
+  typedAnswer += d;
+  renderAnswer();
+}
+
+function doBackspace() {
+  if (locked) return;
+  typedAnswer = typedAnswer.slice(0, -1);
+  renderAnswer();
+}
+
+function renderAnswer() {
+  const box = document.getElementById('answerBox');
+  box.textContent = typedAnswer || '_';
+  box.className   = 'answer-box';
+}
+
+function doCheck() {
+  if (locked || !typedAnswer) return;
+  locked = true;
+
+  const given = parseInt(typedAnswer, 10);
+  const box   = document.getElementById('answerBox');
+  const fb    = document.getElementById('feedbackText');
+
+  if (given === currentQ.answer) {
+    box.className = 'answer-box correct popping';
+    fb.className  = 'feedback-text correct';
+    fb.textContent = pickRandom(CORRECT_MSGS);
+
+    launchBlocks(30);
+
+    streak++;
+    save();
+    renderXP();
+
+    if (streak >= GOAL) {
+      streak = 0;
+      totalMinutes++;
+      save();
+      renderXP();
+      renderHeader();
+      setTimeout(showEarned, 1100);
+    } else {
+      renderHeader();
+      setTimeout(nextQuestion, 1400);
+    }
+
+  } else {
+    box.className = 'answer-box wrong shaking';
+    fb.className  = 'feedback-text wrong';
+    fb.textContent = pickRandom(WRONG_MSGS);
+
+    setTimeout(() => {
+      box.classList.remove('shaking');
+      typedAnswer = '';
+      box.textContent = '_';
+      box.className   = 'answer-box';
+      fb.textContent  = '';
+      fb.className    = 'feedback-text';
+      locked = false;
+    }, 1500);
+  }
+}
+
+const CORRECT_MSGS = [
+  '🎮 GG! Goed zo!',
+  '⚡ PRO MOVE!',
+  '🏆 EPIC WIN!',
+  '🎯 HEADSHOT!',
+  '💎 NOOB CRUSH!',
+  '🚀 OP! Geweldig!',
+  '🎲 NICE ONE!',
+  '⭐ LEGENDARY!',
+  '💪 TOO EASY!',
+  '😎 CLUTCH PLAY!'
+];
+
+const WRONG_MSGS = [
+  '😅 Try again!',
+  '🙈 Bijna! Nog een keer!',
+  '🎮 Respawn! Opnieuw!',
+  '💀 Oeps! Probeer nog eens!',
+  '🔄 Reset! Nog een poging?'
+];
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// ── Roblox blocks celebration ─────────────────────────────────────────────────
+function launchBlocks(n) {
+  const layer  = document.getElementById('blocksLayer');
+  // Roblox color palette
+  const colors = [
+    '#E8232A', '#FFD700', '#0077FF', '#00b06a',
+    '#ff6b35', '#9b59b6', '#1abc9c', '#e74c3c',
+    '#f39c12', '#2ecc71', '#3498db', '#ffffff'
+  ];
+
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => {
+      const el   = document.createElement('div');
+      el.className = 'rblock';
+      const size = rand(10, 26);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      el.style.cssText = `
+        left: ${Math.random() * 100}vw;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        border-color: rgba(0,0,0,0.5);
+        animation-duration: ${(Math.random() * 1.6 + 0.8).toFixed(2)}s;
+        animation-delay: 0s;
+      `;
+      layer.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }, i * 30);
+  }
+}
+
+// ── Earned overlay ────────────────────────────────────────────────────────────
+function showEarned() {
+  launchBlocks(60);
+  document.getElementById('earnedTotal').textContent =
+    `Totaal: ${totalMinutes} ${totalMinutes === 1 ? 'minuut' : 'minuten'} 🎮`;
+  document.getElementById('earnedOverlay').classList.remove('hidden');
+}
+
+function closeEarned() {
+  document.getElementById('earnedOverlay').classList.add('hidden');
+  nextQuestion();
+}
+
+// ── PIN Modal ─────────────────────────────────────────────────────────────────
+function buildPinPad() {
+  const pad  = document.getElementById('pinPad');
+  const keys = [1,2,3, 4,5,6, 7,8,9, '✕', 0, '⌫'];
+
+  keys.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className   = 'mpb';
+    btn.textContent = k;
+
+    if (k === '✕') {
+      btn.classList.add('m-cancel');
+      btn.addEventListener('click', closePin);
+    } else if (k === '⌫') {
+      btn.classList.add('m-del');
+      btn.addEventListener('click', pinBackspace);
+    } else {
+      btn.addEventListener('click', () => pinDigit(String(k)));
+    }
+    pad.appendChild(btn);
+  });
+}
+
+function openPin() {
+  pinBuffer = '';
+  renderPinDots();
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinModal').classList.remove('hidden');
+}
+
+function closePin() {
+  document.getElementById('pinModal').classList.add('hidden');
+  pinBuffer = '';
+}
+
+function pinDigit(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  renderPinDots();
+  if (pinBuffer.length === 4) setTimeout(checkPin, 150);
+}
+
+function pinBackspace() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  renderPinDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function renderPinDots() {
+  const filled = '● '.repeat(pinBuffer.length).trim();
+  const empty  = '○ '.repeat(4 - pinBuffer.length).trim();
+  document.getElementById('pinDots').textContent =
+    [filled, empty].filter(Boolean).join(' ');
+}
+
+function checkPin() {
+  if (pinBuffer === PIN) {
+    streak       = 0;
+    totalMinutes = 0;
+    save();
+    renderXP();
+    renderHeader();
+    closePin();
+    nextQuestion();
+    const fb = document.getElementById('feedbackText');
+    fb.className   = 'feedback-text correct';
+    fb.textContent = '✅ Minuten gereset!';
+    setTimeout(() => { fb.textContent = ''; fb.className = 'feedback-text'; }, 2000);
+  } else {
+    document.getElementById('pinError').textContent = '❌ WRONG PIN – try again';
+    pinBuffer = '';
+    renderPinDots();
+  }
+}
+</script>
+</body>
+</html>

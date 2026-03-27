@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>📚 Philou Leest!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #fff0f5;
+    color: #333;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── TOP BAR ─── */
+  #topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: white;
+    box-shadow: 0 2px 12px rgba(233,30,140,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    height: 64px;
+  }
+  #topbar .brand { font-size: 1.3rem; font-weight: 700; color: #e91e8c; }
+  #minutes-display {
+    background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+    color: white;
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 3px 10px rgba(233,30,140,0.3);
+  }
+  #reset-btn {
+    background: none;
+    border: 2px solid #e91e8c;
+    color: #e91e8c;
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  #reset-btn:hover { background: #e91e8c; color: white; }
+
+  /* ─── MAIN CONTENT ─── */
+  #app {
+    padding-top: 80px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ─── HOME SCREEN ─── */
+  #home-screen {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  .home-hero {
+    font-size: 4rem;
+    margin-bottom: 10px;
+  }
+  .home-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #e91e8c;
+    margin-bottom: 8px;
+  }
+  .home-sub {
+    font-size: 1.2rem;
+    color: #888;
+    margin-bottom: 30px;
+  }
+  .story-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .story-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(233,30,140,0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    border: 3px solid transparent;
+  }
+  .story-card:hover, .story-card:active {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(233,30,140,0.2);
+    border-color: #e91e8c;
+  }
+  .story-card.done {
+    opacity: 0.7;
+    background: #f8f8f8;
+  }
+  .story-card .card-icon { font-size: 2.8rem; flex-shrink: 0; }
+  .story-card .card-info h3 { font-size: 1.2rem; font-weight: 700; color: #333; }
+  .story-card .card-info p { font-size: 0.95rem; color: #888; margin-top: 3px; }
+  .card-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: #e91e8c;
+    color: white;
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .card-badge.done-badge { background: #4caf50; }
+
+  /* ─── STORY SCREEN ─── */
+  #story-screen {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 20px;
+  }
+  .story-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .story-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #e91e8c;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .story-subtitle {
+    font-size: 1.1rem;
+    color: #888;
+    font-style: italic;
+  }
+  .story-content {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(233,30,140,0.1);
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: #333;
+  }
+  .story-content p { margin-bottom: 16px; }
+  .story-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e91e8c;
+    margin: 24px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .story-img {
+    width: 100%;
+    border-radius: 16px;
+    margin: 20px 0;
+    object-fit: cover;
+    max-height: 260px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  .img-caption {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: -12px;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .start-btn {
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(233,30,140,0.35);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .start-btn:hover, .start-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(233,30,140,0.45);
+  }
+
+  /* ─── QUESTION SCREEN ─── */
+  #question-screen {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px 20px;
+  }
+  .progress-bar-wrap {
+    background: #fce4f2;
+    border-radius: 50px;
+    height: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    background: linear-gradient(90deg, #e91e8c, #ff6eb4);
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+  .q-counter {
+    text-align: center;
+    font-size: 1rem;
+    color: #aaa;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .question-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(233,30,140,0.1);
+    margin-bottom: 20px;
+  }
+  .question-text {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.45;
+    margin-bottom: 28px;
+  }
+  .answer-btn {
+    display: block;
+    width: 100%;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    background: #fff0f5;
+    border: 3px solid #fce4f2;
+    border-radius: 16px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .answer-btn:hover:not(:disabled) {
+    border-color: #e91e8c;
+    background: #fce4f2;
+    transform: translateX(4px);
+  }
+  .answer-btn.correct {
+    border-color: #4caf50;
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  .answer-btn.wrong {
+    border-color: #f44336;
+    background: #ffebee;
+    color: #c62828;
+  }
+  .answer-btn:disabled { cursor: default; }
+  .feedback-box {
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 16px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .feedback-box.show { display: flex; }
+  .feedback-box.fb-correct { background: #e8f5e9; color: #2e7d32; }
+  .feedback-box.fb-wrong { background: #ffebee; color: #c62828; }
+  .read-story-btn {
+    background: none;
+    border: 2px solid #e91e8c;
+    color: #e91e8c;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto 16px;
+    transition: all 0.2s;
+  }
+  .read-story-btn:hover { background: #e91e8c; color: white; }
+
+  /* ─── END SCREEN ─── */
+  #end-screen {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .end-trophy { font-size: 5rem; margin-bottom: 16px; }
+  .end-title { font-size: 2rem; font-weight: 800; color: #e91e8c; margin-bottom: 10px; }
+  .score-display {
+    font-size: 1.3rem;
+    color: #555;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .minutes-earned {
+    background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+    color: white;
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 20px rgba(233,30,140,0.3);
+  }
+  .minutes-earned .big-num {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .minutes-earned .label { font-size: 1.1rem; opacity: 0.9; margin-top: 4px; }
+  .next-story-btn {
+    display: inline-block;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(233,30,140,0.35);
+    transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+  .next-story-btn:hover { transform: translateY(-2px); }
+  .home-link {
+    display: block;
+    color: #aaa;
+    font-size: 1rem;
+    margin-top: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ─── OVERLAY ─── */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  #overlay.show { display: flex; }
+  .overlay-content {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px 24px 40px;
+    position: relative;
+  }
+  .overlay-close {
+    position: sticky;
+    top: 0;
+    background: white;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    z-index: 1;
+    padding-top: 4px;
+  }
+  .overlay-close button {
+    background: #e91e8c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ─── MODAL ─── */
+  #modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #modal.show { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: 24px;
+    padding: 36px 32px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-box h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: #333; }
+  .modal-box input {
+    width: 100%;
+    border: 3px solid #fce4f2;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 1.3rem;
+    text-align: center;
+    letter-spacing: 8px;
+    margin-bottom: 16px;
+    outline: none;
+  }
+  .modal-box input:focus { border-color: #e91e8c; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-cancel { background: #f5f5f5; color: #666; }
+  .btn-confirm { background: #e91e8c; color: white; }
+  .modal-error { color: #f44336; font-size: 0.9rem; margin-bottom: 12px; display: none; }
+
+  /* ─── CONFETTI ─── */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confetti-fall linear forwards;
+    z-index: 500;
+    pointer-events: none;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ─── UTIL ─── */
+  .hidden { display: none !important; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  @media (max-width: 480px) {
+    .story-title { font-size: 1.6rem; }
+    .question-text { font-size: 1.15rem; }
+    .answer-btn { font-size: 1rem; padding: 16px 18px; }
+    .story-content { padding: 20px; font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="brand">📚 Philou Leest!</div>
+  <div id="minutes-display">
+    ⏱️ <span id="total-minutes">0</span> min
+  </div>
+  <button id="reset-btn" title="Ouder reset" onclick="openResetModal()">🔑</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen active">
+    <div class="home-hero">📖</div>
+    <div class="home-title">Hallo Philou!</div>
+    <div class="home-sub">Kies een verhaal en verdien schermtijd ⏱️</div>
+    <div class="story-cards" id="story-cards"></div>
+  </div>
+
+  <!-- STORY -->
+  <div id="story-screen" class="screen">
+    <button onclick="goHome()" style="background:none;border:none;color:#e91e8c;font-size:1.1rem;font-weight:700;cursor:pointer;margin-bottom:10px;padding:6px 0;">← Terug naar overzicht</button>
+    <div class="story-header">
+      <div class="story-title" id="s-title"></div>
+      <div class="story-subtitle" id="s-subtitle"></div>
+    </div>
+    <div class="story-content" id="s-body"></div>
+    <button class="start-btn" onclick="startQuestions()">Start vragen →</button>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div id="question-screen" class="screen">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="q-counter" id="q-counter">Vraag 1 van 3</div>
+    <button class="read-story-btn" onclick="openStoryOverlay()">📖 Verhaal lezen</button>
+    <div class="question-card">
+      <div class="question-text" id="q-text"></div>
+      <button class="answer-btn" id="btn-a" onclick="checkAnswer(0)"></button>
+      <button class="answer-btn" id="btn-b" onclick="checkAnswer(1)"></button>
+      <button class="answer-btn" id="btn-c" onclick="checkAnswer(2)"></button>
+      <div class="feedback-box" id="feedback-box"></div>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div id="end-screen" class="screen">
+    <div class="end-trophy" id="end-trophy">🏆</div>
+    <div class="end-title" id="end-title">Super gedaan!</div>
+    <div class="score-display" id="end-score"></div>
+    <div class="minutes-earned">
+      <div class="big-num" id="end-minutes">0</div>
+      <div class="label">minuten verdiend in totaal 🎉</div>
+    </div>
+    <button class="next-story-btn" onclick="nextStory()">Volgend verhaal →</button>
+    <span class="home-link" onclick="goHome()">← Terug naar het overzicht</span>
+  </div>
+
+</div>
+
+<!-- STORY OVERLAY -->
+<div id="overlay">
+  <div class="overlay-content">
+    <div class="overlay-close">
+      <button onclick="closeOverlay()">Sluiten ✕</button>
+    </div>
+    <div id="overlay-body"></div>
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <h3>🔑 Ouder PIN</h3>
+    <input type="password" id="pin-input" maxlength="4" placeholder="• • • •" inputmode="numeric" pattern="[0-9]*">
+    <div class="modal-error" id="pin-error">Verkeerde PIN, probeer opnieuw</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Annuleer</button>
+      <button class="btn-confirm" onclick="confirmReset()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA — 5 verhalen
+═══════════════════════════════════════════ */
+const STORIES = [
+  {
+    id: 'wereldrecords',
+    icon: '🏅',
+    title: 'Verbazingwekkende Wereldrecords',
+    subtitle: 'De meest ongelofelijke prestaties van mensen en dieren',
+    intro: 'Heb jij weleens gedacht dat iets onmogelijk was? Soms doen mensen — en zelfs dieren — dingen die zo bijzonder zijn, dat niemand ze ooit heeft evenaard. Die prestaties worden vastgelegd als wereldrecord. Het boek dat alle wereldrecords bijhoudt heet het Guinness Book of World Records. In dit verhaal lees je over vijf echt ongelooflijke records.',
+    sections: [
+      {
+        heading: '📏 De langste mens ooit',
+        text: 'De langste mens die ooit heeft geleefd, was de Amerikaan Robert Wadlow. Hij werd geboren in 1918 en groeide maar door en door. Op zijn langst mat hij maar liefst 2,72 meter! Dat is bijna drie meter — hoger dan de deur in jouw slaapkamer. Robert had een bijzondere aandoening waarbij zijn lichaam niet ophield met groeien. Helaas werd hij maar 22 jaar oud, maar zijn record staat nog steeds.',
+        img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+        imgCaption: 'Atleten trainen hard voor hun records'
+      },
+      {
+        heading: '⚡ De snelste mens ter wereld',
+        text: 'De snelste loper ooit is de Jamaicaan Usain Bolt. In 2009 rende hij de 100 meter in slechts 9,58 seconden — dat is sneller dan een fietsend kind op volle snelheid! Usain Bolt won ook drie keer olympisch goud op de 100 meter en drie keer op de 200 meter. Hij staat bekend om zijn ontspannen manier van hardlopen en zijn grappige poses na de finish. Zijn bijnaam is "The Lightning Bolt" — de bliksemschicht.',
+        img: null
+      },
+      {
+        heading: '🍕 De grootste pizza ooit',
+        text: 'In 2012 werd in Rome, Italië, de grootste pizza ooit gemaakt. Die pizza was maar liefst 1.261 vierkante meter groot — dat is groter dan een voetbalveld! Het duurde meerdere dagen om alle ingrediënten te bereiden. Er werd meer dan 1.700 kilogram meel, 1.700 kilogram tomaten en 2.000 kilogram kaas gebruikt. De pizza werd "Ottavia" genoemd en was ook nog eens glutenvrij. Meer dan honderd koks werkten samen aan dit waanzinnige gerecht.',
+        img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80',
+        imgCaption: 'Pizza — maar dan veel, véél groter!'
+      },
+      {
+        heading: '🐢 De oudste schildpad ter wereld',
+        text: 'Jonathan de schildpad is de oudste levende landdier op aarde. Hij werd geboren omstreeks 1832 en leeft op het eiland Sint-Helena in de Atlantische Oceaan. Dat betekent dat hij al meer dan 192 jaar oud is! Jonathan was al oud toen de Eiffeltoren nog gebouwd moest worden. Hij ziet niet meer zo goed en ruikt ook minder goed dan vroeger, maar hij eet nog steeds elke week verse groente. Hij is een echte held.',
+        img: 'https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=800&q=80',
+        imgCaption: 'Schildpadden kunnen erg oud worden'
+      },
+      {
+        heading: '🁣 De meeste dominostenen omgegooid',
+        text: 'Stel je voor: 4,4 miljoen dominostenen, zorgvuldig op een rij gezet, en dan — omvallen! In 2009 lukte dit een team in Nederland bij een groot domino-evenement genaamd Domino Day. Mensen werkten weken lang aan het neerzetten van al die steentjes. Als er één steentje per ongeluk viel, kon het hele kunstwerk verpest worden. Dat maakt het extra spannend. Gelukkig viel alles op precies het goede moment om!',
+        img: null
+      }
+    ],
+    questions: [
+      {
+        text: 'Hoe lang was Robert Wadlow, de langste mens ooit?',
+        answers: ['2,18 meter', '2,72 meter', '3,10 meter'],
+        correct: 1
+      },
+      {
+        text: 'Wat is de bijnaam van Usain Bolt?',
+        answers: ['The Thunder', 'The Lightning Bolt', 'The Speed King'],
+        correct: 1
+      },
+      {
+        text: 'Hoe groot was de recordpizza uit Rome?',
+        answers: ['500 vierkante meter', '987 vierkante meter', '1.261 vierkante meter'],
+        correct: 2
+      }
+    ]
+  },
+  {
+    id: 'gebouwen',
+    icon: '🏛️',
+    title: 'De Mooiste Gebouwen ter Wereld',
+    subtitle: 'Torens, tempels en theaters die je adem doen stokken',
+    intro: 'Over de hele wereld staan gebouwen die zo bijzonder zijn, dat miljoenen toeristen speciaal voor hen reizen. Sommige zijn waanzinnig hoog, andere zijn meer dan duizend jaar oud, en weer andere zijn zo slim ontworpen dat architecten er nog steeds versteld van staan. In dit verhaal maak je kennis met vijf van de allermooiste en bijzonderste gebouwen op aarde.',
+    sections: [
+      {
+        heading: '🏙️ Burj Khalifa — de wolkenkrabber van Dubai',
+        text: 'De Burj Khalifa in Dubai staat bekend als het hoogste gebouw ter wereld. Het is maar liefst 828 meter hoog en heeft 163 verdiepingen. De bouw begon in 2004 en duurde zes jaar. Op de begane grond kun je een winkelcentrum vinden, maar op verdieping 124 bevindt zich een observatiedek waar je de hele stad kunt zien. Het gebouw is zo hoog dat mensen die erboven wonen bijna twee keer per avond de zonsondergang kunnen zien — omdat ze zo hoog zitten!',
+        img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
+        imgCaption: 'De skyline van Dubai met de Burj Khalifa'
+      },
+      {
+        heading: '⛪ Sagrada Família — nog niet klaar na 140 jaar',
+        text: 'In Barcelona, Spanje, staat een kerk die al meer dan 140 jaar in aanbouw is: de Sagrada Família. Het ontwerp is gemaakt door de Spaanse architect Antoni Gaudí, die in 1926 overleed — maar zijn kerk is nog steeds niet af. De toren lijkt op een enorme zandsteen, met grillige vormen en kleurrijke ramen. Miljoenen toeristen bezoeken de kerk elk jaar. Naar verwachting wordt de Sagrada Família pas in 2026 helemaal klaar.',
+        img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&q=80',
+        imgCaption: 'De Sagrada Família in Barcelona'
+      },
+      {
+        heading: '🎭 Sydney Opera House — schelpvormig wonder',
+        text: 'Het Sydney Opera House in Australië is een van de meest herkenbare gebouwen ter wereld. Het staat direct aan de haven van Sydney en heeft een dak dat bestaat uit grote witte schelpvormige panelen. Het gebouw werd ontworpen door de Deense architect Jørn Utzon. Het werd geopend in 1973 en is sindsdien het culturele hart van Australië. Elke week worden er meer dan twintig verschillende optredens gegeven — van opera tot popconcer.',
+        img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+        imgCaption: 'Het Sydney Opera House aan de haven'
+      },
+      {
+        heading: '🔺 Het Louvre — museum met glazen piramide',
+        text: 'Het Louvre in Parijs, Frankrijk, is het meest bezochte museum ter wereld. Voor het indrukwekkende oude paleis staat een moderne glazen piramide, die als ingang dient. Deze piramide werd in 1989 gebouwd en was eerst heel omstreden — veel Parijzenaars vonden het lelijk. Nu is het één van de iconen van Parijs. In het museum hangt ook de beroemdste schilderij ter wereld: de Mona Lisa van Leonardo da Vinci.',
+        img: null
+      },
+      {
+        heading: '🏟️ Colosseum — arena voor gladiatoren',
+        text: 'Het Colosseum in Rome, Italië, is het grootste amfitheater uit de Oudheid. Het werd gebouwd tussen 70 en 80 na Christus — dus al bijna 2.000 jaar geleden! Er konden maar liefst 80.000 toeschouwers in. In het Colosseum vochten gladiatoren tegen elkaar en zelfs tegen wilde dieren zoals leeuwen en tijgers. Tegenwoordig is het Colosseum een van de meest bezochte toeristische plekken ter wereld.',
+        img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=80',
+        imgCaption: 'Het indrukwekkende Colosseum in Rome'
+      }
+    ],
+    questions: [
+      {
+        text: 'Hoeveel verdiepingen heeft de Burj Khalifa?',
+        answers: ['97 verdiepingen', '163 verdiepingen', '200 verdiepingen'],
+        correct: 1
+      },
+      {
+        text: 'Waarom is de Sagrada Família bijzonder?',
+        answers: ['Het is het hoogste gebouw ter wereld', 'Het is al meer dan 140 jaar in aanbouw', 'Het staat op een eiland in de zee'],
+        correct: 1
+      },
+      {
+        text: 'Hoeveel toeschouwers konden er in het Colosseum?',
+        answers: ['20.000', '50.000', '80.000'],
+        correct: 2
+      }
+    ]
+  },
+  {
+    id: 'twintowers',
+    icon: '🗽',
+    title: 'De Twin Towers',
+    subtitle: 'Alles wat je moet weten over de beroemdste torens ter wereld',
+    intro: 'Lang geleden stonden er in New York City twee enorme wolkenkrabbers naast elkaar: de Twin Towers. Ze waren zo groot en zo herkenbaar dat de hele wereld ze kende. In dit verhaal lees je alles over hoe ze gebouwd werden, hoe groot ze waren, wat er met hen gebeurde, en wat er nu op dezelfde plek staat.',
+    sections: [
+      {
+        heading: '🏗️ Hoe groot waren ze?',
+        text: 'De Twin Towers — officieel de torens van het World Trade Center — waren twee identieke wolkenkrabbers in het hart van Manhattan, New York. De eerste toren was 417 meter hoog en de tweede toren was 415 meter hoog. Beide torens hadden 110 verdiepingen. Ze werden gebouwd tussen 1966 en 1973, dus de bouw duurde maar liefst zeven jaar. Op het moment dat ze klaar waren, waren ze de hoogste gebouwen ter wereld.',
+        img: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805584?w=800&q=80',
+        imgCaption: 'De skyline van New York City'
+      },
+      {
+        heading: '👷 Wie werkten er?',
+        text: 'In de Twin Towers werkten elke dag ongeveer 50.000 mensen. Dat is meer mensen dan in een klein stadje! Er waren kantoren van banken, verzekeringsmaatschappijen, restaurants en winkels. Op de 107e verdieping van de eerste toren was een luxe restaurant: Windows on the World. Vanuit dat restaurant had je een ongelooflijk uitzicht over de hele stad. Elke dag kwamen ook nog eens 200.000 bezoekers naar het World Trade Center.',
+        img: null
+      },
+      {
+        heading: '📅 11 september 2001',
+        text: 'Op de ochtend van dinsdag 11 september 2001 gebeurde er iets verschrikkelijks. Terroristen kaapten vliegtuigen en vlogen daarmee opzettelijk in de beide torens. Door de enorme klap en de brand die ontstond, stortten beide torens in. Bijna 3.000 mensen verloren hun leven op die dag. Het was een van de verdrietigste dagen in de geschiedenis van Amerika. Mensen over de hele wereld waren geschokt en verdrietig. Die dag vergeten we nooit.',
+        img: null
+      },
+      {
+        heading: '🆕 Het One World Trade Center',
+        text: 'Na de aanslag werd besloten om op dezelfde plek een nieuw gebouw te bouwen als teken van hoop en kracht. Dat gebouw heet het One World Trade Center, maar veel mensen noemen het ook wel de Freedom Tower — de Vrijheidstoren. Het is nu 541 meter hoog — zelfs hoger dan de originele Twin Towers. Het werd geopend in 2014. Op de begane grond is er ook een museum, het 9/11 Memorial Museum, waar bezoekers kunnen gedenken wat er is gebeurd.',
+        img: 'https://images.unsplash.com/photo-1499092346302-2586949dc63a?w=800&q=80',
+        imgCaption: 'Manhattan — de skyline met nieuwe torens'
+      }
+    ],
+    questions: [
+      {
+        text: 'Hoeveel verdiepingen hadden de Twin Towers?',
+        answers: ['85 verdiepingen', '110 verdiepingen', '163 verdiepingen'],
+        correct: 1
+      },
+      {
+        text: 'Hoe hoog is het One World Trade Center dat nu op dezelfde plek staat?',
+        answers: ['417 meter', '500 meter', '541 meter'],
+        correct: 2
+      },
+      {
+        text: 'Hoeveel mensen werkten er elke dag in de Twin Towers?',
+        answers: ['Ongeveer 10.000', 'Ongeveer 50.000', 'Ongeveer 200.000'],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'brugklas',
+    icon: '🎒',
+    title: 'Brugklas — de serie!',
+    subtitle: 'Alles over de populairste Nederlandse jeugdserie',
+    intro: 'Ken jij de serie Brugklas? Als je de leeftijd van Philou hebt, is de kans groot dat je er al van gehoord hebt. Brugklas is al jaren één van de populairste series voor kinderen en jongeren in Nederland. In dit verhaal lees je alles over de serie, de hoofdpersonages, de thema\'s en waarom zoveel kinderen het zo leuk vinden.',
+    sections: [
+      {
+        heading: '📺 Wat is Brugklas?',
+        text: 'Brugklas is een Nederlandse jeugdserie die wordt uitgezonden op Zapp, het kinderprogrammakanaal van de NPO. De serie draait om een groep jongeren die voor het eerst naar de middelbare school gaan — de zogenaamde "brugklas". De serie begon in 2012 en is sindsdien uitgegroeid tot een van de langstlopende jeugdseries van Nederland. Er zijn al meer dan tien seizoenen van gemaakt, en nog steeds kijken er elke week duizenden kinderen naar.',
+        img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80',
+        imgCaption: 'Middelbare scholieren in de gang — net als in Brugklas'
+      },
+      {
+        heading: '👫 De hoofdpersonages',
+        text: 'In de serie volgen we een groep jongeren die allemaal heel anders zijn. Kiki is de lieve, gevoelige meid die altijd voor haar vrienden klaarstaat. Sem is de grappige, stoere jongen die eigenlijk zachter is dan hij lijkt. Bo is de creatieve kunstenares die altijd een andere kijk op de wereld heeft. En Jayden is de coole nieuwkomer die in het begin niet zo makkelijk vrienden maakt. Samen beleven ze van alles op school en thuis.',
+        img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
+        imgCaption: 'Vrienden op school — net als in de serie'
+      },
+      {
+        heading: '💬 Wat zijn de thema\'s?',
+        text: 'Wat Brugklas zo bijzonder maakt, is dat het echte onderwerpen bespreekt die kinderen herkennen. De serie gaat over vriendschap — hoe je nieuwe vrienden maakt en hoe je je beste vrienden kunt kwijtraken. Ook gaat het over de eerste liefde: spannende gevoelens voor iemand op school. Een ander belangrijk onderwerp is pesten: hoe pijnlijk dat is en hoe je ermee omgaat. En dan is er natuurlijk puberteit: alles verandert in je lichaam en in je hoofd.',
+        img: null
+      },
+      {
+        heading: '🌟 Waarom is het zo populair?',
+        text: 'Brugklas is zo populair omdat kinderen van 10 tot 14 jaar zichzelf herkennen in de personages. Je ziet mensen die dezelfde twijfels, angsten en dromen hebben als jij. De serie speelt zich af op een gewone school, met gewone mensen. Er zijn ook grappige momenten, spannende cliffhangers en romantische scènes die je hart sneller laten kloppen. Bovendien wisselen de acteurs na een paar seizoenen, waardoor er altijd nieuwe verhalen zijn.',
+        img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80',
+        imgCaption: 'Tieners op school — het leven van Brugklas'
+      }
+    ],
+    questions: [
+      {
+        text: 'Op welk kanaal wordt Brugklas uitgezonden?',
+        answers: ['Nickelodeon', 'Disney Channel', 'Zapp'],
+        correct: 2
+      },
+      {
+        text: 'Welk personage uit Brugklas staat altijd klaar voor haar vrienden?',
+        answers: ['Bo', 'Kiki', 'Jayden'],
+        correct: 1
+      },
+      {
+        text: 'Wat is een belangrijk thema in de serie Brugklas?',
+        answers: ['Ruimtereizen en avontuur', 'Pesten en vriendschap', 'Koken en sport'],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'vakanties',
+    icon: '✈️',
+    title: 'De Coolste Vakanties voor Kinderen',
+    subtitle: 'Droombestemmingen die je nooit meer vergeet',
+    intro: 'Stel je voor: je pakt je koffer en je kunt naar élke plek ter wereld reizen. Waar zou jij naartoe gaan? Er zijn plekken op aarde die zo bijzonder zijn, dat kinderen er jaren over dromen. Van sprookjeskasteeltjes tot bungalows boven het water — in dit verhaal leer je vijf van de meest fantastische vakantiebestemmingen voor kinderen kennen.',
+    sections: [
+      {
+        heading: '🎢 Disneyland Parijs',
+        text: 'Slechts een paar uur rijden vanuit Nederland vind je het magische Disneyland Parijs. Dit pretpark bestaat uit twee grote parken vol attracties, shows en ontmoetingen met Disney-figuren zoals Mickey Mouse, Elsa, en Spider-Man. Er zijn achtbanen voor de dappere kinderen en rustigere attracties voor de kleinere. Je kunt er ook overnachten in hotels met een Disney-thema — zelfs in het kasteel van een Disney-prinses! Meer dan 15 miljoen mensen bezoeken het park elk jaar.',
+        img: 'https://images.unsplash.com/photo-1597466765688-44c4a93a9dec?w=800&q=80',
+        imgCaption: 'Disneyland — het koninkrijk van de magie'
+      },
+      {
+        heading: '🌊 De Malediven — bungalows boven water',
+        text: 'De Malediven zijn een groep van meer dan duizend kleine eilandjes in de Indische Oceaan. Het water is er turquoise blauw en zo helder dat je de vissen onder je voeten kunt zien zwemmen. Op veel eilanden staan luxe waterbungalows: huisjes die direct boven het water staan, met een trappetje naar de zee. Als je wakker wordt, open je de deur en stap je zo het warme water in. Snorkelen, duiken en genieten van de zon — dat is een dag op de Malediven.',
+        img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80',
+        imgCaption: 'Waterbungalows op de Malediven'
+      },
+      {
+        heading: '🗽 New York City',
+        text: 'New York is de stad die nooit slaapt. In de haven staat het Vrijheidsbeeld — een gigantisch standbeeld van een vrouw met een toorts, dat al meer dan 130 jaar hoog uittorent boven het water. In het centrum van de stad vind je Times Square: een plein vol gigantische lichtborden, theaters en winkels. Je kunt ook naar de top van het Empire State Building, een beroemde wolkenkrabber met uitzicht over de hele stad. En dan is er Central Park — een enorm park midden in de stad!',
+        img: 'https://images.unsplash.com/photo-1490644658840-3f2e3f8c5625?w=800&q=80',
+        imgCaption: 'Het Vrijheidsbeeld in New York'
+      },
+      {
+        heading: '🦁 Safari in Kenya',
+        text: 'Stel je voor dat je in een open jeep rijdt en ineens een leeuwin met haar jongen ziet liggen in het gras. Dat kan op een safari in Kenya! In nationale parken zoals de Masai Mara kun je olifanten, giraffen, zebra\'s, neushoorns en nijlpaarden zien in het wild. De dieren leven vrij in de savanne — niet in een kooi. In juli en augustus trekken elk jaar miljoenen wilde beesten en zebra\'s door het park op zoek naar gras. Dit spectakel heet de Great Migration en is één van de grootste dierenshows op aarde.',
+        img: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80',
+        imgCaption: 'Wilde dieren op safari in Afrika'
+      },
+      {
+        heading: '🏝️ De Griekse eilanden',
+        text: 'Griekenland heeft meer dan 2.000 eilanden — en sommige daarvan zijn echt paradijselijk. Het bekendste eiland is Santorini, met zijn witte huisjes en blauwe koepels boven de rotsen, uitkijkend over de zee. Op andere eilanden zoals Kreta of Corfu vind je lange zandstranden, kristalhelder water en heerlijk Grieks eten zoals gyros en baklava. De zomers zijn er lang en warm, en het volk is er erg vriendelijk. Vakantie in Griekenland voelt als leven in een plaatjesboek.',
+        img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80',
+        imgCaption: 'De witte huisjes van Santorini in Griekenland'
+      }
+    ],
+    questions: [
+      {
+        text: 'Wat is bijzonder aan een vakantie op de Malediven?',
+        answers: ['Er zijn heel veel pretparken', 'Je kunt slapen in bungalows boven het water', 'Er wonen de meeste schildpadden ter wereld'],
+        correct: 1
+      },
+      {
+        text: 'Hoe heet het beroemde plein in New York vol met lichtborden?',
+        answers: ['Central Park', 'Times Square', 'Broadway Plaza'],
+        correct: 1
+      },
+      {
+        text: 'In welk land kun je een safari doen om leeuwen en olifanten te zien?',
+        answers: ['Griekenland', 'Nederland', 'Kenya'],
+        correct: 2
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let state = {
+  totalMinutes: 0,
+  completedStories: [],
+  order: []
+};
+let currentStoryIdx = 0;
+let currentStory = null;
+let currentQuestionIdx = 0;
+let sessionMinutes = 0;
+
+function loadState() {
+  const saved = localStorage.getItem('philou-lezen-v2');
+  if (saved) {
+    try { state = JSON.parse(saved); } catch(e) {}
+  }
+  if (!state.order || state.order.length === 0) {
+    state.order = shuffle([...Array(STORIES.length).keys()]);
+  }
+  updateMinutesDisplay();
+}
+
+function saveState() {
+  localStorage.setItem('philou-lezen-v2', JSON.stringify(state));
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ═══════════════════════════════════════════
+   MINUTES DISPLAY
+═══════════════════════════════════════════ */
+function updateMinutesDisplay() {
+  document.getElementById('total-minutes').textContent = state.totalMinutes;
+}
+
+function awardMinute() {
+  state.totalMinutes++;
+  saveState();
+  updateMinutesDisplay();
+  launchConfetti();
+}
+
+/* ═══════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════ */
+function launchConfetti() {
+  const colors = ['#e91e8c','#ff6eb4','#ff1493','#ffb3d9','#fff','#ff69b4','#c2185b'];
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = '-20px';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.transform = `rotate(${Math.random()*360}deg)`;
+      piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      piece.style.width = (6 + Math.random() * 8) + 'px';
+      piece.style.height = (6 + Math.random() * 8) + 'px';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 3500);
+    }, Math.random() * 600);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   HOME
+═══════════════════════════════════════════ */
+function renderHome() {
+  showScreen('home-screen');
+  const container = document.getElementById('story-cards');
+  container.innerHTML = '';
+  state.order.forEach((storyIdx, i) => {
+    const story = STORIES[storyIdx];
+    const done = state.completedStories.includes(story.id);
+    const card = document.createElement('div');
+    card.className = 'story-card' + (done ? ' done' : '');
+    card.innerHTML = `
+      <div class="card-icon">${story.icon}</div>
+      <div class="card-info">
+        <h3>${story.title}</h3>
+        <p>${story.subtitle}</p>
+      </div>
+      <div class="card-badge ${done ? 'done-badge' : ''}">${done ? '✅ Klaar' : '3 vragen'}</div>
+    `;
+    card.addEventListener('click', () => openStory(storyIdx));
+    container.appendChild(card);
+  });
+}
+
+function goHome() {
+  renderHome();
+}
+
+/* ═══════════════════════════════════════════
+   STORY SCREEN
+═══════════════════════════════════════════ */
+function openStory(idx) {
+  currentStory = STORIES[idx];
+  currentStoryIdx = idx;
+  renderStory(currentStory, 'story-screen', 's-title', 's-subtitle', 's-body');
+  showScreen('story-screen');
+}
+
+function renderStory(story, screenId, titleId, subtitleId, bodyId) {
+  document.getElementById(titleId).textContent = story.icon + ' ' + story.title;
+  document.getElementById(subtitleId).textContent = story.subtitle;
+
+  const body = document.getElementById(bodyId);
+  let html = `<p><strong>${story.intro}</strong></p>`;
+
+  story.sections.forEach(sec => {
+    html += `<h3>${sec.heading}</h3><p>${sec.text}</p>`;
+    if (sec.img) {
+      html += `<img class="story-img" src="${sec.img}" alt="${sec.heading}" loading="lazy" onerror="this.style.display='none'">`;
+      if (sec.imgCaption) html += `<p class="img-caption">${sec.imgCaption}</p>`;
+    }
+  });
+  body.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   QUESTIONS
+═══════════════════════════════════════════ */
+function startQuestions() {
+  currentQuestionIdx = 0;
+  sessionMinutes = 0;
+  showQuestion();
+  showScreen('question-screen');
+}
+
+function showQuestion() {
+  const q = currentStory.questions[currentQuestionIdx];
+  const total = currentStory.questions.length;
+  const pct = (currentQuestionIdx / total) * 100;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-counter').textContent = `Vraag ${currentQuestionIdx + 1} van ${total}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const btns = ['btn-a', 'btn-b', 'btn-c'];
+  const labels = ['A', 'B', 'C'];
+  btns.forEach((id, i) => {
+    const btn = document.getElementById(id);
+    btn.textContent = `${labels[i]}. ${q.answers[i]}`;
+    btn.className = 'answer-btn';
+    btn.disabled = false;
+  });
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.innerHTML = '';
+}
+
+function checkAnswer(chosenIdx) {
+  const q = currentStory.questions[currentQuestionIdx];
+  const btns = ['btn-a', 'btn-b', 'btn-c'];
+  const correct = q.correct;
+  const isCorrect = chosenIdx === correct;
+
+  btns.forEach(id => document.getElementById(id).disabled = true);
+  document.getElementById(btns[chosenIdx]).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) {
+    document.getElementById(btns[correct]).classList.add('correct');
+  }
+
+  const fb = document.getElementById('feedback-box');
+  if (isCorrect) {
+    sessionMinutes++;
+    awardMinute();
+    fb.className = 'feedback-box show fb-correct';
+    fb.innerHTML = '✅ Goed zo! Je verdient 1 minuut schermtijd! 🎉';
+  } else {
+    fb.className = 'feedback-box show fb-wrong';
+    fb.innerHTML = `❌ Helaas! Het goede antwoord was: <strong>${q.answers[correct]}</strong>`;
+  }
+
+  setTimeout(() => {
+    currentQuestionIdx++;
+    if (currentQuestionIdx < currentStory.questions.length) {
+      showQuestion();
+    } else {
+      showEnd();
+    }
+  }, 2000);
+}
+
+/* ═══════════════════════════════════════════
+   END SCREEN
+═══════════════════════════════════════════ */
+function showEnd() {
+  const total = currentStory.questions.length;
+  const pct = Math.round((sessionMinutes / total) * 100);
+
+  // mark as done
+  if (!state.completedStories.includes(currentStory.id)) {
+    state.completedStories.push(currentStory.id);
+  }
+  saveState();
+
+  // trophy / title
+  let trophy = '🏆';
+  let title = 'Super gedaan!';
+  if (sessionMinutes === total) { trophy = '🌟'; title = 'Perfect! Alle vragen goed!'; }
+  else if (sessionMinutes === 0) { trophy = '💪'; title = 'Probeer het nog eens!'; }
+
+  document.getElementById('end-trophy').textContent = trophy;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-score').innerHTML =
+    `Je had <strong>${sessionMinutes} van de ${total}</strong> vragen goed.<br>` +
+    `Je hebt ${sessionMinutes} minuut${sessionMinutes !== 1 ? 'en' : ''} verdiend!`;
+  document.getElementById('end-minutes').textContent = state.totalMinutes;
+
+  showScreen('end-screen');
+  if (sessionMinutes > 0) launchConfetti();
+}
+
+function nextStory() {
+  // find next not-done story, or loop
+  const order = state.order;
+  let next = null;
+  for (let i = 0; i < order.length; i++) {
+    const s = STORIES[order[i]];
+    if (!state.completedStories.includes(s.id)) {
+      next = order[i];
+      break;
+    }
+  }
+  if (next === null) {
+    // all done — shuffle again
+    state.order = shuffle([...Array(STORIES.length).keys()]);
+    state.completedStories = [];
+    saveState();
+    next = state.order[0];
+  }
+  openStory(next);
+}
+
+/* ═══════════════════════════════════════════
+   STORY OVERLAY
+═══════════════════════════════════════════ */
+function openStoryOverlay() {
+  const story = currentStory;
+  let html = `<h2 style="color:#e91e8c;margin-bottom:12px;">${story.icon} ${story.title}</h2>`;
+  html += `<p style="font-size:1.05rem;line-height:1.7;margin-bottom:16px;"><strong>${story.intro}</strong></p>`;
+  story.sections.forEach(sec => {
+    html += `<h3 style="color:#e91e8c;margin:20px 0 8px;font-size:1.1rem;">${sec.heading}</h3>`;
+    html += `<p style="font-size:1.05rem;line-height:1.7;margin-bottom:12px;">${sec.text}</p>`;
+    if (sec.img) {
+      html += `<img src="${sec.img}" style="width:100%;border-radius:12px;max-height:220px;object-fit:cover;margin:10px 0;" onerror="this.style.display='none'">`;
+    }
+  });
+  document.getElementById('overlay-body').innerHTML = html;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════
+   RESET MODAL
+═══════════════════════════════════════════ */
+function openResetModal() {
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-error').style.display = 'none';
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('pin-input').focus(), 200);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function confirmReset() {
+  const pin = document.getElementById('pin-input').value;
+  if (pin === '1234') {
+    state = {
+      totalMinutes: 0,
+      completedStories: [],
+      order: shuffle([...Array(STORIES.length).keys()])
+    };
+    saveState();
+    updateMinutesDisplay();
+    closeModal();
+    renderHome();
+    alert('✅ Voortgang gereset!');
+  } else {
+    document.getElementById('pin-error').style.display = 'block';
+    document.getElementById('pin-input').value = '';
+  }
+}
+
+// Allow Enter key in PIN input
+document.getElementById('pin-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmReset();
+});
+
+// Close overlay on background click
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeOverlay();
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+loadState();
+renderHome();
+</script>
+</body>
+</html>
