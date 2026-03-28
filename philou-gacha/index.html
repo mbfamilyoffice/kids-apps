@@ -25,7 +25,7 @@
     .xp-card{background:#111;border:2px solid #222;border-radius:12px;padding:10px 18px 12px;text-align:center;width:100%;max-width:480px;}
     .xp-label{font-size:0.72rem;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
     .xp-bar-wrap{background:#0a0a0a;border-radius:8px;height:22px;border:2px solid #333;overflow:hidden;}
-    .xp-bar-fill{height:100%;background:linear-gradient(90deg,#e91e8c,#c2185b);border-radius:6px;transition:width 0.5s cubic-bezier(.34,1.56,.64,1);}
+    .xp-bar-fill{height:100%;background:linear-gradient(90deg,#e91e8c,#ff6b35);border-radius:6px;transition:width 0.5s cubic-bezier(.34,1.56,.64,1);}
     .xp-dots{display:flex;justify-content:center;gap:8px;margin-top:8px;}
     .xp-dot{width:24px;height:24px;border-radius:4px;border:2px solid #222;background:#0a0a0a;font-size:0.9rem;display:flex;align-items:center;justify-content:center;}
     .xp-dot.lit{background:#e91e8c;border-color:#e91e8c;box-shadow:0 0 10px rgba(233,30,140,0.5);}
@@ -33,7 +33,7 @@
     /* ── QUESTION ── */
     .q-card{background:#111;border:2px solid #222;border-radius:14px;padding:20px 20px 16px;text-align:center;width:100%;max-width:480px;}
     .q-text{font-size:3.6rem;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:2px;line-height:1;text-shadow:2px 2px 0 #000;}
-    .ans-box{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:64px;background:#0a0a0a;border:4px solid #333;border-radius:10px;font-size:2.6rem;font-weight:900;color:#fff;padding:4px 18px;transition:all 0.2s;}
+    .ans-box{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:64px;background:#0a0a0a;border:4px solid #333;border-radius:10px;font-size:3rem;font-weight:900;color:#fff;padding:4px 18px;transition:all 0.2s;}
     .ans-box.correct{border-color:#00b06a;background:#001a0f;color:#00b06a;box-shadow:0 0 16px rgba(0,176,106,0.4);}
     .ans-box.wrong{border-color:#e91e8c;background:#1a0000;color:#e91e8c;box-shadow:0 0 16px rgba(233,30,140,0.4);}
     .fb-text{margin-top:8px;font-size:1.1rem;font-weight:900;min-height:28px;color:#444;text-transform:uppercase;letter-spacing:1px;}
@@ -91,42 +91,40 @@
     .slot-win .slot-name{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:1px;}
     .slot-emoji-fallback{font-size:5rem;text-align:center;}
 
-    /* ── CARD FLIP REVEAL ── */
-    .card-scene{width:240px;height:340px;perspective:800px;position:relative;}
-    .card-scene.hidden{display:none;}
-    .card-flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(.4,0,.2,1);}
-    .card-flip.flipped{transform:rotateY(180deg);}
-
-    /* Card back */
-    .card-back{
-      position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;overflow:hidden;
+    /* ── CARD REVEAL (geen 3D flip, werkt op iOS) ── */
+    /* Stap 1: omgedraaide kaart */
+    .card-back-simple{
+      width:240px;border-radius:16px;overflow:hidden;
       background:linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a);
-      border:3px solid #333;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+      border:3px solid #444;padding:60px 20px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
       box-shadow:0 20px 60px rgba(0,0,0,0.8);
+      cursor:pointer;position:relative;
+      animation:cardEntrance 0.5s cubic-bezier(.34,1.56,.64,1);
     }
-    .card-back .back-logo{font-size:3rem;}
-    .card-back .back-text{font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:3px;}
-    .card-back .back-glow{
+    .card-back-simple.hidden{display:none;}
+    @keyframes cardEntrance{from{transform:scale(0.3) rotate(-10deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+    .card-back-simple .back-logo{font-size:3.5rem;line-height:1;}
+    .card-back-simple .back-uni{font-size:1.2rem;}
+    .card-back-simple .back-text{font-size:0.65rem;color:#555;text-transform:uppercase;letter-spacing:3px;}
+    .card-back-simple .back-shine{
       position:absolute;inset:0;border-radius:14px;
-      background:conic-gradient(from 0deg,#7c3aed,#dc2626,#d97706,#7c3aed);
-      opacity:0;animation:cardGlow 2s linear infinite;
-      filter:blur(8px);z-index:-1;
+      background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.04) 50%,transparent 60%);
+      animation:shineMove 2s ease infinite;
     }
-    @keyframes cardGlow{0%{opacity:0.3;transform:rotate(0deg);}50%{opacity:0.6;}100%{opacity:0.3;transform:rotate(360deg);}}
+    @keyframes shineMove{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 
-    /* Tap hint */
-    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
-    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
-
-    /* Card front */
-    .card-front{
-      position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);
-      border-radius:16px;overflow:hidden;border:3px solid #333;
+    /* Stap 2: kaart reveal */
+    .tcg-card{
+      width:240px;border-radius:16px;overflow:hidden;position:relative;
       box-shadow:0 20px 60px rgba(0,0,0,0.8);
+      animation:revealPop 0.5s cubic-bezier(.34,1.56,.64,1);
     }
+    .tcg-card.hidden{display:none;}
+    @keyframes revealPop{from{transform:scale(0.5) rotate(5deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
 
     /* Holographic shimmer */
-    .card-front.holo::before{
+    .tcg-card.holo::before{
       content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
       background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0.18) 45%,rgba(120,80,255,0.1) 50%,rgba(255,255,255,0.07) 55%,transparent 65%);
       animation:holoShimmer 2.5s linear infinite;
@@ -134,16 +132,16 @@
     @keyframes holoShimmer{0%{transform:translateX(-120%);}100%{transform:translateX(220%);}}
 
     /* OG rainbow shimmer */
-    .card-front.rainbow::before{
+    .tcg-card.rainbow::before{
       content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
       background:linear-gradient(125deg,rgba(255,0,0,0.15),rgba(255,165,0,0.15),rgba(255,255,0,0.15),rgba(0,255,0,0.15),rgba(0,0,255,0.15),rgba(148,0,211,0.15));
       animation:rainbowShimmer 1.5s linear infinite;
     }
     @keyframes rainbowShimmer{0%{transform:translateX(-120%) skew(-10deg);}100%{transform:translateX(220%) skew(-10deg);}}
 
-    /* TCG card content (same as before but now inside .card-front) */
-    .tcg-card{width:100%;height:100%;background:#0d0d0d;display:flex;flex-direction:column;}
-    .tcg-card.hidden{display:none;}
+    /* tap hint */
+    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
+    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
 
     .card-header{padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;}
     .card-name-top{font-size:0.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;max-width:140px;}
@@ -273,7 +271,7 @@
     .onboard-skip{flex:1;background:transparent;border:2px solid #1a1a1a;color:#333;border-radius:10px;padding:14px;font-size:0.8rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
     .onboard-next{flex:2;background:#e91e8c;border:2px solid #ff6eb4;color:#fff;border-radius:10px;padding:14px;font-size:1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 0 #8b0057;}
     .onboard-next:active{transform:translateY(3px);box-shadow:0 1px 0 #8b0057;}
-    .onboard-start{flex:1;background:linear-gradient(135deg,#e91e8c,#c2185b);border:none;color:#fff;border-radius:10px;padding:16px;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0057;animation:startPulse 1s ease infinite alternate;}
+    .onboard-start{flex:1;background:linear-gradient(135deg,#e91e8c,#ff6b35);border:none;color:#fff;border-radius:10px;padding:16px;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0057;animation:startPulse 1s ease infinite alternate;}
     @keyframes startPulse{from{box-shadow:0 4px 0 #8b0057,0 0 0 rgba(233,30,140,0);}to{box-shadow:0 4px 0 #8b0057,0 0 20px rgba(233,30,140,0.5);}}
 
     @media(max-height:700px){.header-minutes{font-size:2.2rem;}.q-text{font-size:2.8rem;}.ans-box{font-size:2.5rem;min-height:54px;}.pad-btn{height:62px;font-size:1.7rem;}}
@@ -312,8 +310,7 @@
     <div class="onboard-text"><strong>Stap 1:</strong> Los een sommetje op!</div>
     <div class="onboard-example">8 × 7 = ?</div>
     <div class="onboard-text">
-      Keer- en deelsommen — tot tafel 16!<br><br>
-      Los <strong>3 sommen</strong> goed op<br>
+      Keer- en deelsommen tot tafel 16!<br><br>      Los <strong>3 sommen</strong> goed op<br>
       en je verdient <strong>1 minuut</strong> schermtijd! ⏱️<br><br>
       Na <strong>5 minuten</strong> mag je<br>
       een pack openen! 🎰
@@ -427,38 +424,32 @@
     <div class="slot-name" id="slotName"></div>
   </div>
 
-  <!-- Card flip reveal -->
-  <div class="card-scene hidden" id="cardScene" onclick="flipCard()">
-    <div class="card-flip" id="cardFlip">
-      <!-- BACK -->
-      <div class="card-back">
-        <div class="back-glow"></div>
-        <div class="back-logo">🎴</div>
-        <div style="font-size:1.4rem" id="backUniIcon">🎰</div>
-        <div class="back-text">Tik om te onthullen</div>
-      </div>
-      <!-- FRONT -->
-      <div class="card-front" id="cardFront">
-        <div class="tcg-card" id="tcgCard">
-          <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
-          <div class="card-header">
-            <div class="card-name-top" id="cardNameTop"></div>
-            <div class="card-rarity-gem" id="cardRarityGem"></div>
-          </div>
-          <div class="card-img-wrap">
-            <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
-            <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
-            <div class="card-uni-badge" id="cardUniBadge"></div>
-          </div>
-          <div class="card-body">
-            <div class="card-bonus hidden" id="cardBonus"></div>
-            <div class="card-desc" id="cardDesc"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Stap 1: omgedraaide kaart -->
+  <div class="card-back-simple hidden" id="cardBack" onclick="flipCard()">
+    <div class="back-shine"></div>
+    <div class="back-logo">🎴</div>
+    <div class="back-uni" id="backUniIcon">🎰</div>
+    <div class="back-text">Tik om te onthullen</div>
   </div>
   <div class="tap-hint hidden" id="tapHint">👆 Tik op de kaart!</div>
+
+  <!-- Stap 2: revealed card -->
+  <div class="tcg-card hidden" id="tcgCard">
+    <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
+    <div class="card-header">
+      <div class="card-name-top" id="cardNameTop"></div>
+      <div class="card-rarity-gem" id="cardRarityGem"></div>
+    </div>
+    <div class="card-img-wrap">
+      <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
+      <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
+      <div class="card-uni-badge" id="cardUniBadge"></div>
+    </div>
+    <div class="card-body">
+      <div class="card-bonus hidden" id="cardBonus"></div>
+      <div class="card-desc" id="cardDesc"></div>
+    </div>
+  </div>
   <button class="collect-btn hidden" id="collectBtn" onclick="closeGacha()" style="width:240px;">COLLECT! 👊</button>
   <div class="gacha-total" id="gachaTotal"></div>
 </div>
@@ -720,8 +711,12 @@ const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
 })();
 
 buildNumpad();buildPinPad();renderXP();renderHeader();
-// Show onboarding if first time
-if(!localStorage.getItem('philouOnboarded')){showOnboarding();}else{nextQuestion();}
+// Onboarding vars & functions defined below in script, called after DOM ready
+window.addEventListener('DOMContentLoaded',()=>{});
+// Show onboarding if first time — called after all functions defined
+setTimeout(()=>{
+  if(!localStorage.getItem('philouOnboarded')){showOnboarding();}else{nextQuestion();}
+},0);
 
 function save(){
   localStorage.setItem('philouMinutes',   totalMinutes);
@@ -749,28 +744,12 @@ function nextQuestion(){
   typedAnswer='';locked=false;
   const b=document.getElementById('ansBox');b.textContent='_';b.className='ans-box';
   const f=document.getElementById('fbText');f.textContent='';f.className='fb-text';
-
-  // 50% keer, 50% deel
-  const isKeer = Math.random() < 0.5;
-
-  let a, b2, op, ans;
-  if(isKeer){
-    // Tafels t/m 16 — maar niet te moeilijk: tafel t/m 12 vaker, 13-16 ook
-    a = rand(2, 16);
-    b2 = rand(2, 16);
-    op = '×';
-    ans = a * b2;
-  } else {
-    // Deelsommen: antwoord is altijd heel getal, uitkomst max 600
-    // Kies deler 2-16, quotiënt 2-37 (zodat product max ~592)
-    b2 = rand(2, 16);
-    ans = rand(2, Math.min(37, Math.floor(600 / b2)));
-    a = b2 * ans; // deeltal
-    op = '÷';
-  }
-
-  currentQ = {a, b: b2, op, ans};
-  document.getElementById('qText').textContent = `${a} ${op} ${b2} = ?`;
+  const isKeer=Math.random()<0.5;
+  let a,b2,op,ans;
+  if(isKeer){a=rand(2,16);b2=rand(2,16);op='×';ans=a*b2;}
+  else{b2=rand(2,16);ans=rand(2,Math.min(37,Math.floor(600/b2)));a=b2*ans;op='÷';}
+  currentQ={a,b:b2,op,ans};
+  document.getElementById('qText').textContent=`${a} ${op} ${b2} = ?`;
 }
 function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn;}
 
@@ -863,12 +842,10 @@ function showReveal(char){
 
   document.getElementById('slotWin').style.display='none';
   document.getElementById('gachaHdr').textContent='🎴 Wat heb je gespawnd?';
-
-  // Set back icon
   document.getElementById('backUniIcon').textContent =
     activeUniverse==='brainrot'?'🧠':activeUniverse==='pokemon'?'🃏':'⭐';
 
-  // Pre-load front card content (hidden behind flip)
+  // Pre-load card content
   const isNew=!collection[char.id];
   const imgUrl=IMG[char.id];
   const ci=document.getElementById('cardImg');
@@ -891,44 +868,43 @@ function showReveal(char){
   const nb=document.getElementById('cardNew');
   isNew?nb.classList.remove('hidden'):nb.classList.add('hidden');
 
-  // Style the card front
-  const front=document.getElementById('cardFront');
-  front.style.background=rv.bg;
-  front.style.borderColor=rv.border;
-  front.style.boxShadow=`0 0 50px ${rv.glow}`;
-  front.className='card-front'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
+  // Style the revealed card
+  const card=document.getElementById('tcgCard');
+  card.style.background=rv.bg;
+  card.style.border=`3px solid ${rv.border}`;
+  card.style.boxShadow=`0 0 50px ${rv.glow}, 0 20px 60px rgba(0,0,0,0.8)`;
+  card.className='tcg-card hidden'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
 
-  // Show the card scene (face down)
-  const scene=document.getElementById('cardScene');
-  scene.classList.remove('hidden');
-  document.getElementById('cardFlip').classList.remove('flipped');
+  // Show back card first
+  document.getElementById('cardBack').classList.remove('hidden');
   document.getElementById('tapHint').classList.remove('hidden');
   document.getElementById('collectBtn').classList.add('hidden');
   document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
 
-  // Suspense shake on og/secret
+  // Suspense: shake back card for og/secret
   if(char.r==='og'||char.r==='secret'){
-    setTimeout(()=>{
-      scene.style.animation='shake 0.3s ease 3';
-      setTimeout(()=>scene.style.animation='',900);
-    },600);
+    const back=document.getElementById('cardBack');
+    setTimeout(()=>{back.style.animation='cardEntrance 0s, shake 0.3s ease 3';},500);
+    setTimeout(()=>{back.style.animation='cardEntrance 0s';},1400);
   }
 }
 
 function flipCard(){
   const char=pendingRevealChar;
   if(!char)return;
-  const flip=document.getElementById('cardFlip');
-  if(flip.classList.contains('flipped'))return; // already flipped
+  const back=document.getElementById('cardBack');
+  if(back.classList.contains('hidden'))return; // already flipped
 
-  flip.classList.add('flipped');
+  // Hide back, show front card
+  back.classList.add('hidden');
   document.getElementById('tapHint').classList.add('hidden');
 
-  // Now collect & award
   const rv=R[char.r];
   collection[char.id]=(collection[char.id]||0)+1;
   if(rv.bonus>0)totalMinutes+=rv.bonus;
   save();renderHeader();
+
+  document.getElementById('tcgCard').classList.remove('hidden');
 
   setTimeout(()=>{
     document.getElementById('gachaHdr').textContent=
@@ -943,12 +919,13 @@ function flipCard(){
     else if(char.r==='secret')launchParticles(70);
     else if(char.r==='epic')launchParticles(40);
     else if(char.r==='rare')launchParticles(15);
-  },750);
+  },300);
 }
 
 function closeGacha(){
   document.getElementById('gachaOverlay').classList.add('hidden');
-  document.getElementById('cardScene').classList.add('hidden');
+  document.getElementById('cardBack').classList.add('hidden');
+  document.getElementById('tcgCard').classList.add('hidden');
   document.getElementById('collectBtn').classList.add('hidden');
   pendingRevealChar=null;
   nextQuestion();
@@ -1041,7 +1018,7 @@ function copyUrl(text){
 /* ── PARTICLES ── */
 function launchParticles(n){
   const layer=document.getElementById('particles');
-  const colors=['#e91e8c','#FFD700','#0077FF','#00b06a','#c2185b','#a78bfa','#38bdf8','#fb923c','#fbbf24','#f472b6'];
+  const colors=['#e91e8c','#FFD700','#0077FF','#00b06a','#ff6b35','#a78bfa','#38bdf8','#fb923c','#fbbf24','#f472b6'];
   for(let i=0;i<n;i++){
     setTimeout(()=>{
       const el=document.createElement('div');el.className='p-block';
