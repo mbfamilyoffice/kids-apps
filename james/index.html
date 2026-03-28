@@ -144,6 +144,19 @@
     .tab-btn.t-pokemon.active{border-color:#e74c3c;background:#1a0505;color:#ff8a80;}
     .tab-btn.t-brawl.active{border-color:#f39c12;background:#1a1000;color:#FFD700;}
 
+    /* Share button */
+    .share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:480px;margin:0 auto 14px;background:linear-gradient(135deg,#1a2e1a,#0d1a0d);border:2px solid #00b06a;color:#00b06a;border-radius:12px;padding:14px;font-size:0.85rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .share-btn:active{transform:scale(0.97);}
+
+    /* Share toast */
+    .share-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#00b06a;color:#000;padding:12px 24px;border-radius:50px;font-size:0.85rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;z-index:3000;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+    .share-toast.show{opacity:1;}
+
+    /* View mode banner */
+    .view-banner{width:100%;max-width:480px;background:linear-gradient(135deg,#0d1a2e,#1a0d2e);border:2px solid #4fc3f7;border-radius:12px;padding:14px 18px;text-align:center;margin-bottom:4px;}
+    .view-banner-title{font-size:1rem;font-weight:900;color:#4fc3f7;margin-bottom:4px;}
+    .view-banner-sub{font-size:0.75rem;color:#555;text-transform:uppercase;letter-spacing:1px;}
+
     .coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:480px;margin:0 auto;}
     .rarity-hdr{grid-column:1/-1;font-size:0.7rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:8px 0 4px;display:flex;align-items:center;gap:8px;}
     .rarity-line{flex:1;height:1px;background:#1a1a1a;}
@@ -236,14 +249,20 @@
     <button class="coll-close" onclick="closeCollection()">✕ Sluiten</button>
   </div>
   <div class="coll-stats" id="collStats"></div>
+  <button class="share-btn" id="shareBtn" onclick="shareCollection()">🔗 Deel mijn collectie met vrienden!</button>
   <div class="coll-tabs">
     <button class="tab-btn t-all active" onclick="switchTab('all')">Alles</button>
     <button class="tab-btn t-brainrot" onclick="switchTab('brainrot')">🧠 Brainrot</button>
     <button class="tab-btn t-pokemon" onclick="switchTab('pokemon')">🃏 Pokémon</button>
     <button class="tab-btn t-brawl" onclick="switchTab('brawl')">⭐ Brawl</button>
   </div>
+  <div id="viewBanner" class="view-banner" style="display:none;">
+    <div class="view-banner-title" id="viewBannerTitle">🎮 James zijn collectie</div>
+    <div class="view-banner-sub">Bekijk modus — dit is niet jouw collectie</div>
+  </div>
   <div class="coll-grid" id="collGrid"></div>
 </div>
+<div class="share-toast" id="shareToast">✅ Link gekopieerd!</div>
 
 <!-- ══ PIN ══ -->
 <div class="pin-overlay hidden" id="pinOverlay">
@@ -596,19 +615,60 @@ function closeGacha(){document.getElementById('gachaOverlay').classList.add('hid
 /* ══════════════════════════════════════════
    COLLECTION
 ══════════════════════════════════════════ */
+// Check on load: are we in view mode?
+let viewCollection = null;
+(function checkViewMode(){
+  const params=new URLSearchParams(window.location.search);
+  const data=params.get('c');
+  const name=params.get('n');
+  if(data){
+    try{
+      viewCollection=JSON.parse(atob(data));
+      // Auto-open collection in view mode
+      window.addEventListener('DOMContentLoaded',()=>{
+        setTimeout(()=>{
+          openCollection();
+          document.getElementById('shareBtn').textContent='🔗 Stuur jouw eigen link!';
+          document.getElementById('viewBanner').style.display='';
+          document.getElementById('viewBannerTitle').textContent=`🎮 ${name?decodeURIComponent(name):'Iemand'} zijn collectie`;
+        },100);
+      });
+    }catch(e){viewCollection=null;}
+  }
+})();
+
 function openCollection(){renderCollection();document.getElementById('collOverlay').classList.remove('hidden');}
-function closeCollection(){document.getElementById('collOverlay').classList.add('hidden');}
+function closeCollection(){document.getElementById('collOverlay').classList.add('hidden');viewCollection=null;history.replaceState(null,'',window.location.pathname);}
 function switchTab(tab){
   collTab=tab;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.tab-btn.t-'+tab).classList.add('active');
   renderCollection();
 }
+
+function shareCollection(){
+  const data=btoa(JSON.stringify(collection));
+  const url=`${window.location.origin}${window.location.pathname}?n=${encodeURIComponent('James')}&c=${data}`;
+  if(navigator.share){
+    navigator.share({title:'🎮 James zijn Gacha Collectie!',text:'Kijk mijn characters!',url}).catch(()=>copyToClipboard(url));
+  } else {
+    copyToClipboard(url);
+  }
+}
+function copyToClipboard(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const t=document.getElementById('shareToast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  }).catch(()=>alert('Kopieer deze link:\n'+text));
+}
 function renderCollection(){
   const grid=document.getElementById('collGrid');grid.innerHTML='';
+  const displayColl=viewCollection||collection;
   const allFlat=[...ALL_CHARS.brainrot,...ALL_CHARS.pokemon,...ALL_CHARS.brawl];
-  const unlocked=Object.keys(collection).length;
+  const unlocked=Object.keys(displayColl).length;
   document.getElementById('collStats').textContent=`${unlocked} / ${allFlat.length} gespawnd 🧬`;
+  document.getElementById('viewBanner').style.display=viewCollection?'':'none';
 
   const universes=collTab==='all'
     ?['brainrot','pokemon','brawl']
@@ -633,8 +693,8 @@ function renderCollection(){
       const rv=RARITIES[rk];
 
       chars.forEach(char=>{
-        const isUnlocked=!!collection[char.id];
-        const cnt=collection[char.id]||0;
+        const isUnlocked=!!displayColl[char.id];
+        const cnt=displayColl[char.id]||0;
         const card=document.createElement('div');
         card.className='cc '+(isUnlocked?'unlocked':'locked');
         if(isUnlocked){card.style.setProperty('--cc',rv.border);card.style.setProperty('--cg',rv.glow);}
