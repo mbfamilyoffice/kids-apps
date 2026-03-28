@@ -114,34 +114,52 @@
     }
     @keyframes shineMove{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 
-    /* Stap 2: kaart reveal */
+    /* Stap 2: reveal — simpel en iOS-proof */
     .tcg-card{
-      width:240px;border-radius:16px;overflow:hidden;position:relative;
-      box-shadow:0 20px 60px rgba(0,0,0,0.8);
-      animation:revealPop 0.5s cubic-bezier(.34,1.56,.64,1);
+      width:280px;text-align:center;
+      animation:revealPop 0.6s cubic-bezier(.34,1.56,.64,1);
+      -webkit-transform:translateZ(0);transform:translateZ(0);
     }
     .tcg-card.hidden{display:none;}
-    @keyframes revealPop{from{transform:scale(0.5) rotate(5deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
-
-    /* Holographic shimmer */
-    .tcg-card.holo::before{
-      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
-      background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0.18) 45%,rgba(120,80,255,0.1) 50%,rgba(255,255,255,0.07) 55%,transparent 65%);
-      animation:holoShimmer 2.5s linear infinite;
+    @keyframes revealPop{
+      0%{opacity:0;-webkit-transform:scale(0.4) translateZ(0);transform:scale(0.4);}
+      100%{opacity:1;-webkit-transform:scale(1) translateZ(0);transform:scale(1);}
     }
-    @keyframes holoShimmer{0%{transform:translateX(-120%);}100%{transform:translateX(220%);}}
-
-    /* OG rainbow shimmer */
-    .tcg-card.rainbow::before{
-      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
-      background:linear-gradient(125deg,rgba(255,0,0,0.15),rgba(255,165,0,0.15),rgba(255,255,0,0.15),rgba(0,255,0,0.15),rgba(0,0,255,0.15),rgba(148,0,211,0.15));
-      animation:rainbowShimmer 1.5s linear infinite;
+    .reveal-img-wrap{
+      width:220px;height:220px;margin:0 auto 12px;
+      border-radius:18px;
+      border:4px solid #333;
+      background:#111;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;
+      -webkit-transform:translateZ(0);transform:translateZ(0);
     }
-    @keyframes rainbowShimmer{0%{transform:translateX(-120%) skew(-10deg);}100%{transform:translateX(220%) skew(-10deg);}}
-
+    .reveal-img-wrap img{width:100%;height:100%;object-fit:contain;border-radius:14px;display:block;}
+    .reveal-img-wrap .reveal-emoji{font-size:5rem;line-height:1;}
+    .reveal-img-wrap .shimmer-layer{
+      position:absolute;top:0;left:0;right:0;bottom:0;border-radius:14px;pointer-events:none;
+      background:linear-gradient(125deg,transparent 30%,rgba(255,255,255,0.2) 50%,transparent 70%);
+      animation:holoShimmer 2s linear infinite;
+    }
+    .reveal-img-wrap .rainbow-layer{
+      position:absolute;top:0;left:0;right:0;bottom:0;border-radius:14px;pointer-events:none;
+      background:linear-gradient(125deg,rgba(255,0,0,0.2),rgba(255,165,0,0.2),rgba(255,255,0,0.2),rgba(0,255,0,0.2),rgba(0,0,255,0.2),rgba(148,0,211,0.2));
+      animation:rainbowShimmer 1.2s linear infinite;
+    }
+    @keyframes holoShimmer{0%{-webkit-transform:translateX(-100%);transform:translateX(-100%);}100%{-webkit-transform:translateX(100%);transform:translateX(100%);}}
+    @keyframes rainbowShimmer{0%{-webkit-transform:translateX(-100%);transform:translateX(-100%);}100%{-webkit-transform:translateX(100%);transform:translateX(100%);}}
+    .reveal-rarity{display:inline-block;padding:4px 14px;border-radius:50px;font-size:0.75rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#000;margin-bottom:6px;}
+    .reveal-uni{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-left:6px;margin-bottom:6px;}
+    .reveal-name{font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:6px;line-height:1.2;}
+    .reveal-bonus-txt{font-size:0.9rem;color:#FFD700;font-weight:900;margin-bottom:4px;}
+    .reveal-bonus-txt.hidden{display:none;}
+    .reveal-desc-txt{font-size:0.65rem;color:#666;line-height:1.5;font-family:Arial,sans-serif;font-weight:normal;padding:0 8px;margin-bottom:4px;}
+    .reveal-new{display:inline-block;background:#E8232A;color:#fff;font-size:0.6rem;font-weight:900;padding:2px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;animation:newPulse 0.5s infinite alternate;}
+    .reveal-new.hidden{display:none;}
     /* tap hint */
     .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
     @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
+    @keyframes newPulse{from{-webkit-transform:scale(0.95);transform:scale(0.95);}to{-webkit-transform:scale(1.08);transform:scale(1.08);}}
 
     .card-header{padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;}
     .card-name-top{font-size:0.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;max-width:140px;}
@@ -432,22 +450,20 @@
   </div>
   <div class="tap-hint hidden" id="tapHint">👆 Tik op de kaart!</div>
 
-  <!-- Stap 2: revealed card -->
+  <!-- Stap 2: revealed card — iOS-proof -->
   <div class="tcg-card hidden" id="tcgCard">
-    <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
-    <div class="card-header">
-      <div class="card-name-top" id="cardNameTop"></div>
-      <div class="card-rarity-gem" id="cardRarityGem"></div>
+    <div class="reveal-new hidden" id="cardNew">⭐ NEW!</div>
+    <div>
+      <span class="reveal-rarity" id="cardRarityGem"></span>
+      <span class="reveal-uni" id="cardUniBadge"></span>
     </div>
-    <div class="card-img-wrap">
-      <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
-      <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
-      <div class="card-uni-badge" id="cardUniBadge"></div>
+    <div class="reveal-img-wrap" id="revealImgWrap">
+      <img id="cardImg" src="" alt="" onerror="this.style.display='none';document.getElementById('cardFb').style.display='block';">
+      <div class="reveal-emoji" id="cardFb" style="display:none"></div>
     </div>
-    <div class="card-body">
-      <div class="card-bonus hidden" id="cardBonus"></div>
-      <div class="card-desc" id="cardDesc"></div>
-    </div>
+    <div class="reveal-name" id="cardNameTop"></div>
+    <div class="reveal-bonus-txt hidden" id="cardBonus"></div>
+    <div class="reveal-desc-txt" id="cardDesc"></div>
   </div>
   <button class="collect-btn hidden" id="collectBtn" onclick="closeGacha()" style="width:240px;">COLLECT! 👊</button>
   <div class="gacha-total" id="gachaTotal"></div>
@@ -847,12 +863,12 @@ function showReveal(char){
   const imgUrl=IMG[char.id];
   const ci=document.getElementById('cardImg');
   const cf=document.getElementById('cardFb');
-  if(imgUrl){ci.src=imgUrl;ci.style.display='';cf.style.display='none';}
-  else{ci.style.display='none';cf.textContent=char.emoji;cf.style.display='flex';}
+  if(imgUrl){ci.src=imgUrl;ci.style.display='block';cf.style.display='none';}
+  else{ci.style.display='none';cf.textContent=char.emoji;cf.style.display='block';}
 
   document.getElementById('cardNameTop').textContent=char.name;
   const rg=document.getElementById('cardRarityGem');
-  rg.textContent=rv.label;rg.style.background=rv.color;
+  rg.textContent=rv.label;rg.style.background=rv.color;rg.style.color='#000';
 
   const ub=document.getElementById('cardUniBadge');
   ub.textContent=uni.label;ub.style.background=uni.bg;ub.style.color=uni.color;
@@ -865,12 +881,17 @@ function showReveal(char){
   const nb=document.getElementById('cardNew');
   isNew?nb.classList.remove('hidden'):nb.classList.add('hidden');
 
-  // Style the revealed card
+  // Style de image wrap border met rarity kleur
+  const wrap=document.getElementById('revealImgWrap');
+  wrap.style.borderColor=rv.border;
+  wrap.style.boxShadow=`0 0 30px ${rv.glow}`;
+  // Shimmer layer
+  wrap.querySelectorAll('.shimmer-layer,.rainbow-layer').forEach(e=>e.remove());
+  if(char.r==='og'){const l=document.createElement('div');l.className='rainbow-layer';wrap.appendChild(l);}
+  else if(char.r!=='common'){const l=document.createElement('div');l.className='shimmer-layer';wrap.appendChild(l);}
+
   const card=document.getElementById('tcgCard');
-  card.style.background=rv.bg;
-  card.style.border=`3px solid ${rv.border}`;
-  card.style.boxShadow=`0 0 50px ${rv.glow}, 0 20px 60px rgba(0,0,0,0.8)`;
-  card.className='tcg-card hidden'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
+  card.className='tcg-card hidden';
 
   // Show back card first
   document.getElementById('cardBack').classList.remove('hidden');
