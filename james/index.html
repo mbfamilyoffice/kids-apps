@@ -352,10 +352,10 @@
       <div class="onboard-rarity-pill" style="background:#38bdf8;">Rare</div>
       <div class="onboard-rarity-pill" style="background:#a78bfa;">Epic</div>
       <div class="onboard-rarity-pill" style="background:#fb923c;">Legendary</div>
-      <div class="onboard-rarity-pill" style="background:#fbbf24;">⭐ Ultra</div>
+      <div class="onboard-rarity-pill" style="background:#fbbf24;">⭐ OG</div>
     </div>
     <div class="onboard-text">
-      Ultra is het <strong>allerzeldzaamst</strong>!<br>
+      <strong>OG</strong> is het allerzeldzaamst!<br>
       Soms krijg je er <strong>extra minuten</strong> bij 🎁<br><br>
       En als je iets zeldzaams krijgt —<br>
       stuur de link naar je vrienden! 🔗
@@ -409,7 +409,7 @@
     </button>
     <button class="pack-btn bw" onclick="startGacha('brawl')">
       <img class="pack-img" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
-      <div><div class="pack-name">⭐ Brawl Stars Pack</div><div class="pack-sub-txt">Legendary & Ultra Legendary</div></div>
+      <div><div class="pack-name">⭐ Brawl Stars Pack</div><div class="pack-sub-txt">Legendary & OG</div></div>
     </button>
   </div>
 </div>
@@ -596,7 +596,7 @@ const R = {
   rare:  {label:'Rare',       color:'#38bdf8',bg:'#020c18',border:'#38bdf8',glow:'rgba(56,189,248,.3)',bonus:0},
   epic:  {label:'Epic',       color:'#a78bfa',bg:'#080412',border:'#a78bfa',glow:'rgba(167,139,250,.35)',bonus:0},
   secret:{label:'Legendary',  color:'#fb923c',bg:'#140800',border:'#fb923c',glow:'rgba(251,146,60,.45)',bonus:1},
-  og:    {label:'Ultra',      color:'#fbbf24',bg:'#140f00',border:'#fbbf24',glow:'rgba(251,191,36,.5)', bonus:3},
+  og:    {label:'⭐ OG',      color:'#fbbf24',bg:'#140f00',border:'#fbbf24',glow:'rgba(251,191,36,.5)', bonus:3},
 };
 const U = {
   brainrot:{label:'🧠 Brainrot',bg:'#7c3aed',color:'#fff'},
@@ -692,8 +692,8 @@ const CHARS = {
     {id:'kit',     name:'Kit',                   emoji:'🐱',r:'secret',desc:'Zakelijke kat die op brawlers springt als support. Legendary! +1 min!'},
     {id:'kenji',   name:'Kenji',                 emoji:'🗡️',r:'secret',desc:'Samurai die glijdt langs vijanden met katana. Legendary! +1 min!'},
     {id:'pierce',  name:'Pierce',                emoji:'🔱',r:'secret',desc:'Stoere schutter met drietand. Nieuwste Legendary. +1 min!'},
-    {id:'kaze',    name:'Kaze',                  emoji:'🌀',r:'og',    desc:'Ultra Legendary windmeester. 0.495% kans in Ultra Chaos Drop. INSANE! +3 min!'},
-    {id:'sirius',  name:'Sirius',                emoji:'🌟',r:'og',    desc:'Ultra Legendary kosmische kracht. Absoluut zeldzaamste brawler. +3 min!'},
+    {id:'kaze',    name:'Kaze',                  emoji:'🌀',r:'og',    desc:'OG windmeester. 0.495% kans in Ultra Chaos Drop. INSANE! +3 min!'},
+    {id:'sirius',  name:'Sirius',                emoji:'🌟',r:'og',    desc:'OG kosmische kracht. Absoluut zeldzaamste brawler. +3 min!'},
   ],
 };
 
@@ -910,7 +910,7 @@ function flipCard(){
 
   setTimeout(()=>{
     document.getElementById('gachaHdr').textContent=
-      char.r==='og'?'🌟🌟🌟 ULTRA LEGENDARY!! 🌟🌟🌟':
+      char.r==='og'?'🌟🌟🌟 OG SPAWN!! 🌟🌟🌟':
       char.r==='secret'?'🔥🔥 LEGENDARY SPAWN!! 🔥🔥':
       char.r==='epic'?'💜 EPIC SPAWN!':
       char.r==='rare'?'💙 Rare Spawn!':'✅ Gespawnd!';
