@@ -191,19 +191,19 @@
     .coll-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
     .coll-title{font-size:1.1rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;}
     .coll-close{background:#e91e8c;border:none;color:#fff;border-radius:8px;padding:9px 12px;font-size:0.75rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;}
-    .coll-stats{text-align:center;color:#333;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .coll-stats{text-align:center;color:#aaa;font-size:0.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
 
     /* Progress bars */
     .uni-progress{max-width:480px;margin:0 auto 12px;display:flex;flex-direction:column;gap:7px;}
     .up-row{display:flex;align-items:center;gap:8px;}
-    .up-label{font-size:0.65rem;font-weight:900;color:#333;text-transform:uppercase;letter-spacing:1px;width:72px;flex-shrink:0;}
-    .up-bar{flex:1;background:#0a0a0a;border-radius:50px;height:8px;overflow:hidden;border:1px solid #1a1a1a;}
+    .up-label{font-size:0.65rem;font-weight:900;color:#ccc;text-transform:uppercase;letter-spacing:1px;width:72px;flex-shrink:0;}
+    .up-bar{flex:1;background:#222;border-radius:50px;height:10px;overflow:hidden;border:1px solid #333;}
     .up-fill{height:100%;border-radius:50px;transition:width 0.6s ease;}
-    .up-count{font-size:0.6rem;color:#333;font-weight:900;width:32px;text-align:right;flex-shrink:0;}
+    .up-count{font-size:0.6rem;color:#ccc;font-weight:900;width:32px;text-align:right;flex-shrink:0;}
 
     /* Pity pills */
     .pity-row{display:flex;gap:6px;justify-content:center;margin-bottom:10px;max-width:480px;margin-left:auto;margin-right:auto;flex-wrap:wrap;}
-    .pity-pill{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:50px;padding:4px 9px;font-size:0.58rem;color:#333;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;}
+    .pity-pill{background:#1a1a1a;border:1px solid #333;border-radius:50px;padding:4px 9px;font-size:0.58rem;color:#aaa;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;}
     .pity-pill.warn{border-color:#ff9800;color:#ff9800;}
     .pity-pill.hot{border-color:#FFD700;color:#FFD700;animation:newPulse 0.5s infinite alternate;}
 
@@ -228,19 +228,20 @@
 
     /* Card grid */
     .coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:480px;margin:0 auto;}
-    .rarity-hdr{grid-column:1/-1;font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:8px 0 3px;display:flex;align-items:center;gap:6px;}
+    .rarity-hdr{grid-column:1/-1;font-size:0.7rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:10px 0 4px;display:flex;align-items:center;gap:6px;}
     .rarity-line{flex:1;height:1px;background:#111;}
 
     /* Collection mini-card */
-    .mini-card{border-radius:10px;overflow:hidden;position:relative;border:2px solid #1a1a1a;background:#0d0d0d;aspect-ratio:2/3;cursor:pointer;}
-    .mini-card.unlocked{border-color:var(--mc,#333);}
-    .mini-card.locked{filter:brightness(0.15);}
+    .mini-card{border-radius:10px;overflow:hidden;position:relative;border:2px solid #333;background:#1a1a1a;aspect-ratio:2/3;cursor:pointer;}
+    .mini-card.unlocked{border-color:var(--mc,#555);box-shadow:0 0 8px rgba(255,255,255,0.05);}
+    .mini-card.locked{background:#1a1a1a;border-color:#333;opacity:0.85;}
     .mini-card img{width:100%;height:70%;object-fit:cover;display:block;}
-    .mini-card .mc-emoji{width:100%;height:70%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:#111;}
-    .mini-card .mc-name{padding:3px 4px;font-size:0.48rem;color:#888;text-transform:uppercase;letter-spacing:0.3px;line-height:1.2;text-align:center;}
-    .mini-card .mc-cnt{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#555;font-size:0.5rem;font-weight:900;padding:1px 5px;border-radius:50px;}
-    .mini-card.unlocked .mc-name{color:#ccc;}
-    .mini-card .mc-dot{position:absolute;bottom:0;left:0;right:0;height:3px;}
+    .mini-card .mc-emoji{width:100%;height:70%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:#222;}
+    .mini-card .mc-name{padding:4px 4px 2px;font-size:0.5rem;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;line-height:1.3;text-align:center;}
+    .mini-card.locked .mc-name{color:#aaa;}
+    .mini-card .mc-cnt{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.85);color:#FFD700;font-size:0.5rem;font-weight:900;padding:1px 5px;border-radius:50px;}
+    .mini-card .mc-dot{position:absolute;bottom:0;left:0;right:0;height:4px;}
+    .mini-card .mc-lock{width:100%;height:70%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:#222;color:#555;}
 
     /* PIN */
     .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:2000;}
@@ -309,8 +310,7 @@
     <div class="onboard-text">
       Dit is jouw <strong>eigen gacha game</strong>.<br>
       Jij kunt super coole characters verzamelen —<br>
-      van Pokémon tot Brawl Stars tot Brainrot!<br><br>
-      En misschien heb jij straks meer dan James 😏
+      van Pokémon tot Brawl Stars tot Brainrot!
     </div>
     <div class="onboard-chars">
       <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
@@ -1011,8 +1011,11 @@ function renderCollection(){
         if(isUnlocked)mc.style.setProperty('--mc',rv.border);
         const imgUrl=IMG[char.id];
         mc.innerHTML=`
-          ${imgUrl&&isUnlocked?`<img src="${imgUrl}" alt="${char.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" loading="lazy"><div class="mc-emoji" style="display:none">${char.emoji}</div>`:
-          `<div class="mc-emoji">${isUnlocked?char.emoji:'❓'}</div>`}
+          ${isUnlocked
+            ? (imgUrl
+                ? `<img src="${imgUrl}" alt="${char.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" loading="lazy"><div class="mc-emoji" style="display:none">${char.emoji}</div>`
+                : `<div class="mc-emoji">${char.emoji}</div>`)
+            : `<div class="mc-lock">❓</div>`}
           <div class="mc-name">${isUnlocked?char.name:'???'}</div>
           <div class="mc-dot" style="background:${rv.color}"></div>
           ${cnt>1?`<div class="mc-cnt">×${cnt}</div>`:''}
