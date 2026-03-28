@@ -91,30 +91,59 @@
     .slot-win .slot-name{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:1px;}
     .slot-emoji-fallback{font-size:5rem;text-align:center;}
 
-    /* TCG Card */
-    .tcg-card{
-      width:240px;border-radius:16px;overflow:hidden;
-      position:relative;cursor:pointer;
-      animation:cardPop 0.6s cubic-bezier(.34,1.56,.64,1);
+    /* ── CARD FLIP REVEAL ── */
+    .card-scene{width:240px;height:340px;perspective:800px;position:relative;}
+    .card-scene.hidden{display:none;}
+    .card-flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(.4,0,.2,1);}
+    .card-flip.flipped{transform:rotateY(180deg);}
+
+    /* Card back */
+    .card-back{
+      position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;overflow:hidden;
+      background:linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a);
+      border:3px solid #333;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
       box-shadow:0 20px 60px rgba(0,0,0,0.8);
     }
-    .tcg-card.hidden{display:none;}
-    @keyframes cardPop{from{transform:scale(0.2) rotate(-15deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
-
-    /* Holographic shimmer for rare+ */
-    .tcg-card.holo::before{
-      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;
-      background:linear-gradient(135deg,
-        transparent 20%,
-        rgba(255,255,255,0.08) 30%,
-        rgba(255,255,255,0.15) 40%,
-        transparent 50%,
-        rgba(255,255,255,0.08) 60%,
-        transparent 70%
-      );
-      animation:holoShimmer 2s linear infinite;
+    .card-back .back-logo{font-size:3rem;}
+    .card-back .back-text{font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:3px;}
+    .card-back .back-glow{
+      position:absolute;inset:0;border-radius:14px;
+      background:conic-gradient(from 0deg,#7c3aed,#dc2626,#d97706,#7c3aed);
+      opacity:0;animation:cardGlow 2s linear infinite;
+      filter:blur(8px);z-index:-1;
     }
-    @keyframes holoShimmer{0%{transform:translateX(-100%) rotate(0deg);}100%{transform:translateX(200%) rotate(0deg);}}
+    @keyframes cardGlow{0%{opacity:0.3;transform:rotate(0deg);}50%{opacity:0.6;}100%{opacity:0.3;transform:rotate(360deg);}}
+
+    /* Tap hint */
+    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
+    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
+
+    /* Card front */
+    .card-front{
+      position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);
+      border-radius:16px;overflow:hidden;border:3px solid #333;
+      box-shadow:0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    /* Holographic shimmer */
+    .card-front.holo::before{
+      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
+      background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0.18) 45%,rgba(120,80,255,0.1) 50%,rgba(255,255,255,0.07) 55%,transparent 65%);
+      animation:holoShimmer 2.5s linear infinite;
+    }
+    @keyframes holoShimmer{0%{transform:translateX(-120%);}100%{transform:translateX(220%);}}
+
+    /* OG rainbow shimmer */
+    .card-front.rainbow::before{
+      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
+      background:linear-gradient(125deg,rgba(255,0,0,0.15),rgba(255,165,0,0.15),rgba(255,255,0,0.15),rgba(0,255,0,0.15),rgba(0,0,255,0.15),rgba(148,0,211,0.15));
+      animation:rainbowShimmer 1.5s linear infinite;
+    }
+    @keyframes rainbowShimmer{0%{transform:translateX(-120%) skew(-10deg);}100%{transform:translateX(220%) skew(-10deg);}}
+
+    /* TCG card content (same as before but now inside .card-front) */
+    .tcg-card{width:100%;height:100%;background:#0d0d0d;display:flex;flex-direction:column;}
+    .tcg-card.hidden{display:none;}
 
     .card-header{padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;}
     .card-name-top{font-size:0.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;max-width:140px;}
@@ -132,8 +161,10 @@
     .card-new.hidden{display:none;}
     @keyframes newPulse{from{transform:scale(0.95);}to{transform:scale(1.08);}}
 
-    .collect-btn{display:block;width:calc(100% - 20px);margin:0 10px 10px;background:#E8232A;border:2px solid #ff4444;border-radius:10px;padding:12px;font-size:0.95rem;font-weight:900;color:#fff;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0000;}
+    .collect-btn{display:block;background:#E8232A;border:2px solid #ff4444;border-radius:10px;padding:12px;font-size:0.95rem;font-weight:900;color:#fff;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0000;animation:cardPop 0.4s cubic-bezier(.34,1.56,.64,1);}
     .collect-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8b0000;}
+    .collect-btn.hidden{display:none;}
+    @keyframes cardPop{from{transform:scale(0.6);opacity:0;}to{transform:scale(1);opacity:1;}}
     .gacha-total{font-size:0.8rem;color:#FFD700;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 
     /* ══════════════════════════════════
@@ -239,28 +270,47 @@
 <!-- ══ GACHA ══ -->
 <div class="gacha-overlay hidden" id="gachaOverlay">
   <div class="gacha-hdr" id="gachaHdr">🎰 Spawning...</div>
+
+  <!-- Slot spinner (shown during roll) -->
   <div class="slot-win" id="slotWin">
     <img class="slot-img" id="slotImg" src="" alt="" onerror="this.style.display='none'">
     <div class="slot-emoji-fallback" id="slotFb" style="display:none"></div>
     <div class="slot-name" id="slotName"></div>
   </div>
-  <div class="tcg-card hidden" id="tcgCard">
-    <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
-    <div class="card-header">
-      <div class="card-name-top" id="cardNameTop"></div>
-      <div class="card-rarity-gem" id="cardRarityGem"></div>
+
+  <!-- Card flip reveal -->
+  <div class="card-scene hidden" id="cardScene" onclick="flipCard()">
+    <div class="card-flip" id="cardFlip">
+      <!-- BACK -->
+      <div class="card-back">
+        <div class="back-glow"></div>
+        <div class="back-logo">🎴</div>
+        <div style="font-size:1.4rem" id="backUniIcon">🎰</div>
+        <div class="back-text">Tik om te onthullen</div>
+      </div>
+      <!-- FRONT -->
+      <div class="card-front" id="cardFront">
+        <div class="tcg-card" id="tcgCard">
+          <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
+          <div class="card-header">
+            <div class="card-name-top" id="cardNameTop"></div>
+            <div class="card-rarity-gem" id="cardRarityGem"></div>
+          </div>
+          <div class="card-img-wrap">
+            <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
+            <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
+            <div class="card-uni-badge" id="cardUniBadge"></div>
+          </div>
+          <div class="card-body">
+            <div class="card-bonus hidden" id="cardBonus"></div>
+            <div class="card-desc" id="cardDesc"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card-img-wrap">
-      <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
-      <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
-      <div class="card-uni-badge" id="cardUniBadge"></div>
-    </div>
-    <div class="card-body">
-      <div class="card-bonus hidden" id="cardBonus"></div>
-      <div class="card-desc" id="cardDesc"></div>
-    </div>
-    <button class="collect-btn" onclick="closeGacha()">COLLECT! 👊</button>
   </div>
+  <div class="tap-hint hidden" id="tapHint">👆 Tik op de kaart!</div>
+  <button class="collect-btn hidden" id="collectBtn" onclick="closeGacha()" style="width:240px;">COLLECT! 👊</button>
   <div class="gacha-total" id="gachaTotal"></div>
 </div>
 
@@ -326,21 +376,24 @@
 /* ══════════════════════════════════════════
    CHARACTER DATA — met echte afbeeldingen
 ══════════════════════════════════════════ */
+const BASE_IMG = 'https://mbfamilyoffice.github.io/kids-apps/james/img/';
 const IMG = {
-  // Brainrot
-  bombard:  'https://static.wikia.nocookie.net/italian-brainrot/images/1/1c/Bombardiro_Crocodilo.webp/revision/latest/scale-to-width-down/300?cb=20250311143244',
-  tralal:   'https://static.wikia.nocookie.net/italian-brainrot/images/7/7d/Tralalero_Tralala.webp/revision/latest/scale-to-width-down/300?cb=20250312043106',
-  cappass:  'https://static.wikia.nocookie.net/italian-brainrot/images/6/6e/Cappuccino_Assassino.webp/revision/latest/scale-to-width-down/300?cb=20250312023916',
-  frigo:    'https://static.wikia.nocookie.net/italian-brainrot/images/2/2e/Frigo_Camelo.webp/revision/latest/scale-to-width-down/300?cb=20250312043741',
-  chimpa:   'https://static.wikia.nocookie.net/italian-brainrot/images/c/c7/Chimpanzini_Bananini.webp/revision/latest/scale-to-width-down/300?cb=20250312022904',
-  coco:     'https://static.wikia.nocookie.net/italian-brainrot/images/9/96/Cocofanto_Elefanto.webp/revision/latest/scale-to-width-down/300?cb=20250312023201',
-  girafa:   'https://static.wikia.nocookie.net/italian-brainrot/images/0/08/Girafa_Celestre.webp/revision/latest/scale-to-width-down/300?cb=20250312043941',
-  dragon:   'https://static.wikia.nocookie.net/italian-brainrot/images/d/dc/Dragon_Cannelloni.webp/revision/latest/scale-to-width-down/300?cb=20250401000000',
-  strawbel: 'https://static.wikia.nocookie.net/italian-brainrot/images/8/8e/Strawberry_Elephant.webp/revision/latest/scale-to-width-down/300?cb=20250501000000',
-  orcaler:  'https://static.wikia.nocookie.net/italian-brainrot/images/9/9e/Orcalero_Orcala.webp/revision/latest/scale-to-width-down/300?cb=20250312045030',
-  balleri:  'https://static.wikia.nocookie.net/italian-brainrot/images/b/b5/Ballerina_Cappuccina.webp/revision/latest/scale-to-width-down/300?cb=20250312022524',
-  sigma:    'https://static.wikia.nocookie.net/italian-brainrot/images/5/50/Sigma_Boy.webp/revision/latest/scale-to-width-down/300?cb=20250312051126',
-  tralalit: 'https://static.wikia.nocookie.net/italian-brainrot/images/f/fa/Tralalita_Tralala.webp/revision/latest/scale-to-width-down/300?cb=20250404000000',
+  // Brainrot — AI gegenereerd, gehost op GitHub
+  bombard:  BASE_IMG+'bombard.jpg',
+  tralal:   BASE_IMG+'tralal.jpg',
+  cappass:  BASE_IMG+'cappass.jpg',
+  frigo:    BASE_IMG+'frigo.jpg',
+  chimpa:   BASE_IMG+'chimpa.jpg',
+  coco:     BASE_IMG+'coco.jpg',
+  dragon:   BASE_IMG+'dragon.jpg',
+  strawbel: BASE_IMG+'strawbel.jpg',
+  sigma:    BASE_IMG+'sigma.jpg',
+  spaghett: BASE_IMG+'spaghett.jpg',
+  // Brainrot — emoji fallback (geen AI image)
+  girafa:   null,
+  orcaler:  null,
+  balleri:  null,
+  tralalit: null,
   // Pokémon — via pokemontcg.io API (gratis, geen key nodig)
   pikachu:  'https://images.pokemontcg.io/base1/58_hires.png',
   charizrd: 'https://images.pokemontcg.io/base1/4_hires.png',
@@ -631,36 +684,30 @@ function runGacha(){
   spin();
 }
 
+let pendingRevealChar = null;
+
 function showReveal(char){
-  const rv=R[char.r];const uni=U[activeUniverse];
-  const isNew=!collection[char.id];
-  collection[char.id]=(collection[char.id]||0)+1;
-  if(rv.bonus>0)totalMinutes+=rv.bonus;
-  save();renderHeader();
+  pendingRevealChar = char;
+  const rv=R[char.r]; const uni=U[activeUniverse];
 
   document.getElementById('slotWin').style.display='none';
-  document.getElementById('gachaHdr').textContent=
-    char.r==='og'?'🌟🌟🌟 ULTRA LEGENDARY!! 🌟🌟🌟':
-    char.r==='secret'?'🔥🔥 LEGENDARY SPAWN!! 🔥🔥':
-    char.r==='epic'?'💜 EPIC SPAWN!':
-    char.r==='rare'?'💙 Rare Spawn!':'✅ Gespawnd!';
+  document.getElementById('gachaHdr').textContent='🎴 Wat heb je gespawnd?';
 
-  const card=document.getElementById('tcgCard');
-  card.style.background=rv.bg;
-  card.style.border=`3px solid ${rv.border}`;
-  card.style.boxShadow=`0 0 50px ${rv.glow}, 0 20px 60px rgba(0,0,0,0.8)`;
-  card.className='tcg-card'+(char.r!=='common'?' holo':'');
-  card.classList.remove('hidden');
+  // Set back icon
+  document.getElementById('backUniIcon').textContent =
+    activeUniverse==='brainrot'?'🧠':activeUniverse==='pokemon'?'🃏':'⭐';
 
-  document.getElementById('cardNameTop').textContent=char.name;
-  const rg=document.getElementById('cardRarityGem');
-  rg.textContent=rv.label;rg.style.background=rv.color;
-
+  // Pre-load front card content (hidden behind flip)
+  const isNew=!collection[char.id];
   const imgUrl=IMG[char.id];
   const ci=document.getElementById('cardImg');
   const cf=document.getElementById('cardFb');
   if(imgUrl){ci.src=imgUrl;ci.style.display='';cf.style.display='none';}
   else{ci.style.display='none';cf.textContent=char.emoji;cf.style.display='flex';}
+
+  document.getElementById('cardNameTop').textContent=char.name;
+  const rg=document.getElementById('cardRarityGem');
+  rg.textContent=rv.label;rg.style.background=rv.color;
 
   const ub=document.getElementById('cardUniBadge');
   ub.textContent=uni.label;ub.style.background=uni.bg;ub.style.color=uni.color;
@@ -672,13 +719,69 @@ function showReveal(char){
   document.getElementById('cardDesc').textContent=char.desc;
   const nb=document.getElementById('cardNew');
   isNew?nb.classList.remove('hidden'):nb.classList.add('hidden');
+
+  // Style the card front
+  const front=document.getElementById('cardFront');
+  front.style.background=rv.bg;
+  front.style.borderColor=rv.border;
+  front.style.boxShadow=`0 0 50px ${rv.glow}`;
+  front.className='card-front'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
+
+  // Show the card scene (face down)
+  const scene=document.getElementById('cardScene');
+  scene.classList.remove('hidden');
+  document.getElementById('cardFlip').classList.remove('flipped');
+  document.getElementById('tapHint').classList.remove('hidden');
+  document.getElementById('collectBtn').classList.add('hidden');
   document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
 
-  if(char.r==='og')launchParticles(100);
-  else if(char.r==='secret')launchParticles(60);
-  else if(char.r==='epic')launchParticles(35);
+  // Suspense shake on og/secret
+  if(char.r==='og'||char.r==='secret'){
+    setTimeout(()=>{
+      scene.style.animation='shake 0.3s ease 3';
+      setTimeout(()=>scene.style.animation='',900);
+    },600);
+  }
 }
-function closeGacha(){document.getElementById('gachaOverlay').classList.add('hidden');nextQuestion();}
+
+function flipCard(){
+  const char=pendingRevealChar;
+  if(!char)return;
+  const flip=document.getElementById('cardFlip');
+  if(flip.classList.contains('flipped'))return; // already flipped
+
+  flip.classList.add('flipped');
+  document.getElementById('tapHint').classList.add('hidden');
+
+  // Now collect & award
+  const rv=R[char.r];
+  collection[char.id]=(collection[char.id]||0)+1;
+  if(rv.bonus>0)totalMinutes+=rv.bonus;
+  save();renderHeader();
+
+  setTimeout(()=>{
+    document.getElementById('gachaHdr').textContent=
+      char.r==='og'?'🌟🌟🌟 ULTRA LEGENDARY!! 🌟🌟🌟':
+      char.r==='secret'?'🔥🔥 LEGENDARY SPAWN!! 🔥🔥':
+      char.r==='epic'?'💜 EPIC SPAWN!':
+      char.r==='rare'?'💙 Rare Spawn!':'✅ Gespawnd!';
+    document.getElementById('collectBtn').classList.remove('hidden');
+    document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+
+    if(char.r==='og')launchParticles(120);
+    else if(char.r==='secret')launchParticles(70);
+    else if(char.r==='epic')launchParticles(40);
+    else if(char.r==='rare')launchParticles(15);
+  },750);
+}
+
+function closeGacha(){
+  document.getElementById('gachaOverlay').classList.add('hidden');
+  document.getElementById('cardScene').classList.add('hidden');
+  document.getElementById('collectBtn').classList.add('hidden');
+  pendingRevealChar=null;
+  nextQuestion();
+}
 
 /* ── COLLECTION ── */
 function openCollection(){renderCollection();document.getElementById('collOverlay').classList.remove('hidden');}
