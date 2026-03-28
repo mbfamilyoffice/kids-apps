@@ -731,7 +731,9 @@ buildNumpad();buildPinPad();renderXP();renderHeader();
 window.addEventListener('DOMContentLoaded',()=>{});
 // Show onboarding if first time — called after all functions defined
 setTimeout(()=>{
-  if(!localStorage.getItem('philouOnboarded')){showOnboarding();}else{nextQuestion();}
+  if(viewCollection){nextQuestion();}
+  else if(!localStorage.getItem('philouOnboarded')){showOnboarding();}
+  else{nextQuestion();}
 },0);
 
 function save(){
