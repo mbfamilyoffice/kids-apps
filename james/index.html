@@ -91,42 +91,40 @@
     .slot-win .slot-name{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:1px;}
     .slot-emoji-fallback{font-size:5rem;text-align:center;}
 
-    /* ── CARD FLIP REVEAL ── */
-    .card-scene{width:240px;height:340px;perspective:800px;position:relative;}
-    .card-scene.hidden{display:none;}
-    .card-flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(.4,0,.2,1);}
-    .card-flip.flipped{transform:rotateY(180deg);}
-
-    /* Card back */
-    .card-back{
-      position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;overflow:hidden;
+    /* ── CARD REVEAL (geen 3D flip, werkt op iOS) ── */
+    /* Stap 1: omgedraaide kaart */
+    .card-back-simple{
+      width:240px;border-radius:16px;overflow:hidden;
       background:linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a);
-      border:3px solid #333;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+      border:3px solid #444;padding:60px 20px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
       box-shadow:0 20px 60px rgba(0,0,0,0.8);
+      cursor:pointer;position:relative;
+      animation:cardEntrance 0.5s cubic-bezier(.34,1.56,.64,1);
     }
-    .card-back .back-logo{font-size:3rem;}
-    .card-back .back-text{font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:3px;}
-    .card-back .back-glow{
+    .card-back-simple.hidden{display:none;}
+    @keyframes cardEntrance{from{transform:scale(0.3) rotate(-10deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+    .card-back-simple .back-logo{font-size:3.5rem;line-height:1;}
+    .card-back-simple .back-uni{font-size:1.2rem;}
+    .card-back-simple .back-text{font-size:0.65rem;color:#555;text-transform:uppercase;letter-spacing:3px;}
+    .card-back-simple .back-shine{
       position:absolute;inset:0;border-radius:14px;
-      background:conic-gradient(from 0deg,#7c3aed,#dc2626,#d97706,#7c3aed);
-      opacity:0;animation:cardGlow 2s linear infinite;
-      filter:blur(8px);z-index:-1;
+      background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.04) 50%,transparent 60%);
+      animation:shineMove 2s ease infinite;
     }
-    @keyframes cardGlow{0%{opacity:0.3;transform:rotate(0deg);}50%{opacity:0.6;}100%{opacity:0.3;transform:rotate(360deg);}}
+    @keyframes shineMove{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 
-    /* Tap hint */
-    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
-    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
-
-    /* Card front */
-    .card-front{
-      position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);
-      border-radius:16px;overflow:hidden;border:3px solid #333;
+    /* Stap 2: kaart reveal */
+    .tcg-card{
+      width:240px;border-radius:16px;overflow:hidden;position:relative;
       box-shadow:0 20px 60px rgba(0,0,0,0.8);
+      animation:revealPop 0.5s cubic-bezier(.34,1.56,.64,1);
     }
+    .tcg-card.hidden{display:none;}
+    @keyframes revealPop{from{transform:scale(0.5) rotate(5deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
 
     /* Holographic shimmer */
-    .card-front.holo::before{
+    .tcg-card.holo::before{
       content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
       background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0.18) 45%,rgba(120,80,255,0.1) 50%,rgba(255,255,255,0.07) 55%,transparent 65%);
       animation:holoShimmer 2.5s linear infinite;
@@ -134,16 +132,16 @@
     @keyframes holoShimmer{0%{transform:translateX(-120%);}100%{transform:translateX(220%);}}
 
     /* OG rainbow shimmer */
-    .card-front.rainbow::before{
+    .tcg-card.rainbow::before{
       content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
       background:linear-gradient(125deg,rgba(255,0,0,0.15),rgba(255,165,0,0.15),rgba(255,255,0,0.15),rgba(0,255,0,0.15),rgba(0,0,255,0.15),rgba(148,0,211,0.15));
       animation:rainbowShimmer 1.5s linear infinite;
     }
     @keyframes rainbowShimmer{0%{transform:translateX(-120%) skew(-10deg);}100%{transform:translateX(220%) skew(-10deg);}}
 
-    /* TCG card content (same as before but now inside .card-front) */
-    .tcg-card{width:100%;height:100%;background:#0d0d0d;display:flex;flex-direction:column;}
-    .tcg-card.hidden{display:none;}
+    /* tap hint */
+    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
+    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
 
     .card-header{padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;}
     .card-name-top{font-size:0.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;max-width:140px;}
@@ -425,38 +423,32 @@
     <div class="slot-name" id="slotName"></div>
   </div>
 
-  <!-- Card flip reveal -->
-  <div class="card-scene hidden" id="cardScene" onclick="flipCard()">
-    <div class="card-flip" id="cardFlip">
-      <!-- BACK -->
-      <div class="card-back">
-        <div class="back-glow"></div>
-        <div class="back-logo">🎴</div>
-        <div style="font-size:1.4rem" id="backUniIcon">🎰</div>
-        <div class="back-text">Tik om te onthullen</div>
-      </div>
-      <!-- FRONT -->
-      <div class="card-front" id="cardFront">
-        <div class="tcg-card" id="tcgCard">
-          <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
-          <div class="card-header">
-            <div class="card-name-top" id="cardNameTop"></div>
-            <div class="card-rarity-gem" id="cardRarityGem"></div>
-          </div>
-          <div class="card-img-wrap">
-            <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
-            <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
-            <div class="card-uni-badge" id="cardUniBadge"></div>
-          </div>
-          <div class="card-body">
-            <div class="card-bonus hidden" id="cardBonus"></div>
-            <div class="card-desc" id="cardDesc"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Stap 1: omgedraaide kaart -->
+  <div class="card-back-simple hidden" id="cardBack" onclick="flipCard()">
+    <div class="back-shine"></div>
+    <div class="back-logo">🎴</div>
+    <div class="back-uni" id="backUniIcon">🎰</div>
+    <div class="back-text">Tik om te onthullen</div>
   </div>
   <div class="tap-hint hidden" id="tapHint">👆 Tik op de kaart!</div>
+
+  <!-- Stap 2: revealed card -->
+  <div class="tcg-card hidden" id="tcgCard">
+    <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
+    <div class="card-header">
+      <div class="card-name-top" id="cardNameTop"></div>
+      <div class="card-rarity-gem" id="cardRarityGem"></div>
+    </div>
+    <div class="card-img-wrap">
+      <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
+      <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
+      <div class="card-uni-badge" id="cardUniBadge"></div>
+    </div>
+    <div class="card-body">
+      <div class="card-bonus hidden" id="cardBonus"></div>
+      <div class="card-desc" id="cardDesc"></div>
+    </div>
+  </div>
   <button class="collect-btn hidden" id="collectBtn" onclick="closeGacha()" style="width:240px;">COLLECT! 👊</button>
   <div class="gacha-total" id="gachaTotal"></div>
 </div>
@@ -847,12 +839,10 @@ function showReveal(char){
 
   document.getElementById('slotWin').style.display='none';
   document.getElementById('gachaHdr').textContent='🎴 Wat heb je gespawnd?';
-
-  // Set back icon
   document.getElementById('backUniIcon').textContent =
     activeUniverse==='brainrot'?'🧠':activeUniverse==='pokemon'?'🃏':'⭐';
 
-  // Pre-load front card content (hidden behind flip)
+  // Pre-load card content
   const isNew=!collection[char.id];
   const imgUrl=IMG[char.id];
   const ci=document.getElementById('cardImg');
@@ -875,44 +865,43 @@ function showReveal(char){
   const nb=document.getElementById('cardNew');
   isNew?nb.classList.remove('hidden'):nb.classList.add('hidden');
 
-  // Style the card front
-  const front=document.getElementById('cardFront');
-  front.style.background=rv.bg;
-  front.style.borderColor=rv.border;
-  front.style.boxShadow=`0 0 50px ${rv.glow}`;
-  front.className='card-front'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
+  // Style the revealed card
+  const card=document.getElementById('tcgCard');
+  card.style.background=rv.bg;
+  card.style.border=`3px solid ${rv.border}`;
+  card.style.boxShadow=`0 0 50px ${rv.glow}, 0 20px 60px rgba(0,0,0,0.8)`;
+  card.className='tcg-card hidden'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
 
-  // Show the card scene (face down)
-  const scene=document.getElementById('cardScene');
-  scene.classList.remove('hidden');
-  document.getElementById('cardFlip').classList.remove('flipped');
+  // Show back card first
+  document.getElementById('cardBack').classList.remove('hidden');
   document.getElementById('tapHint').classList.remove('hidden');
   document.getElementById('collectBtn').classList.add('hidden');
   document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
 
-  // Suspense shake on og/secret
+  // Suspense: shake back card for og/secret
   if(char.r==='og'||char.r==='secret'){
-    setTimeout(()=>{
-      scene.style.animation='shake 0.3s ease 3';
-      setTimeout(()=>scene.style.animation='',900);
-    },600);
+    const back=document.getElementById('cardBack');
+    setTimeout(()=>{back.style.animation='cardEntrance 0s, shake 0.3s ease 3';},500);
+    setTimeout(()=>{back.style.animation='cardEntrance 0s';},1400);
   }
 }
 
 function flipCard(){
   const char=pendingRevealChar;
   if(!char)return;
-  const flip=document.getElementById('cardFlip');
-  if(flip.classList.contains('flipped'))return; // already flipped
+  const back=document.getElementById('cardBack');
+  if(back.classList.contains('hidden'))return; // already flipped
 
-  flip.classList.add('flipped');
+  // Hide back, show front card
+  back.classList.add('hidden');
   document.getElementById('tapHint').classList.add('hidden');
 
-  // Now collect & award
   const rv=R[char.r];
   collection[char.id]=(collection[char.id]||0)+1;
   if(rv.bonus>0)totalMinutes+=rv.bonus;
   save();renderHeader();
+
+  document.getElementById('tcgCard').classList.remove('hidden');
 
   setTimeout(()=>{
     document.getElementById('gachaHdr').textContent=
@@ -927,12 +916,13 @@ function flipCard(){
     else if(char.r==='secret')launchParticles(70);
     else if(char.r==='epic')launchParticles(40);
     else if(char.r==='rare')launchParticles(15);
-  },750);
+  },300);
 }
 
 function closeGacha(){
   document.getElementById('gachaOverlay').classList.add('hidden');
-  document.getElementById('cardScene').classList.add('hidden');
+  document.getElementById('cardBack').classList.add('hidden');
+  document.getElementById('tcgCard').classList.add('hidden');
   document.getElementById('collectBtn').classList.add('hidden');
   pendingRevealChar=null;
   nextQuestion();
