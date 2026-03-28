@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>🎮 Philou Sommen</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+    body{font-family:'Arial Black','Arial Bold',Arial,sans-serif;background:#0a0a0f;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:12px 10px 32px;gap:10px;}
+
+    /* ── TOPBAR ── */
+    .topbar{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:2px 0;}
+    .logo{font-size:1.1rem;font-weight:900;color:#fff;line-height:1.1;}
+    .logo span{color:#e91e8c;}
+    .logo .sub{font-size:0.55rem;color:#333;letter-spacing:3px;display:block;text-transform:uppercase;}
+    .coll-open-btn{background:#111;border:2px solid #2a2a3a;color:#9b7dce;border-radius:10px;padding:9px 13px;font-size:0.72rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ── HEADER ── */
+    .header-card{background:#111;border:2px solid #e91e8c;border-radius:12px;padding:10px 24px;text-align:center;box-shadow:0 0 20px rgba(233,30,140,0.3);width:100%;max-width:480px;}
+    .header-label{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;}
+    .header-minutes{font-size:2.8rem;font-weight:900;color:#FFD700;line-height:1.1;text-shadow:0 0 16px rgba(255,215,0,0.4);}
+    .header-sub{font-size:0.75rem;color:#444;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ── XP ── */
+    .xp-card{background:#111;border:2px solid #222;border-radius:12px;padding:10px 18px 12px;text-align:center;width:100%;max-width:480px;}
+    .xp-label{font-size:0.72rem;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+    .xp-bar-wrap{background:#0a0a0a;border-radius:8px;height:22px;border:2px solid #333;overflow:hidden;}
+    .xp-bar-fill{height:100%;background:linear-gradient(90deg,#e91e8c,#c2185b);border-radius:6px;transition:width 0.5s cubic-bezier(.34,1.56,.64,1);}
+    .xp-dots{display:flex;justify-content:center;gap:8px;margin-top:8px;}
+    .xp-dot{width:24px;height:24px;border-radius:4px;border:2px solid #222;background:#0a0a0a;font-size:0.9rem;display:flex;align-items:center;justify-content:center;}
+    .xp-dot.lit{background:#e91e8c;border-color:#e91e8c;box-shadow:0 0 10px rgba(233,30,140,0.5);}
+
+    /* ── QUESTION ── */
+    .q-card{background:#111;border:2px solid #222;border-radius:14px;padding:20px 20px 16px;text-align:center;width:100%;max-width:480px;}
+    .q-text{font-size:3.6rem;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:2px;line-height:1;text-shadow:2px 2px 0 #000;}
+    .ans-box{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:64px;background:#0a0a0a;border:4px solid #333;border-radius:10px;font-size:2.6rem;font-weight:900;color:#fff;padding:4px 18px;transition:all 0.2s;}
+    .ans-box.correct{border-color:#00b06a;background:#001a0f;color:#00b06a;box-shadow:0 0 16px rgba(0,176,106,0.4);}
+    .ans-box.wrong{border-color:#e91e8c;background:#1a0000;color:#e91e8c;box-shadow:0 0 16px rgba(233,30,140,0.4);}
+    .fb-text{margin-top:8px;font-size:1.1rem;font-weight:900;min-height:28px;color:#444;text-transform:uppercase;letter-spacing:1px;}
+    .fb-text.correct{color:#00b06a;}
+    .fb-text.wrong{color:#e91e8c;}
+
+    /* ── NUMPAD ── */
+    .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:360px;}
+    .pad-btn{border:none;border-radius:8px;height:74px;font-size:2rem;font-weight:900;cursor:pointer;font-family:'Arial Black',Arial,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,0.6);transition:transform 0.08s,box-shadow 0.08s;-webkit-appearance:none;border:2px solid transparent;}
+    .pad-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,0.6);}
+    .pad-btn.num{background:#1a1a1a;border-color:#333;color:#ddd;box-shadow:0 5px 0 #000;}
+    .pad-btn.backspace{background:#e91e8c;border-color:#ff6eb4;color:#fff;font-size:1.6rem;box-shadow:0 5px 0 #8b0057;}
+    .pad-btn.check{background:#00b06a;border-color:#00e88a;color:#fff;font-size:1.8rem;box-shadow:0 5px 0 #004d30;}
+    .parent-btn{background:transparent;border:1px solid #1a1a1a;color:#333;border-radius:8px;padding:8px 20px;font-size:0.7rem;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ── PARTICLES ── */
+    .particles{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden;}
+    .p-block{position:absolute;border-radius:4px;animation:pfade linear forwards;}
+    @keyframes pfade{0%{transform:translateY(-30px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+    @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-10px);}40%{transform:translateX(10px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+    .shaking{animation:shake 0.35s ease;}
+    @keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+    .popping{animation:pop 0.4s ease;}
+
+    /* ══════════════════════════════════
+       PACK SELECT
+    ══════════════════════════════════ */
+    .pack-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:1100;padding:20px;}
+    .pack-overlay.hidden{display:none;}
+    .pack-title{font-size:1rem;font-weight:900;color:#FFD700;text-transform:uppercase;letter-spacing:3px;text-align:center;}
+    .pack-earned{font-size:0.72rem;color:#333;text-transform:uppercase;letter-spacing:2px;margin-top:-6px;}
+    .pack-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;}
+    .pack-btn{background:#0d0d0d;border:2px solid #222;border-radius:16px;padding:16px 18px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px;transition:all 0.15s;text-align:left;}
+    .pack-btn:active{transform:scale(0.97);}
+    .pack-btn.br{border-color:#7c3aed;}
+    .pack-btn.br:active,.pack-btn.br:hover{background:#12083a;box-shadow:0 0 18px rgba(124,58,237,0.4);}
+    .pack-btn.pk{border-color:#dc2626;}
+    .pack-btn.pk:active,.pack-btn.pk:hover{background:#1a0303;box-shadow:0 0 18px rgba(220,38,38,0.4);}
+    .pack-btn.bw{border-color:#d97706;}
+    .pack-btn.bw:active,.pack-btn.bw:hover{background:#1a1000;box-shadow:0 0 18px rgba(217,119,6,0.4);}
+    .pack-img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#111;}
+    .pack-name{font-size:0.95rem;font-weight:900;color:#fff;}
+    .pack-sub-txt{font-size:0.65rem;color:#444;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+    /* ══════════════════════════════════
+       GACHA — CARD REVEAL
+    ══════════════════════════════════ */
+    .gacha-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.98);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:1200;padding:16px;}
+    .gacha-overlay.hidden{display:none;}
+    .gacha-hdr{font-size:0.85rem;font-weight:900;color:#333;text-transform:uppercase;letter-spacing:3px;text-align:center;}
+
+    /* Slot spinner */
+    .slot-win{width:260px;height:260px;border-radius:20px;border:3px solid #1a1a1a;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:border-color 0.3s,box-shadow 0.3s;}
+    .slot-win .slot-img{width:220px;height:220px;object-fit:contain;border-radius:12px;transition:opacity 0.05s;}
+    .slot-win .slot-name{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:1px;}
+    .slot-emoji-fallback{font-size:5rem;text-align:center;}
+
+    /* ── CARD FLIP REVEAL ── */
+    .card-scene{width:240px;height:340px;perspective:800px;position:relative;}
+    .card-scene.hidden{display:none;}
+    .card-flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(.4,0,.2,1);}
+    .card-flip.flipped{transform:rotateY(180deg);}
+
+    /* Card back */
+    .card-back{
+      position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;overflow:hidden;
+      background:linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a);
+      border:3px solid #333;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.8);
+    }
+    .card-back .back-logo{font-size:3rem;}
+    .card-back .back-text{font-size:0.6rem;color:#333;text-transform:uppercase;letter-spacing:3px;}
+    .card-back .back-glow{
+      position:absolute;inset:0;border-radius:14px;
+      background:conic-gradient(from 0deg,#7c3aed,#dc2626,#d97706,#7c3aed);
+      opacity:0;animation:cardGlow 2s linear infinite;
+      filter:blur(8px);z-index:-1;
+    }
+    @keyframes cardGlow{0%{opacity:0.3;transform:rotate(0deg);}50%{opacity:0.6;}100%{opacity:0.3;transform:rotate(360deg);}}
+
+    /* Tap hint */
+    .tap-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:2px;animation:tapPulse 1s ease infinite alternate;}
+    @keyframes tapPulse{from{opacity:0.4;}to{opacity:1;}}
+
+    /* Card front */
+    .card-front{
+      position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);
+      border-radius:16px;overflow:hidden;border:3px solid #333;
+      box-shadow:0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    /* Holographic shimmer */
+    .card-front.holo::before{
+      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
+      background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0.18) 45%,rgba(120,80,255,0.1) 50%,rgba(255,255,255,0.07) 55%,transparent 65%);
+      animation:holoShimmer 2.5s linear infinite;
+    }
+    @keyframes holoShimmer{0%{transform:translateX(-120%);}100%{transform:translateX(220%);}}
+
+    /* OG rainbow shimmer */
+    .card-front.rainbow::before{
+      content:'';position:absolute;inset:0;z-index:10;pointer-events:none;border-radius:14px;
+      background:linear-gradient(125deg,rgba(255,0,0,0.15),rgba(255,165,0,0.15),rgba(255,255,0,0.15),rgba(0,255,0,0.15),rgba(0,0,255,0.15),rgba(148,0,211,0.15));
+      animation:rainbowShimmer 1.5s linear infinite;
+    }
+    @keyframes rainbowShimmer{0%{transform:translateX(-120%) skew(-10deg);}100%{transform:translateX(220%) skew(-10deg);}}
+
+    /* TCG card content (same as before but now inside .card-front) */
+    .tcg-card{width:100%;height:100%;background:#0d0d0d;display:flex;flex-direction:column;}
+    .tcg-card.hidden{display:none;}
+
+    .card-header{padding:8px 10px 0;display:flex;align-items:center;justify-content:space-between;}
+    .card-name-top{font-size:0.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;max-width:140px;}
+    .card-rarity-gem{font-size:0.6rem;font-weight:900;padding:2px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:1px;color:#000;}
+
+    .card-img-wrap{position:relative;margin:6px 8px;border-radius:10px;overflow:hidden;background:#0a0a0a;height:155px;}
+    .card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+    .card-img-wrap .card-uni-badge{position:absolute;top:6px;left:6px;font-size:0.55rem;font-weight:900;padding:2px 7px;border-radius:50px;text-transform:uppercase;letter-spacing:1px;}
+
+    .card-body{padding:6px 10px 10px;}
+    .card-desc{font-size:0.6rem;color:#888;line-height:1.45;margin-bottom:6px;font-family:Arial,sans-serif;font-weight:normal;}
+    .card-bonus{font-size:0.7rem;font-weight:900;color:#FFD700;margin-bottom:6px;}
+    .card-bonus.hidden{display:none;}
+    .card-new{position:absolute;top:8px;right:8px;background:#e91e8c;color:#fff;font-size:0.55rem;font-weight:900;padding:2px 7px;border-radius:50px;text-transform:uppercase;letter-spacing:1px;animation:newPulse 0.5s infinite alternate;z-index:20;}
+    .card-new.hidden{display:none;}
+    @keyframes newPulse{from{transform:scale(0.95);}to{transform:scale(1.08);}}
+
+    .collect-btn{display:block;background:#e91e8c;border:2px solid #ff6eb4;border-radius:10px;padding:12px;font-size:0.95rem;font-weight:900;color:#fff;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0057;animation:cardPop 0.4s cubic-bezier(.34,1.56,.64,1);}
+    .collect-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8b0057;}
+    .collect-btn.hidden{display:none;}
+    @keyframes cardPop{from{transform:scale(0.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .gacha-total{font-size:0.8rem;color:#FFD700;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ══════════════════════════════════
+       COLLECTION
+    ══════════════════════════════════ */
+    .coll-overlay{position:fixed;inset:0;background:#060608;z-index:1500;overflow-y:auto;padding:16px 10px 40px;}
+    .coll-overlay.hidden{display:none;}
+    .coll-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .coll-title{font-size:1.1rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;}
+    .coll-close{background:#e91e8c;border:none;color:#fff;border-radius:8px;padding:9px 12px;font-size:0.75rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;}
+    .coll-stats{text-align:center;color:#333;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+
+    /* Progress bars */
+    .uni-progress{max-width:480px;margin:0 auto 12px;display:flex;flex-direction:column;gap:7px;}
+    .up-row{display:flex;align-items:center;gap:8px;}
+    .up-label{font-size:0.65rem;font-weight:900;color:#333;text-transform:uppercase;letter-spacing:1px;width:72px;flex-shrink:0;}
+    .up-bar{flex:1;background:#0a0a0a;border-radius:50px;height:8px;overflow:hidden;border:1px solid #1a1a1a;}
+    .up-fill{height:100%;border-radius:50px;transition:width 0.6s ease;}
+    .up-count{font-size:0.6rem;color:#333;font-weight:900;width:32px;text-align:right;flex-shrink:0;}
+
+    /* Pity pills */
+    .pity-row{display:flex;gap:6px;justify-content:center;margin-bottom:10px;max-width:480px;margin-left:auto;margin-right:auto;flex-wrap:wrap;}
+    .pity-pill{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:50px;padding:4px 9px;font-size:0.58rem;color:#333;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;}
+    .pity-pill.warn{border-color:#ff9800;color:#ff9800;}
+    .pity-pill.hot{border-color:#FFD700;color:#FFD700;animation:newPulse 0.5s infinite alternate;}
+
+    /* Share */
+    .share-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;max-width:480px;margin:0 auto 12px;background:#0d1a0d;border:2px solid #00b06a;color:#00b06a;border-radius:10px;padding:12px;font-size:0.78rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .share-btn:active{transform:scale(0.97);}
+    .share-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#00b06a;color:#000;padding:10px 22px;border-radius:50px;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;z-index:3000;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+    .share-toast.show{opacity:1;}
+
+    /* Tabs */
+    .coll-tabs{display:flex;gap:6px;justify-content:center;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .tab-btn{flex:1;background:#0d0d0d;border:2px solid #1a1a1a;border-radius:8px;padding:9px 4px;font-size:0.65rem;font-weight:900;color:#333;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;transition:all 0.15s;}
+    .tab-btn.t-all.active{border-color:#444;color:#fff;background:#1a1a1a;}
+    .tab-btn.t-br.active{border-color:#7c3aed;color:#c4b5fd;background:#12083a;}
+    .tab-btn.t-pk.active{border-color:#dc2626;color:#fca5a5;background:#1a0303;}
+    .tab-btn.t-bw.active{border-color:#d97706;color:#fcd34d;background:#1a1000;}
+
+    /* View banner */
+    .view-banner{width:100%;max-width:480px;background:#0d1a2e;border:2px solid #4fc3f7;border-radius:10px;padding:12px 16px;text-align:center;margin-bottom:10px;display:none;}
+    .view-banner-title{font-size:0.9rem;font-weight:900;color:#4fc3f7;margin-bottom:2px;}
+    .view-banner-sub{font-size:0.65rem;color:#333;text-transform:uppercase;letter-spacing:1px;}
+
+    /* Card grid */
+    .coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:480px;margin:0 auto;}
+    .rarity-hdr{grid-column:1/-1;font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:8px 0 3px;display:flex;align-items:center;gap:6px;}
+    .rarity-line{flex:1;height:1px;background:#111;}
+
+    /* Collection mini-card */
+    .mini-card{border-radius:10px;overflow:hidden;position:relative;border:2px solid #1a1a1a;background:#0d0d0d;aspect-ratio:2/3;cursor:pointer;}
+    .mini-card.unlocked{border-color:var(--mc,#333);}
+    .mini-card.locked{filter:brightness(0.15);}
+    .mini-card img{width:100%;height:70%;object-fit:cover;display:block;}
+    .mini-card .mc-emoji{width:100%;height:70%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:#111;}
+    .mini-card .mc-name{padding:3px 4px;font-size:0.48rem;color:#888;text-transform:uppercase;letter-spacing:0.3px;line-height:1.2;text-align:center;}
+    .mini-card .mc-cnt{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#555;font-size:0.5rem;font-weight:900;padding:1px 5px;border-radius:50px;}
+    .mini-card.unlocked .mc-name{color:#ccc;}
+    .mini-card .mc-dot{position:absolute;bottom:0;left:0;right:0;height:3px;}
+
+    /* PIN */
+    .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:2000;}
+    .pin-overlay.hidden{display:none;}
+    .pin-box{background:#111;border:3px solid #e91e8c;border-radius:14px;padding:24px 22px;text-align:center;width:90%;max-width:320px;}
+    .pin-title{font-size:1.2rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+    .pin-sub{font-size:0.75rem;color:#555;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
+    .pin-dots{font-size:1.6rem;letter-spacing:10px;margin-bottom:12px;color:#e91e8c;}
+    .pin-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px;}
+    .mpb{border:2px solid #333;border-radius:8px;height:52px;font-size:1.3rem;font-weight:700;cursor:pointer;font-family:'Arial Black',Arial,sans-serif;background:#1a1a1a;color:#fff;box-shadow:0 3px 0 #000;}
+    .mpb:active{transform:translateY(2px);}
+    .mpb.m-cancel{background:#e91e8c;border-color:#ff6eb4;box-shadow:0 3px 0 #8b0057;}
+    .mpb.m-del{background:#333;border-color:#555;box-shadow:0 3px 0 #111;}
+    .pin-err{font-size:0.8rem;color:#e91e8c;min-height:18px;font-weight:700;text-transform:uppercase;}
+
+    /* ══════════════════════════════════
+       ONBOARDING SLIDES
+    ══════════════════════════════════ */
+    .onboard-overlay{position:fixed;inset:0;background:#050508;z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+    .onboard-overlay.hidden{display:none;}
+
+    .onboard-slide{display:none;flex-direction:column;align-items:center;text-align:center;gap:14px;max-width:340px;width:100%;animation:slideIn 0.4s ease;}
+    .onboard-slide.active{display:flex;}
+    @keyframes slideIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
+
+    .onboard-big-emoji{font-size:5rem;line-height:1;}
+    .onboard-chars{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:4px 0;}
+    .onboard-char-img{width:72px;height:72px;border-radius:12px;object-fit:cover;border:3px solid #333;background:#111;}
+    .onboard-char-img.og{border-color:#fbbf24;box-shadow:0 0 14px rgba(251,191,36,0.5);}
+    .onboard-char-img.secret{border-color:#fb923c;box-shadow:0 0 10px rgba(251,146,60,0.4);}
+    .onboard-title{font-size:1.6rem;font-weight:900;color:#fff;line-height:1.2;}
+    .onboard-title span{color:#e91e8c;}
+    .onboard-text{font-size:1rem;color:#aaa;line-height:1.6;font-family:Arial,sans-serif;font-weight:normal;}
+    .onboard-text strong{color:#fff;font-family:'Arial Black',Arial,sans-serif;}
+    .onboard-example{background:#111;border:2px solid #222;border-radius:14px;padding:14px 18px;font-size:2rem;font-weight:900;color:#fff;letter-spacing:2px;}
+    .onboard-rarity-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+    .onboard-rarity-pill{padding:5px 12px;border-radius:50px;font-size:0.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#000;}
+
+    /* Dots */
+    .onboard-dots{display:flex;gap:8px;justify-content:center;}
+    .onboard-dot{width:8px;height:8px;border-radius:50%;background:#222;transition:all 0.3s;}
+    .onboard-dot.active{background:#e91e8c;width:24px;border-radius:4px;}
+
+    /* Nav buttons */
+    .onboard-nav{display:flex;gap:10px;width:100%;max-width:340px;}
+    .onboard-skip{flex:1;background:transparent;border:2px solid #1a1a1a;color:#333;border-radius:10px;padding:14px;font-size:0.8rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .onboard-next{flex:2;background:#e91e8c;border:2px solid #ff6eb4;color:#fff;border-radius:10px;padding:14px;font-size:1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 0 #8b0057;}
+    .onboard-next:active{transform:translateY(3px);box-shadow:0 1px 0 #8b0057;}
+    .onboard-start{flex:1;background:linear-gradient(135deg,#e91e8c,#c2185b);border:none;color:#fff;border-radius:10px;padding:16px;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0057;animation:startPulse 1s ease infinite alternate;}
+    @keyframes startPulse{from{box-shadow:0 4px 0 #8b0057,0 0 0 rgba(233,30,140,0);}to{box-shadow:0 4px 0 #8b0057,0 0 20px rgba(233,30,140,0.5);}}
+
+    @media(max-height:700px){.header-minutes{font-size:2.2rem;}.q-text{font-size:2.8rem;}.ans-box{font-size:2.5rem;min-height:54px;}.pad-btn{height:62px;font-size:1.7rem;}}
+  </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<!-- ══ ONBOARDING ══ -->
+<div class="onboard-overlay" id="onboardOverlay">
+
+  <!-- Slide 1: Welkom -->
+  <div class="onboard-slide active" id="slide0">
+    <div class="onboard-big-emoji">🎮</div>
+    <div class="onboard-title">Hé Philou!<br><span>Welkom!</span></div>
+    <div class="onboard-text">
+      Dit is jouw <strong>eigen gacha game</strong>.<br>
+      Jij kunt super coole characters verzamelen —<br>
+      van Pokémon tot Brawl Stars tot Brainrot!<br><br>
+      En misschien heb jij straks meer dan James 😏
+    </div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://images.pokemontcg.io/base1/4_hires.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/dragon.jpg" onerror="this.style.display='none'" alt="">
+    </div>
+    <div class="onboard-text">Maar je moet ze <strong>verdienen</strong> 💪</div>
+  </div>
+
+  <!-- Slide 2: Hoe werkt het -->
+  <div class="onboard-slide" id="slide1">
+    <div class="onboard-big-emoji">🧮</div>
+    <div class="onboard-title">Zo werkt het!</div>
+    <div class="onboard-text"><strong>Stap 1:</strong> Los een sommetje op!</div>
+    <div class="onboard-example">8 × 7 = ?</div>
+    <div class="onboard-text">
+      Keer- en deelsommen — tot tafel 16!<br><br>
+      Los <strong>3 sommen</strong> goed op<br>
+      en je verdient <strong>1 minuut</strong> schermtijd! ⏱️<br><br>
+      Na <strong>5 minuten</strong> mag je<br>
+      een pack openen! 🎰
+    </div>
+  </div>
+
+  <!-- Slide 3: De packs -->
+  <div class="onboard-slide" id="slide2">
+    <div class="onboard-big-emoji">🎴</div>
+    <div class="onboard-title">Kies je pack!</div>
+    <div class="onboard-text">Er zijn <strong>3 packs</strong> om uit te kiezen:</div>
+    <div class="onboard-chars">
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://mbfamilyoffice.github.io/kids-apps/james/img/bombard.jpg" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#7c3aed;margin-top:4px;font-weight:900;text-transform:uppercase;">🧠 Brainrot</div>
+      </div>
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://images.pokemontcg.io/base1/4_hires.png" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#dc2626;margin-top:4px;font-weight:900;text-transform:uppercase;">🃏 Pokémon</div>
+      </div>
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://cdn.brawlify.com/brawler-bs/Leon.png" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#d97706;margin-top:4px;font-weight:900;text-transform:uppercase;">⭐ Brawl Stars</div>
+      </div>
+    </div>
+    <div class="onboard-text">
+      Elke keer mag je zelf kiezen!<br>
+      Jij bent de baas. 😎
+    </div>
+  </div>
+
+  <!-- Slide 4: Zeldzaamheid -->
+  <div class="onboard-slide" id="slide3">
+    <div class="onboard-big-emoji">✨</div>
+    <div class="onboard-title">Hoe zeldzaam<br>is jouw card?</div>
+    <div class="onboard-rarity-row">
+      <div class="onboard-rarity-pill" style="background:#6b7280;color:#fff;">Common</div>
+      <div class="onboard-rarity-pill" style="background:#38bdf8;">Rare</div>
+      <div class="onboard-rarity-pill" style="background:#a78bfa;">Epic</div>
+      <div class="onboard-rarity-pill" style="background:#fb923c;">Legendary</div>
+      <div class="onboard-rarity-pill" style="background:#fbbf24;">⭐ OG</div>
+    </div>
+    <div class="onboard-text">
+      <strong>OG</strong> is het allerzeldzaamst!<br>
+      Soms krijg je er <strong>extra minuten</strong> bij 🎁<br><br>
+      En als je iets zeldzaams krijgt —<br>
+      stuur de link naar je vrienden! 🔗
+    </div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://cdn.brawlify.com/brawler-bs/Kaze.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Pikachu_Illustrator_card.jpg/200px-Pikachu_Illustrator_card.jpg" onerror="this.style.display='none'" alt="">
+    </div>
+  </div>
+
+  <!-- Slide 5: Start! -->
+  <div class="onboard-slide" id="slide4">
+    <div class="onboard-big-emoji">🚀</div>
+    <div class="onboard-title">Ben je er klaar voor?</div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og"     src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://mbfamilyoffice.github.io/kids-apps/james/img/dragon.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Leon.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og"     src="https://cdn.brawlify.com/brawler-bs/Kaze.png" onerror="this.style.display='none'" alt="">
+    </div>
+    <div class="onboard-text">
+      <strong>83 characters</strong> wachten op jou.<br>
+      Wie spawn jij als eerste?<br><br>
+      Doe je best bij de sommen —<br>
+      en verzamel ze allemaal! 🏆
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="onboard-dots" id="onboardDots"></div>
+  <div class="onboard-nav" id="onboardNav">
+    <button class="onboard-skip" onclick="finishOnboarding()">Overslaan</button>
+    <button class="onboard-next" id="onboardNextBtn" onclick="onboardNext()">Volgende →</button>
+  </div>
+</div>
+
+<!-- ══ PACK SELECT ══ -->
+<div class="pack-overlay hidden" id="packOverlay">
+  <div class="pack-title">🎰 Kies je pack!</div>
+  <div class="pack-earned">5 minuten verdiend — spawn time!</div>
+  <div class="pack-grid">
+    <button class="pack-btn br" onclick="startGacha('brainrot')">
+      <img class="pack-img" src="https://static.wikia.nocookie.net/italian-brainrot/images/1/1c/Bombardiro_Crocodilo.webp/revision/latest/scale-to-width-down/120?cb=20250311143244" onerror="this.style.display='none'" alt="">
+      <div><div class="pack-name">🧠 Brainrot Pack</div><div class="pack-sub-txt">Italian Brainrot × Roblox</div></div>
+    </button>
+    <button class="pack-btn pk" onclick="startGacha('pokemon')">
+      <img class="pack-img" src="https://images.pokemontcg.io/base1/4_hires.png" onerror="this.style.display='none'" alt="">
+      <div><div class="pack-name">🃏 Pokémon Pack</div><div class="pack-sub-txt">Zeldzaamste kaarten ooit</div></div>
+    </button>
+    <button class="pack-btn bw" onclick="startGacha('brawl')">
+      <img class="pack-img" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
+      <div><div class="pack-name">⭐ Brawl Stars Pack</div><div class="pack-sub-txt">Legendary & OG</div></div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ GACHA ══ -->
+<div class="gacha-overlay hidden" id="gachaOverlay">
+  <div class="gacha-hdr" id="gachaHdr">🎰 Spawning...</div>
+
+  <!-- Slot spinner (shown during roll) -->
+  <div class="slot-win" id="slotWin">
+    <img class="slot-img" id="slotImg" src="" alt="" onerror="this.style.display='none'">
+    <div class="slot-emoji-fallback" id="slotFb" style="display:none"></div>
+    <div class="slot-name" id="slotName"></div>
+  </div>
+
+  <!-- Card flip reveal -->
+  <div class="card-scene hidden" id="cardScene" onclick="flipCard()">
+    <div class="card-flip" id="cardFlip">
+      <!-- BACK -->
+      <div class="card-back">
+        <div class="back-glow"></div>
+        <div class="back-logo">🎴</div>
+        <div style="font-size:1.4rem" id="backUniIcon">🎰</div>
+        <div class="back-text">Tik om te onthullen</div>
+      </div>
+      <!-- FRONT -->
+      <div class="card-front" id="cardFront">
+        <div class="tcg-card" id="tcgCard">
+          <div class="card-new hidden" id="cardNew">⭐ NEW!</div>
+          <div class="card-header">
+            <div class="card-name-top" id="cardNameTop"></div>
+            <div class="card-rarity-gem" id="cardRarityGem"></div>
+          </div>
+          <div class="card-img-wrap">
+            <img id="cardImg" src="" alt="" onerror="this.parentNode.querySelector('.card-fb').style.display='flex';this.style.display='none';" style="width:100%;height:100%;object-fit:cover;">
+            <div class="card-fb" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:4rem;" id="cardFb"></div>
+            <div class="card-uni-badge" id="cardUniBadge"></div>
+          </div>
+          <div class="card-body">
+            <div class="card-bonus hidden" id="cardBonus"></div>
+            <div class="card-desc" id="cardDesc"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tap-hint hidden" id="tapHint">👆 Tik op de kaart!</div>
+  <button class="collect-btn hidden" id="collectBtn" onclick="closeGacha()" style="width:240px;">COLLECT! 👊</button>
+  <div class="gacha-total" id="gachaTotal"></div>
+</div>
+
+<!-- ══ COLLECTION ══ -->
+<div class="coll-overlay hidden" id="collOverlay">
+  <div class="coll-top" style="max-width:480px;margin-left:auto;margin-right:auto;">
+    <div class="coll-title">📦 Collectie</div>
+    <button class="coll-close" onclick="closeCollection()">✕ Sluiten</button>
+  </div>
+  <div class="coll-stats" id="collStats"></div>
+  <div class="uni-progress" id="uniProgress"></div>
+  <div class="pity-row" id="pityRow"></div>
+  <button class="share-btn" id="shareBtn" onclick="shareCollection()">🔗 Deel mijn collectie met vrienden!</button>
+  <div class="view-banner" id="viewBanner">
+    <div class="view-banner-title" id="viewBannerTitle">🎮 Collectie</div>
+    <div class="view-banner-sub">Bekijk modus — dit is niet jouw collectie</div>
+  </div>
+  <div class="coll-tabs" style="max-width:480px;margin-left:auto;margin-right:auto;">
+    <button class="tab-btn t-all active" onclick="switchTab('all')">Alles</button>
+    <button class="tab-btn t-br" onclick="switchTab('brainrot')">🧠</button>
+    <button class="tab-btn t-pk" onclick="switchTab('pokemon')">🃏</button>
+    <button class="tab-btn t-bw" onclick="switchTab('brawl')">⭐</button>
+  </div>
+  <div class="coll-grid" id="collGrid"></div>
+</div>
+<div class="share-toast" id="shareToast">✅ Link gekopieerd!</div>
+
+<!-- ══ PIN ══ -->
+<div class="pin-overlay hidden" id="pinOverlay">
+  <div class="pin-box">
+    <div class="pin-title">🔐 Ouder Reset</div>
+    <div class="pin-sub">Voer PIN in</div>
+    <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
+    <div class="pin-numpad" id="pinPad"></div>
+    <div class="pin-err" id="pinErr"></div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="topbar">
+  <div class="logo">🎮 PHILOU<span> SOMMEN</span><span class="sub">Gacha × Reken</span></div>
+  <button class="coll-open-btn" onclick="openCollection()">📦 Collectie</button>
+</div>
+<div class="header-card">
+  <div class="header-label">⏱ Schermtijd verdiend</div>
+  <div class="header-minutes" id="minutesDisplay">0</div>
+  <div class="header-sub" id="minutesLabel">minuten</div>
+</div>
+<div class="xp-card">
+  <div class="xp-label">XP — Nog <span id="leftCount">3</span> sommen &nbsp;·&nbsp; Spawn bij <span id="spawnAt">5</span> min 🎰</div>
+  <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
+  <div class="xp-dots" id="xpDots"></div>
+</div>
+<div class="q-card">
+  <div class="q-text" id="qText">…</div>
+  <div class="ans-box" id="ansBox">_</div>
+  <div class="fb-text" id="fbText"></div>
+</div>
+<div class="numpad" id="numpad"></div>
+<button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
+
+<script>
+/* ══════════════════════════════════════════
+   CHARACTER DATA — met echte afbeeldingen
+══════════════════════════════════════════ */
+const BASE_IMG = 'https://mbfamilyoffice.github.io/kids-apps/james/img/';
+const IMG = {
+  // Brainrot — AI gegenereerd, gehost op GitHub
+  bombard:  BASE_IMG+'bombard.jpg',
+  tralal:   BASE_IMG+'tralal.jpg',
+  cappass:  BASE_IMG+'cappass.jpg',
+  frigo:    BASE_IMG+'frigo.jpg',
+  chimpa:   BASE_IMG+'chimpa.jpg',
+  coco:     BASE_IMG+'coco.jpg',
+  dragon:   BASE_IMG+'dragon.jpg',
+  strawbel: BASE_IMG+'strawbel.jpg',
+  sigma:    BASE_IMG+'sigma.jpg',
+  spaghett: BASE_IMG+'spaghett.jpg',
+  // Brainrot — emoji fallback (geen AI image)
+  girafa:   null,
+  orcaler:  null,
+  balleri:  null,
+  tralalit: null,
+  // Pokémon — via pokemontcg.io API (gratis, geen key nodig)
+  pikachu:  'https://images.pokemontcg.io/base1/58_hires.png',
+  charizrd: 'https://images.pokemontcg.io/base1/4_hires.png',
+  blastois: 'https://images.pokemontcg.io/base1/2_hires.png',
+  mewtwo:   'https://images.pokemontcg.io/base1/10_hires.png',
+  gengar:   'https://images.pokemontcg.io/base1/5_hires.png',
+  lugia:    'https://images.pokemontcg.io/neo1/9_hires.png',
+  dragonit: 'https://images.pokemontcg.io/base1/26_hires.png',
+  venusaur: 'https://images.pokemontcg.io/base1/15_hires.png',
+  charshad: 'https://images.pokemontcg.io/base1/4_hires.png',
+  charjap:  'https://images.pokemontcg.io/base6/4_hires.png',
+  pikaill:  'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Pikachu_Illustrator_card.jpg/300px-Pikachu_Illustrator_card.jpg',
+  blastpro: 'https://images.pokemontcg.io/base1/2_hires.png',
+  espeon:   'https://images.pokemontcg.io/ex9/102_hires.png',
+  umbreon:  'https://images.pokemontcg.io/ex9/17_hires.png',
+  // Brawl Stars — brawlify CDN
+  shelly:   'https://cdn.brawlify.com/brawler-bs/Shelly.png',
+  nita:     'https://cdn.brawlify.com/brawler-bs/Nita.png',
+  colt:     'https://cdn.brawlify.com/brawler-bs/Colt.png',
+  bull:     'https://cdn.brawlify.com/brawler-bs/Bull.png',
+  poco:     'https://cdn.brawlify.com/brawler-bs/Poco.png',
+  piper:    'https://cdn.brawlify.com/brawler-bs/Piper.png',
+  edgar:    'https://cdn.brawlify.com/brawler-bs/Edgar.png',
+  bo:       'https://cdn.brawlify.com/brawler-bs/Bo.png',
+  bibi:     'https://cdn.brawlify.com/brawler-bs/Bibi.png',
+  frank:    'https://cdn.brawlify.com/brawler-bs/Frank.png',
+  mortis:   'https://cdn.brawlify.com/brawler-bs/Mortis.png',
+  tara:     'https://cdn.brawlify.com/brawler-bs/Tara.png',
+  gene:     'https://cdn.brawlify.com/brawler-bs/Gene.png',
+  buzz:     'https://cdn.brawlify.com/brawler-bs/Buzz.png',
+  fang:     'https://cdn.brawlify.com/brawler-bs/Fang.png',
+  charlie:  'https://cdn.brawlify.com/brawler-bs/Charlie.png',
+  melodie:  'https://cdn.brawlify.com/brawler-bs/Melodie.png',
+  draco:    'https://cdn.brawlify.com/brawler-bs/Draco.png',
+  spike:    'https://cdn.brawlify.com/brawler-bs/Spike.png',
+  crow:     'https://cdn.brawlify.com/brawler-bs/Crow.png',
+  leon:     'https://cdn.brawlify.com/brawler-bs/Leon.png',
+  sandy:    'https://cdn.brawlify.com/brawler-bs/Sandy.png',
+  amber:    'https://cdn.brawlify.com/brawler-bs/Amber.png',
+  meg:      'https://cdn.brawlify.com/brawler-bs/Meg.png',
+  surge:    'https://cdn.brawlify.com/brawler-bs/Surge.png',
+  chester:  'https://cdn.brawlify.com/brawler-bs/Chester.png',
+  cordelius:'https://cdn.brawlify.com/brawler-bs/Cordelius.png',
+  kit:      'https://cdn.brawlify.com/brawler-bs/Kit.png',
+  kenji:    'https://cdn.brawlify.com/brawler-bs/Kenji.png',
+  pierce:   'https://cdn.brawlify.com/brawler-bs/Pierce.png',
+  kaze:     'https://cdn.brawlify.com/brawler-bs/Kaze.png',
+  sirius:   'https://cdn.brawlify.com/brawler-bs/Sirius.png',
+};
+
+const R = {
+  common:{label:'Common',     color:'#6b7280',bg:'#0d0d0d',border:'#1f2937',glow:'transparent',       bonus:0},
+  rare:  {label:'Rare',       color:'#38bdf8',bg:'#020c18',border:'#38bdf8',glow:'rgba(56,189,248,.3)',bonus:0},
+  epic:  {label:'Epic',       color:'#a78bfa',bg:'#080412',border:'#a78bfa',glow:'rgba(167,139,250,.35)',bonus:0},
+  secret:{label:'Legendary',  color:'#fb923c',bg:'#140800',border:'#fb923c',glow:'rgba(251,146,60,.45)',bonus:1},
+  og:    {label:'⭐ OG',      color:'#fbbf24',bg:'#140f00',border:'#fbbf24',glow:'rgba(251,191,36,.5)', bonus:3},
+};
+const U = {
+  brainrot:{label:'🧠 Brainrot',bg:'#7c3aed',color:'#fff'},
+  pokemon: {label:'🃏 Pokémon', bg:'#dc2626',color:'#fff'},
+  brawl:   {label:'⭐ Brawl',   bg:'#d97706',color:'#000'},
+};
+
+const CHARS = {
+  brainrot:[
+    {id:'noobini', name:'Noobini Pizzanini',    emoji:'🍕',r:'common',desc:'Eeuwige noob van Roblox. Eet alleen pizza. Geen skills maar groot hart.'},
+    {id:'lirili',  name:'Lirili Larila',         emoji:'🦒',r:'common',desc:'Giraf met arend-hoofd. Gilt door de bossen. Niemand weet waarom.'},
+    {id:'trippi',  name:'Trippi Troppi',          emoji:'🦛',r:'common',desc:'Nijlpaard omringd door bloemen. Lijkt rustig maar is gevaarlijk.'},
+    {id:'tungx3',  name:'Tung Tung Tung Sahur',  emoji:'🥁',r:'common',desc:'Drumsticks met lege oogkassen. Trommelt de hele nacht.'},
+    {id:'gangfoot',name:'Gangster Footera',       emoji:'🦶',r:'common',desc:'Gigantische teen in trainingspak. Loopt de straten onveilig.'},
+    {id:'skibidi', name:'Skibidi Toilet',         emoji:'🚽',r:'common',desc:'Een hoofd in een toiletpot. Zegt alleen skibidi.'},
+    {id:'boneca',  name:'Boneca Ambalabu',        emoji:'🐸',r:'common',desc:'Kikker-pop met lege blik. Staart in je ziel.'},
+    {id:'pipiavo', name:'Pipi Avocado',           emoji:'🥑',r:'common',desc:'Vogeltje met avocado-kop. Valt altijd van de boom.'},
+    {id:'brrpat',  name:'Brr Brr Patapim',        emoji:'🐧',r:'common',desc:'Pinguïn die altijd patapim slaat. Niemand weet waarom.'},
+    {id:'bananit', name:'Bananita Dolphinita',    emoji:'🐬',r:'common',desc:'Dolfijn gevangen in een banaan. Zwemt door de lucht.'},
+    {id:'cappass', name:'Cappuccino Assassino',   emoji:'☕',r:'rare',  desc:'Overdag barista. \'s Nachts killer. Zijn cappuccino is perfect.'},
+    {id:'chimpa',  name:'Chimpanzini Bananini',   emoji:'🐒',r:'rare',  desc:'Chimpansee in een banaan. Aliens ontvoeren hem vanwege zeldzaamheid.'},
+    {id:'balleri', name:'Ballerina Cappuccina',   emoji:'👯',r:'rare',  desc:'Danst op cappuccino-muziek. Niemand begrijpt haar kunst.'},
+    {id:'bombard', name:'Bombardiro Crocodilo',   emoji:'🐊',r:'rare',  desc:'Krokodil die letterlijk een bommenwerper is. Gevaarlijkste vliegtuig van Napels.'},
+    {id:'sigma',   name:'Sigma Boy',              emoji:'😎',r:'rare',  desc:'Sigma grindset. Geen vrienden. Alleen winnen.'},
+    {id:'bombomb', name:'Bombombini Gusini',      emoji:'💣',r:'rare',  desc:'Broertje van Bombardiro. Net zo gevaarlijk, maar kleiner.'},
+    {id:'tigroli', name:'Tigrilini Watermelini',  emoji:'🐯',r:'rare',  desc:'Tijger in watermeloen die over de snelweg loopt. Heeft altijd haast.'},
+    {id:'tralal',  name:'Tralalero Tralala',      emoji:'🦈',r:'epic',  desc:'Haai met Nike schoenen. Zwemt op het land. Niemand stelt vragen.'},
+    {id:'frigo',   name:'Frigo Camelo',           emoji:'🧊',r:'epic',  desc:'Kameel in een koelkast. Steekt rustig de straat over. Altijd.'},
+    {id:'coco',    name:'Cocofanto Elefanto',     emoji:'🐘',r:'epic',  desc:'Olifant van kokosnoot. Op eeuwige vakantie bij een waterval.'},
+    {id:'girafa',  name:'Girafa Celestre',        emoji:'🦒',r:'epic',  desc:'Ruimtegiraffe in watermeloen. Reist door sterrenstelsels.'},
+    {id:'orcaler', name:'Orcalero Orcala',        emoji:'🐋',r:'epic',  desc:'Orka die altijd zijn naam zingt. Leeft in een oceaan van pasta.'},
+    {id:'tralalit',name:'Tralalita Tralala',      emoji:'🦈',r:'epic',  desc:'Zusje van Tralalero. Draagt hakken. Minstens zo gevaarlijk.'},
+    {id:'dragon',  name:'Dragon Cannelloni',      emoji:'🐉',r:'secret',desc:'Pasta-draak met kokende béchamel. Spuwt ricotta boven Napels. Legendary! +1 min!'},
+    {id:'spaghett',name:'Spaghetti Tualetti',     emoji:'🍝',r:'secret',desc:'Spaghetti uit een toilet. Onverwacht heerlijk. Waarschijnlijk. +1 min!'},
+    {id:'sixtysev',name:'67',                     emoji:'6️⃣',r:'secret',desc:'Het getal 67. Extinct Event. Niemand snapt het. +1 min!'},
+    {id:'lascombo',name:'La Supreme Combinasion', emoji:'👑',r:'secret',desc:'Ultieme combinatie van alle brainrots. Nog nooit volledig gezien. +1 min!'},
+    {id:'strawbel',name:'Strawberry Elephant',    emoji:'🍓',r:'og',    desc:'DE allerzeldzaamste brainrot. 1 op 100 kwadriloen kans. ABSOLUTE LEGENDE! +3 min!'},
+    {id:'tung4x',  name:'Los TungTungTungCitos',  emoji:'🥁',r:'og',    desc:'VIER Tung Tungs tegelijk. Kwadraat van chaos. Ooit gezien door 3 mensen. +3 min!'},
+  ],
+  pokemon:[
+    {id:'charmand',name:'Charmander',             emoji:'🔥',r:'common',desc:'Eerste vuurtype starter. Klein maar dapper. Het begin van alles.'},
+    {id:'squirtle',name:'Squirtle',               emoji:'💧',r:'common',desc:'Waterstarter met zonnebril. Coolste schildpad van het universum.'},
+    {id:'bulba',   name:'Bulbasaur',              emoji:'🌿',r:'common',desc:'Planttype starter. Draagt een bol op zijn rug. Rustigste starter.'},
+    {id:'pikachu', name:'Pikachu',                emoji:'⚡',r:'common',desc:'Mascotte van Pokémon. Ash zijn beste vriend. Zegt alleen zijn naam.'},
+    {id:'jigly',   name:'Jigglypuff',            emoji:'🎤',r:'common',desc:'Zingt iedereen in slaap en tekent dan op je gezicht.'},
+    {id:'eevee',   name:'Eevee',                 emoji:'🦊',r:'common',desc:'Kan evolueren naar 8 verschillende vormen. Meest flexibele Pokémon.'},
+    {id:'gengar',  name:'Gengar',                emoji:'👻',r:'rare',  desc:'Spooktype dat je koude rillingen geeft. Favoriet van nachtbrakers.'},
+    {id:'mewtwo',  name:'Mewtwo',                emoji:'🔮',r:'rare',  desc:'Genetisch gecreëerd supermon. Sterkste van de originele 151.'},
+    {id:'dragonit',name:'Dragonite',             emoji:'🐲',r:'rare',  desc:'Vriendelijke reus. Vliegt de aardbol in 16 uur rond. Bezorgt pakketjes.'},
+    {id:'blastois',name:'Blastoise',             emoji:'💧',r:'rare',  desc:'Schildpad met waterkanonnen. Niemand mess with Blastoise.'},
+    {id:'charizrd',name:'Charizard',             emoji:'🔥',r:'rare',  desc:'Populairste Pokémon ooit. Elke kaart is goud waard. Echt icoon.'},
+    {id:'venusaur',name:'Venusaur',              emoji:'🌺',r:'rare',  desc:'Eindstadium Bulbasaur. Gigantische bloem op zijn rug. 1st Ed: $50.000.'},
+    {id:'espeon',  name:'Espeon Gold Star',      emoji:'🌟',r:'epic',  desc:'Gouden ster Espeon. Psychotype elegantie. PSA 10: $30.000+'},
+    {id:'umbreon', name:'Umbreon Gold Star',     emoji:'⚫',r:'epic',  desc:'Gouden ster Umbreon. Duister en mysterieus. Waarde: $20.000+'},
+    {id:'lugia',   name:'Lugia 1st Edition',     emoji:'✨',r:'epic',  desc:'Neo Genesis 1e editie. Slechts 3 perfecte BGS 10 exemplaren. $144.000+'},
+    {id:'shinchar',name:'Shining Charizard',     emoji:'⭐',r:'epic',  desc:'Shiny Charizard uit Neo Destiny. Gloeit van zeldzaamheid. $10.000+'},
+    {id:'charshad',name:'Charizard Shadowless',  emoji:'💎',r:'secret',desc:'1e editie, geen schaduw. 124 PSA 10 copies. Logic kocht voor $204.650. Nu $420.000! +1 min!'},
+    {id:'pikasil', name:'Pikachu Silver Trophy', emoji:'🏆',r:'secret',desc:'2e prijs Japan toernooi 1998. Slechts 14 exemplaren. $444.000! +1 min!'},
+    {id:'blastpro',name:'Blastoise Prototype',   emoji:'🛡️',r:'secret',desc:'WotC prototype 1998. 2-5 exemplaren ooit. Verkocht voor $360.000! +1 min!'},
+    {id:'kangask', name:'Kangaskhan Trophy',     emoji:'🦘',r:'secret',desc:'Ouder-kind toernooi Japan 1998. Win alleen samen! $150.000+! +1 min!'},
+    {id:'tropicmb',name:'Tropical Mega Battle',  emoji:'🌴',r:'secret',desc:'Hawaii toernooi 1999. 12 deelnemers. Zeldzamer dan goud. $50.000+! +1 min!'},
+    {id:'pikaill', name:'Pikachu Illustrator',   emoji:'🖌️',r:'og',    desc:'Heilige graal. Slechts 39 exemplaren. Logan Paul: $5.275.000! Duurste kaart ooit. +3 min!'},
+    {id:'charjap', name:'Charizard 1996 No Rarity',emoji:'👑',r:'og',  desc:'Eerste Charizard ooit gedrukt. Japan 1996. Verkocht voor $641.721 in 2025! +3 min!'},
+  ],
+  brawl:[
+    {id:'shelly',  name:'Shelly',                emoji:'💥',r:'common',desc:'De starter. Shotgun, no-nonsense. Elke speler begint met haar.'},
+    {id:'nita',    name:'Nita',                  emoji:'🐻',r:'common',desc:'Roept een enorme beer op als Super. Rustig maar krachtig.'},
+    {id:'colt',    name:'Colt',                  emoji:'🤠',r:'common',desc:'Cowboy met twee pistolen. Snel, nauwkeurig, stijlvol.'},
+    {id:'bull',    name:'Bull',                  emoji:'🐂',r:'common',desc:'Pure sloopkracht. Laadt recht op vijanden af.'},
+    {id:'poco',    name:'Poco',                  emoji:'🎸',r:'common',desc:'Speelt gitaar en healt zijn team. De support van het veld.'},
+    {id:'piper',   name:'Piper',                 emoji:'💅',r:'rare',  desc:'Sniper met parasol. Hoe verder, hoe meer schade.'},
+    {id:'edgar',   name:'Edgar',                 emoji:'✂️',r:'rare',  desc:'Emo tiener met schoenveren. Springt op vijanden. Healt van schade.'},
+    {id:'bo',      name:'Bo',                    emoji:'🏹',r:'rare',  desc:'Sluipschutter met drie pijlen. Legt mijnen voor verrassingen.'},
+    {id:'bibi',    name:'Bibi',                  emoji:'⚾',r:'rare',  desc:'Basebal bat, bubblegum schild. Slaat iedereen weg.'},
+    {id:'frank',   name:'Frank',                 emoji:'🔨',r:'rare',  desc:'Enorme hamer, langzaam maar verwoestend.'},
+    {id:'mortis',  name:'Mortis',                emoji:'🦇',r:'epic',  desc:'Vampier met schop. Teleporteert naar vijanden. Mythic.'},
+    {id:'tara',    name:'Tara',                  emoji:'🃏',r:'epic',  desc:'Kaartlegster met zwart gat als Super. Mythic.'},
+    {id:'gene',    name:'Gene',                  emoji:'🧞',r:'epic',  desc:'Geest uit lamp. Grijpt tegenstanders vast. Mythic.'},
+    {id:'buzz',    name:'Buzz',                  emoji:'⚡',r:'epic',  desc:'Lifeguard die naar vijanden vliegt. Beste Mythic.'},
+    {id:'fang',    name:'Fang',                  emoji:'🦶',r:'epic',  desc:'Kung-fu vechter. Schoen bounced van vijand naar vijand. Mythic.'},
+    {id:'charlie', name:'Charlie',               emoji:'🕷️',r:'epic',  desc:'Spookachtig meisje dat vijanden in cocon wikkelt. Mythic.'},
+    {id:'melodie', name:'Melodie',               emoji:'🎵',r:'epic',  desc:'Muzikale geest die noten spawnt die vijanden volgen. Mythic.'},
+    {id:'draco',   name:'Draco',                 emoji:'🐉',r:'epic',  desc:'Drakenprinses die verandert in een draak. Mythic.'},
+    {id:'spike',   name:'Spike',                 emoji:'🌵',r:'secret',desc:'Cactus-baas. Supercell\'s mascotte. Stekels in alle richtingen. Legendary! +1 min!'},
+    {id:'crow',    name:'Crow',                  emoji:'☠️',r:'secret',desc:'Giftige kraai met dolken. Vergiftigt alles. Legendary! +1 min!'},
+    {id:'leon',    name:'Leon',                  emoji:'🗡️',r:'secret',desc:'Onzichtbaarheids-ninja. Sluipt onzichtbaar naar vijanden. Legendary! +1 min!'},
+    {id:'sandy',   name:'Sandy',                 emoji:'😴',r:'secret',desc:'Slaperig kind. Zandstorm maakt heel team onzichtbaar. Legendary! +1 min!'},
+    {id:'amber',   name:'Amber',                 emoji:'🔥',r:'secret',desc:'Vurige schutter met benzine. Legt vuurlinies. Legendary! +1 min!'},
+    {id:'meg',     name:'Meg',                   emoji:'🤖',r:'secret',desc:'Meisje met gigantische mecha-robot. Twee vecht-vormen. Legendary! +1 min!'},
+    {id:'surge',   name:'Surge',                 emoji:'🏄',r:'secret',desc:'Surfer die upgrades in-game verdient. Legendary! +1 min!'},
+    {id:'chester', name:'Chester',               emoji:'🎪',r:'secret',desc:'Clown met random Supers — je weet nooit wat je krijgt. Legendary! +1 min!'},
+    {id:'cordelius',name:'Cordelius',            emoji:'🍄',r:'secret',desc:'Paddenstoel dat vijanden meeneemt in een duel-dimensie. Legendary! +1 min!'},
+    {id:'kit',     name:'Kit',                   emoji:'🐱',r:'secret',desc:'Zakelijke kat die op brawlers springt als support. Legendary! +1 min!'},
+    {id:'kenji',   name:'Kenji',                 emoji:'🗡️',r:'secret',desc:'Samurai die glijdt langs vijanden met katana. Legendary! +1 min!'},
+    {id:'pierce',  name:'Pierce',                emoji:'🔱',r:'secret',desc:'Stoere schutter met drietand. Nieuwste Legendary. +1 min!'},
+    {id:'kaze',    name:'Kaze',                  emoji:'🌀',r:'og',    desc:'OG windmeester. 0.495% kans in Ultra Chaos Drop. INSANE! +3 min!'},
+    {id:'sirius',  name:'Sirius',                emoji:'🌟',r:'og',    desc:'OG kosmische kracht. Absoluut zeldzaamste brawler. +3 min!'},
+  ],
+};
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let totalMinutes = parseInt(localStorage.getItem('philouMinutes')||'0');
+let streak       = parseInt(localStorage.getItem('philouStreak') ||'0');
+let collection   = JSON.parse(localStorage.getItem('philouCollection')||'{}');
+let pityCount    = JSON.parse(localStorage.getItem('philouPity')||'{"brainrot":0,"pokemon":0,"brawl":0}');
+let typedAnswer=null,currentQ=null,locked=false,pinBuffer='',activeUniverse=null,collTab='all';
+let viewCollection=null;
+const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
+
+// Check view mode from URL
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  const d=p.get('c'),n=p.get('n');
+  if(d){try{viewCollection=JSON.parse(atob(d));setTimeout(()=>{openCollection();if(n){document.getElementById('viewBannerTitle').textContent=`🎮 ${decodeURIComponent(n)} zijn collectie`;}document.getElementById('viewBanner').style.display='';document.getElementById('shareBtn').textContent='🔗 Maak jouw eigen collectie!';},200);}catch(e){}}
+})();
+
+buildNumpad();buildPinPad();renderXP();renderHeader();
+// Show onboarding if first time
+if(!localStorage.getItem('philouOnboarded')){showOnboarding();}else{nextQuestion();}
+
+function save(){
+  localStorage.setItem('philouMinutes',   totalMinutes);
+  localStorage.setItem('philouStreak',    streak);
+  localStorage.setItem('philouCollection',JSON.stringify(collection));
+  localStorage.setItem('philouPity',      JSON.stringify(pityCount));
+}
+
+/* ── HEADER & XP ── */
+function renderHeader(){
+  document.getElementById('minutesDisplay').textContent=totalMinutes;
+  document.getElementById('minutesLabel').textContent=totalMinutes===1?'minuut':'minuten';
+  const next=SPAWN_EVERY-(totalMinutes%SPAWN_EVERY);
+  document.getElementById('spawnAt').textContent=next===SPAWN_EVERY?SPAWN_EVERY:next;
+}
+function renderXP(){
+  document.getElementById('xpFill').style.width=(streak/GOAL*100)+'%';
+  const c=document.getElementById('xpDots');c.innerHTML='';
+  for(let i=0;i<GOAL;i++){const d=document.createElement('div');d.className='xp-dot'+(i<streak?' lit':'');d.textContent=i<streak?'🎮':'';c.appendChild(d);}
+  document.getElementById('leftCount').textContent=GOAL-streak;
+}
+
+/* ── QUESTION — Philou: keer + deel sommen ── */
+function nextQuestion(){
+  typedAnswer='';locked=false;
+  const b=document.getElementById('ansBox');b.textContent='_';b.className='ans-box';
+  const f=document.getElementById('fbText');f.textContent='';f.className='fb-text';
+
+  // 50% keer, 50% deel
+  const isKeer = Math.random() < 0.5;
+
+  let a, b2, op, ans;
+  if(isKeer){
+    // Tafels t/m 16 — maar niet te moeilijk: tafel t/m 12 vaker, 13-16 ook
+    a = rand(2, 16);
+    b2 = rand(2, 16);
+    op = '×';
+    ans = a * b2;
+  } else {
+    // Deelsommen: antwoord is altijd heel getal, uitkomst max 600
+    // Kies deler 2-16, quotiënt 2-37 (zodat product max ~592)
+    b2 = rand(2, 16);
+    ans = rand(2, Math.min(37, Math.floor(600 / b2)));
+    a = b2 * ans; // deeltal
+    op = '÷';
+  }
+
+  currentQ = {a, b: b2, op, ans};
+  document.getElementById('qText').textContent = `${a} ${op} ${b2} = ?`;
+}
+function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn;}
+
+/* ── NUMPAD ── */
+function buildNumpad(){
+  const pad=document.getElementById('numpad');
+  [7,8,9,4,5,6,1,2,3,'⌫',0,'✓'].forEach(k=>{
+    const btn=document.createElement('button');btn.className='pad-btn';btn.textContent=k;
+    if(k==='⌫'){btn.classList.add('backspace');btn.addEventListener('click',doBksp);}
+    else if(k==='✓'){btn.classList.add('check');btn.addEventListener('click',doCheck);}
+    else{btn.classList.add('num');btn.addEventListener('click',()=>doDigit(String(k)));}
+    pad.appendChild(btn);
+  });
+}
+function doDigit(d){if(locked||typedAnswer.length>=3)return;typedAnswer+=d;refreshAns();}
+function doBksp(){if(locked)return;typedAnswer=typedAnswer.slice(0,-1);refreshAns();}
+function refreshAns(){const b=document.getElementById('ansBox');b.textContent=typedAnswer||'_';b.className='ans-box';}
+function doCheck(){
+  if(locked||!typedAnswer)return;locked=true;
+  const given=parseInt(typedAnswer,10);
+  const box=document.getElementById('ansBox'),fb=document.getElementById('fbText');
+  if(given===currentQ.ans){
+    box.className='ans-box correct popping';fb.className='fb-text correct';fb.textContent=pickRnd(OK_MSGS);
+    launchParticles(28);streak++;save();renderXP();
+    if(streak>=GOAL){streak=0;totalMinutes++;save();renderXP();renderHeader();
+      if(totalMinutes%SPAWN_EVERY===0)setTimeout(showPackSelect,1100);else setTimeout(nextQuestion,1400);}
+    else{renderHeader();setTimeout(nextQuestion,1400);}
+  }else{
+    box.className='ans-box wrong shaking';fb.className='fb-text wrong';fb.textContent=pickRnd(FAIL_MSGS);
+    setTimeout(()=>{box.classList.remove('shaking');typedAnswer='';box.textContent='_';box.className='ans-box';fb.textContent='';fb.className='fb-text';locked=false;},1500);
+  }
+}
+const OK_MSGS=['🎮 GG! Goed zo!','⚡ PRO MOVE!','🏆 EPIC WIN!','🎯 HEADSHOT!','💎 NOOB CRUSH!','🚀 OP!','🧠 SMART!','⭐ LEGENDARY!','💪 TOO EASY!','😎 CLUTCH!'];
+const FAIL_MSGS=['😅 Try again!','🙈 Bijna!','🎮 Respawn!','💀 Oeps!','🔄 Kom op!'];
+function pickRnd(a){return a[Math.floor(Math.random()*a.length)];}
+
+/* ── PACK SELECT ── */
+function showPackSelect(){launchParticles(25);document.getElementById('packOverlay').classList.remove('hidden');}
+function startGacha(uni){activeUniverse=uni;document.getElementById('packOverlay').classList.add('hidden');runGacha();}
+
+/* ── GACHA ── */
+function rollChar(uni){
+  const pity=pityCount[uni]||0;const r=Math.random();let rarity;
+  if(pity>=PITY_SECRET)rarity='secret';
+  else if(pity>=PITY_EPIC)rarity='epic';
+  else if(pity>=PITY_RARE)rarity='rare';
+  else{if(r<0.60)rarity='common';else if(r<0.85)rarity='rare';else if(r<0.95)rarity='epic';else if(r<0.99)rarity='secret';else rarity='og';}
+  pityCount[uni]=rarity==='common'?(pity+1):0;
+  const pool=CHARS[uni].filter(c=>c.r===rarity);
+  if(!pool.length){for(const rv of['secret','epic','rare','common']){const p2=CHARS[uni].filter(c=>c.r===rv);if(p2.length)return p2[Math.floor(Math.random()*p2.length)];}}
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function runGacha(){
+  const char=rollChar(activeUniverse);
+  const overlay=document.getElementById('gachaOverlay');
+  const slotWin=document.getElementById('slotWin');
+  const card=document.getElementById('tcgCard');
+  overlay.classList.remove('hidden');
+  slotWin.style.display='';card.classList.add('hidden');
+  document.getElementById('gachaHdr').textContent='🎰 Spawning...';
+  document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+  slotWin.style.borderColor='#1a1a1a';slotWin.style.boxShadow='none';
+
+  const allFlat=[...CHARS.brainrot,...CHARS.pokemon,...CHARS.brawl];
+  let count=0,total=22,delay=55;
+
+  function spin(){
+    const c=allFlat[Math.floor(Math.random()*allFlat.length)];
+    const rv=R[c.r];
+    const imgUrl=IMG[c.id];
+    const si=document.getElementById('slotImg');
+    const sf=document.getElementById('slotFb');
+    if(imgUrl){si.src=imgUrl;si.style.display='';sf.style.display='none';}
+    else{si.style.display='none';sf.textContent=c.emoji;sf.style.display='';}
+    document.getElementById('slotName').textContent=c.name;
+    if(count>total-7){slotWin.style.borderColor=rv.color;slotWin.style.boxShadow=`0 0 24px ${rv.glow}`;}
+    count++;
+    if(count<total){if(count>total-9)delay+=40;setTimeout(spin,delay);}
+    else setTimeout(()=>showReveal(char),350);
+  }
+  spin();
+}
+
+let pendingRevealChar = null;
+
+function showReveal(char){
+  pendingRevealChar = char;
+  const rv=R[char.r]; const uni=U[activeUniverse];
+
+  document.getElementById('slotWin').style.display='none';
+  document.getElementById('gachaHdr').textContent='🎴 Wat heb je gespawnd?';
+
+  // Set back icon
+  document.getElementById('backUniIcon').textContent =
+    activeUniverse==='brainrot'?'🧠':activeUniverse==='pokemon'?'🃏':'⭐';
+
+  // Pre-load front card content (hidden behind flip)
+  const isNew=!collection[char.id];
+  const imgUrl=IMG[char.id];
+  const ci=document.getElementById('cardImg');
+  const cf=document.getElementById('cardFb');
+  if(imgUrl){ci.src=imgUrl;ci.style.display='';cf.style.display='none';}
+  else{ci.style.display='none';cf.textContent=char.emoji;cf.style.display='flex';}
+
+  document.getElementById('cardNameTop').textContent=char.name;
+  const rg=document.getElementById('cardRarityGem');
+  rg.textContent=rv.label;rg.style.background=rv.color;
+
+  const ub=document.getElementById('cardUniBadge');
+  ub.textContent=uni.label;ub.style.background=uni.bg;ub.style.color=uni.color;
+
+  const bon=document.getElementById('cardBonus');
+  if(rv.bonus>0){bon.textContent=`🎁 +${rv.bonus} BONUS MINUT${rv.bonus>1?'EN':''}!`;bon.classList.remove('hidden');}
+  else bon.classList.add('hidden');
+
+  document.getElementById('cardDesc').textContent=char.desc;
+  const nb=document.getElementById('cardNew');
+  isNew?nb.classList.remove('hidden'):nb.classList.add('hidden');
+
+  // Style the card front
+  const front=document.getElementById('cardFront');
+  front.style.background=rv.bg;
+  front.style.borderColor=rv.border;
+  front.style.boxShadow=`0 0 50px ${rv.glow}`;
+  front.className='card-front'+(char.r==='og'?' rainbow':char.r!=='common'?' holo':'');
+
+  // Show the card scene (face down)
+  const scene=document.getElementById('cardScene');
+  scene.classList.remove('hidden');
+  document.getElementById('cardFlip').classList.remove('flipped');
+  document.getElementById('tapHint').classList.remove('hidden');
+  document.getElementById('collectBtn').classList.add('hidden');
+  document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+
+  // Suspense shake on og/secret
+  if(char.r==='og'||char.r==='secret'){
+    setTimeout(()=>{
+      scene.style.animation='shake 0.3s ease 3';
+      setTimeout(()=>scene.style.animation='',900);
+    },600);
+  }
+}
+
+function flipCard(){
+  const char=pendingRevealChar;
+  if(!char)return;
+  const flip=document.getElementById('cardFlip');
+  if(flip.classList.contains('flipped'))return; // already flipped
+
+  flip.classList.add('flipped');
+  document.getElementById('tapHint').classList.add('hidden');
+
+  // Now collect & award
+  const rv=R[char.r];
+  collection[char.id]=(collection[char.id]||0)+1;
+  if(rv.bonus>0)totalMinutes+=rv.bonus;
+  save();renderHeader();
+
+  setTimeout(()=>{
+    document.getElementById('gachaHdr').textContent=
+      char.r==='og'?'🌟🌟🌟 OG SPAWN!! 🌟🌟🌟':
+      char.r==='secret'?'🔥🔥 LEGENDARY SPAWN!! 🔥🔥':
+      char.r==='epic'?'💜 EPIC SPAWN!':
+      char.r==='rare'?'💙 Rare Spawn!':'✅ Gespawnd!';
+    document.getElementById('collectBtn').classList.remove('hidden');
+    document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+
+    if(char.r==='og')launchParticles(120);
+    else if(char.r==='secret')launchParticles(70);
+    else if(char.r==='epic')launchParticles(40);
+    else if(char.r==='rare')launchParticles(15);
+  },750);
+}
+
+function closeGacha(){
+  document.getElementById('gachaOverlay').classList.add('hidden');
+  document.getElementById('cardScene').classList.add('hidden');
+  document.getElementById('collectBtn').classList.add('hidden');
+  pendingRevealChar=null;
+  nextQuestion();
+}
+
+/* ── COLLECTION ── */
+function openCollection(){renderCollection();document.getElementById('collOverlay').classList.remove('hidden');}
+function closeCollection(){document.getElementById('collOverlay').classList.add('hidden');if(viewCollection){viewCollection=null;history.replaceState(null,'',window.location.pathname);}}
+function switchTab(tab){
+  collTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn.t-'+(tab==='brainrot'?'br':tab==='pokemon'?'pk':tab==='brawl'?'bw':tab)).classList.add('active');
+  renderCollection();
+}
+function renderCollection(){
+  const grid=document.getElementById('collGrid');grid.innerHTML='';
+  const dc=viewCollection||collection;
+  const allFlat=[...CHARS.brainrot,...CHARS.pokemon,...CHARS.brawl];
+  const unlocked=Object.keys(dc).length;
+  document.getElementById('collStats').textContent=`${unlocked} / ${allFlat.length} gespawnd 🧬`;
+  document.getElementById('viewBanner').style.display=viewCollection?'':'none';
+
+  // Progress bars
+  const prog=document.getElementById('uniProgress');prog.innerHTML='';
+  [{key:'brainrot',label:'🧠 Brainrot',color:'#7c3aed'},{key:'pokemon',label:'🃏 Pokémon',color:'#dc2626'},{key:'brawl',label:'⭐ Brawl Stars',color:'#d97706'}].forEach(u=>{
+    const tot=CHARS[u.key].length,got=CHARS[u.key].filter(c=>dc[c.id]).length,pct=Math.round(got/tot*100);
+    const row=document.createElement('div');row.className='up-row';
+    row.innerHTML=`<div class="up-label">${u.label}</div><div class="up-bar"><div class="up-fill" style="width:${pct}%;background:${u.color};"></div></div><div class="up-count">${got}/${tot}</div>`;
+    prog.appendChild(row);
+  });
+
+  // Pity pills
+  const pr=document.getElementById('pityRow');pr.innerHTML='';
+  if(!viewCollection){
+    ['brainrot','pokemon','brawl'].forEach(u=>{
+      const p=pityCount[u]||0;
+      const isHot=p>=PITY_SECRET,isWarn=p>=PITY_EPIC&&!isHot;
+      const pill=document.createElement('div');
+      pill.className='pity-pill'+(isHot?' hot':isWarn?' warn':'');
+      const lbl=u==='brainrot'?'🧠':u==='pokemon'?'🃏':'⭐';
+      const txt=isHot?'Legendary!':`${isWarn?'Epic':p>=PITY_RARE?'Epic':'Rare'} in ${isHot?0:isWarn?PITY_SECRET-p:p>=PITY_RARE?PITY_EPIC-p:PITY_RARE-p}`;
+      pill.textContent=`${lbl} ${txt}`;
+      pr.appendChild(pill);
+    });
+  }
+
+  // Grid
+  const unis=collTab==='all'?['brainrot','pokemon','brawl']:[collTab];
+  const uniLabels={brainrot:'🧠 Brainrot',pokemon:'🃏 Pokémon',brawl:'⭐ Brawl Stars'};
+  const rarityOrder=['og','secret','epic','rare','common'];
+
+  unis.forEach(uni=>{
+    const uhdr=document.createElement('div');uhdr.className='rarity-hdr';
+    uhdr.style.color=U[uni].bg;
+    uhdr.innerHTML=`<span>${uniLabels[uni]}</span><div class="rarity-line"></div>`;
+    grid.appendChild(uhdr);
+
+    rarityOrder.forEach(rk=>{
+      CHARS[uni].filter(c=>c.r===rk).forEach(char=>{
+        const isUnlocked=!!dc[char.id];const cnt=dc[char.id]||0;const rv=R[rk];
+        const mc=document.createElement('div');
+        mc.className='mini-card '+(isUnlocked?'unlocked':'locked');
+        if(isUnlocked)mc.style.setProperty('--mc',rv.border);
+        const imgUrl=IMG[char.id];
+        mc.innerHTML=`
+          ${imgUrl&&isUnlocked?`<img src="${imgUrl}" alt="${char.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" loading="lazy"><div class="mc-emoji" style="display:none">${char.emoji}</div>`:
+          `<div class="mc-emoji">${isUnlocked?char.emoji:'❓'}</div>`}
+          <div class="mc-name">${isUnlocked?char.name:'???'}</div>
+          <div class="mc-dot" style="background:${rv.color}"></div>
+          ${cnt>1?`<div class="mc-cnt">×${cnt}</div>`:''}
+        `;
+        mc.title=isUnlocked?char.desc:'Nog niet gespawnd';
+        grid.appendChild(mc);
+      });
+    });
+  });
+}
+
+/* ── SHARE ── */
+function shareCollection(){
+  const data=btoa(JSON.stringify(collection));
+  const url=`${window.location.origin}${window.location.pathname}?n=${encodeURIComponent('Philou')}&c=${data}`;
+  if(navigator.share){navigator.share({title:'🎮 Philou haar Gacha Collectie!',text:'Kijk mijn cards!',url}).catch(()=>copyUrl(url));}
+  else copyUrl(url);
+}
+function copyUrl(text){
+  navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('shareToast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}).catch(()=>alert(text));
+}
+
+/* ── PARTICLES ── */
+function launchParticles(n){
+  const layer=document.getElementById('particles');
+  const colors=['#e91e8c','#FFD700','#0077FF','#00b06a','#c2185b','#a78bfa','#38bdf8','#fb923c','#fbbf24','#f472b6'];
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='p-block';
+      const sz=rand(7,22);
+      el.style.cssText=`left:${Math.random()*100}vw;width:${sz}px;height:${sz}px;background:${colors[Math.floor(Math.random()*colors.length)]};border:1px solid rgba(0,0,0,0.3);animation-duration:${(Math.random()*1.4+0.7).toFixed(2)}s;`;
+      layer.appendChild(el);setTimeout(()=>el.remove(),2800);
+    },i*22);
+  }
+}
+
+/* ── ONBOARDING ── */
+const TOTAL_SLIDES = 5;
+let currentSlide = 0;
+
+function showOnboarding(){
+  document.getElementById('onboardOverlay').classList.remove('hidden');
+  renderOnboardDots();
+}
+function renderOnboardDots(){
+  const dots=document.getElementById('onboardDots');dots.innerHTML='';
+  for(let i=0;i<TOTAL_SLIDES;i++){
+    const d=document.createElement('div');
+    d.className='onboard-dot'+(i===currentSlide?' active':'');
+    dots.appendChild(d);
+  }
+  const btn=document.getElementById('onboardNextBtn');
+  btn.textContent=currentSlide===TOTAL_SLIDES-1?'🚀 Start!' :'Volgende →';
+  btn.className=currentSlide===TOTAL_SLIDES-1?'onboard-start':'onboard-next';
+}
+function onboardNext(){
+  if(currentSlide<TOTAL_SLIDES-1){
+    document.getElementById('slide'+currentSlide).classList.remove('active');
+    currentSlide++;
+    document.getElementById('slide'+currentSlide).classList.add('active');
+    renderOnboardDots();
+    if(currentSlide===TOTAL_SLIDES-1) launchParticles(30);
+  } else {
+    finishOnboarding();
+  }
+}
+function finishOnboarding(){
+  localStorage.setItem('philouOnboarded','1');
+  document.getElementById('onboardOverlay').classList.add('hidden');
+  nextQuestion();
+}
+
+/* ── PIN ── */
+function buildPinPad(){
+  const pad=document.getElementById('pinPad');
+  [1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].forEach(k=>{
+    const btn=document.createElement('button');btn.className='mpb';btn.textContent=k;
+    if(k==='✕'){btn.classList.add('m-cancel');btn.addEventListener('click',closePin);}
+    else if(k==='⌫'){btn.classList.add('m-del');btn.addEventListener('click',pinBksp);}
+    else btn.addEventListener('click',()=>pinDigit(String(k)));
+    pad.appendChild(btn);
+  });
+}
+function openPin(){pinBuffer='';renderPinDots();document.getElementById('pinErr').textContent='';document.getElementById('pinOverlay').classList.remove('hidden');}
+function closePin(){document.getElementById('pinOverlay').classList.add('hidden');pinBuffer='';}
+function pinDigit(d){if(pinBuffer.length>=4)return;pinBuffer+=d;renderPinDots();if(pinBuffer.length===4)setTimeout(checkPin,150);}
+function pinBksp(){pinBuffer=pinBuffer.slice(0,-1);renderPinDots();document.getElementById('pinErr').textContent='';}
+function renderPinDots(){const f='● '.repeat(pinBuffer.length).trim();const e='○ '.repeat(4-pinBuffer.length).trim();document.getElementById('pinDots').textContent=[f,e].filter(Boolean).join(' ');}
+function checkPin(){
+  if(pinBuffer===PIN){
+    streak=0;totalMinutes=0;collection={};pityCount={brainrot:0,pokemon:0,brawl:0};
+    save();renderXP();renderHeader();closePin();nextQuestion();
+    const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='✅ Alles gereset!';
+    setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+  }else{document.getElementById('pinErr').textContent='❌ WRONG PIN';pinBuffer='';renderPinDots();}
+}
+</script>
+</body>
+</html>
