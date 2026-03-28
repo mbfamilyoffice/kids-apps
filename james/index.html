@@ -3,998 +3,660 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>James Sommen 🎮</title>
+  <title>🧠 Brainrot Sommen</title>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    :root {
-      --roblox-red:    #E8232A;
-      --roblox-dark:   #1a1a1a;
-      --roblox-gray:   #2d2d2d;
-      --roblox-light:  #3d3d3d;
-      --roblox-white:  #ffffff;
-      --roblox-yellow: #FFD700;
-      --roblox-green:  #00b06a;
-      --roblox-blue:   #0077FF;
-    }
-
-    body {
-      font-family: 'Arial Black', 'Arial Bold', 'Trebuchet MS', Arial, sans-serif;
-      background: #1a1a1a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 14px 12px 28px;
-      gap: 12px;
-      background-image:
-        radial-gradient(ellipse at top, #2a0a0a 0%, #1a1a1a 60%);
-    }
-
-    /* ── ROBLOX logo bar ── */
-    .roblox-topbar {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 6px 0 2px;
-    }
-
-    .roblox-logo {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: #fff;
-      text-transform: uppercase;
-    }
-
-    .roblox-logo span {
-      color: var(--roblox-red);
-    }
-
-    /* ── Header: screen time ── */
-    .header-card {
-      background: var(--roblox-gray);
-      border: 3px solid var(--roblox-red);
-      border-radius: 12px;
-      padding: 12px 28px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(232,35,42,0.35), 0 6px 18px rgba(0,0,0,0.5);
-      width: 100%;
-      max-width: 480px;
-    }
-
-    .header-label {
-      font-size: 0.85rem;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 2px;
-    }
-
-    .header-minutes {
-      font-size: 3.2rem;
-      font-weight: 900;
-      color: var(--roblox-yellow);
-      line-height: 1;
-      text-shadow: 0 0 18px rgba(255,215,0,0.5);
-    }
-
-    .header-sublabel {
-      font-size: 0.9rem;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* ── XP Progress bar ── */
-    .progress-card {
-      background: var(--roblox-gray);
-      border: 2px solid #444;
-      border-radius: 12px;
-      padding: 12px 20px 14px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      width: 100%;
-      max-width: 480px;
-    }
-
-    .progress-label {
-      font-size: 0.85rem;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-
-    .xp-bar-wrap {
-      background: #111;
-      border-radius: 8px;
-      height: 28px;
-      width: 100%;
-      border: 2px solid #555;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .xp-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #E8232A, #ff6b35);
-      border-radius: 6px;
-      transition: width 0.5s cubic-bezier(.34,1.56,.64,1);
-      position: relative;
-    }
-
-    .xp-bar-fill::after {
-      content: '';
-      position: absolute;
-      top: 3px; left: 6px; right: 6px;
-      height: 6px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 3px;
-    }
-
-    .xp-circles {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .xp-dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      border: 2px solid #555;
-      background: #111;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .xp-dot.lit {
-      background: var(--roblox-red);
-      border-color: var(--roblox-red);
-      box-shadow: 0 0 10px rgba(232,35,42,0.6);
-      font-size: 1.1rem;
-    }
-
-    /* ── Question card ── */
-    .question-card {
-      background: var(--roblox-gray);
-      border: 2px solid #444;
-      border-radius: 14px;
-      padding: 24px 24px 20px;
-      text-align: center;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
-      width: 100%;
-      max-width: 480px;
-    }
-
-    .question-text {
-      font-size: 4rem;
-      font-weight: 900;
-      color: #ffffff;
-      margin-bottom: 16px;
-      letter-spacing: 2px;
-      line-height: 1.1;
-      text-shadow: 2px 2px 0 #000;
-    }
-
-    .answer-box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 140px;
-      min-height: 72px;
-      background: #111;
-      border: 4px solid #555;
-      border-radius: 10px;
-      font-size: 3.4rem;
-      font-weight: 900;
-      color: #fff;
-      padding: 6px 22px;
-      transition: border-color 0.25s, background 0.25s, color 0.25s;
-      font-family: 'Arial Black', Arial, sans-serif;
-    }
-
-    .answer-box.correct {
-      border-color: var(--roblox-green);
-      background: #003322;
-      color: var(--roblox-green);
-      box-shadow: 0 0 18px rgba(0,176,106,0.4);
-    }
-
-    .answer-box.wrong {
-      border-color: var(--roblox-red);
-      background: #330000;
-      color: var(--roblox-red);
-      box-shadow: 0 0 18px rgba(232,35,42,0.4);
-    }
-
-    .feedback-text {
-      margin-top: 10px;
-      font-size: 1.3rem;
-      font-weight: 900;
-      min-height: 32px;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .feedback-text.correct { color: var(--roblox-green); }
-    .feedback-text.wrong   { color: var(--roblox-red); }
-
-    /* ── Number pad ── */
-    .numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      width: 100%;
-      max-width: 380px;
-    }
-
-    .pad-btn {
-      border: none;
-      border-radius: 8px;
-      padding: 0;
-      height: 80px;
-      font-size: 2.2rem;
-      font-weight: 900;
-      cursor: pointer;
-      font-family: 'Arial Black', Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 0 rgba(0,0,0,0.5);
-      transition: transform 0.08s, box-shadow 0.08s;
-      color: #fff;
-      -webkit-appearance: none;
-      border: 2px solid transparent;
-    }
-
-    .pad-btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 rgba(0,0,0,0.5);
-    }
-
-    .pad-btn.n0  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n1  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n2  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n3  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n4  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n5  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n6  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n7  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n8  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-    .pad-btn.n9  { background: #2d2d2d; border-color: #555; color: #eee; box-shadow: 0 6px 0 #111; }
-
-    .pad-btn.backspace {
-      background: #E8232A;
-      border-color: #ff4444;
-      color: white;
-      font-size: 1.8rem;
-      box-shadow: 0 6px 0 #8b0000;
-    }
-
-    .pad-btn.check {
-      background: var(--roblox-green);
-      border-color: #00e88a;
-      color: white;
-      font-size: 2rem;
-      box-shadow: 0 6px 0 #006040;
-    }
-
-    /* ── Parent button ── */
-    .parent-btn {
-      background: transparent;
-      border: 2px solid #444;
-      color: #666;
-      border-radius: 8px;
-      padding: 10px 24px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      font-family: 'Arial Black', Arial, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .parent-btn:active { border-color: #888; color: #aaa; }
-
-    /* ── Roblox Character CSS Art ── */
-    .roblox-char {
-      position: relative;
-      width: 80px;
-      height: 110px;
-      animation: char-dance 0.4s infinite alternate ease-in-out;
-    }
-
-    @keyframes char-dance {
-      0%   { transform: rotate(-8deg) translateY(0); }
-      100% { transform: rotate(8deg) translateY(-10px); }
-    }
-
-    .char-head {
-      width: 52px;
-      height: 52px;
-      background: #ffcc00;
-      border: 4px solid #000;
-      border-radius: 8px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .char-eye-l, .char-eye-r {
-      width: 10px;
-      height: 10px;
-      background: #000;
-      border-radius: 2px;
-      position: absolute;
-      top: 16px;
-    }
-    .char-eye-l { left: 10px; }
-    .char-eye-r { right: 10px; }
-
-    .char-smile {
-      width: 22px;
-      height: 10px;
-      border-bottom: 4px solid #000;
-      border-radius: 0 0 10px 10px;
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .char-body {
-      width: 44px;
-      height: 36px;
-      background: #0077FF;
-      border: 4px solid #000;
-      border-radius: 4px;
-      margin: 0 auto;
-      margin-top: -2px;
-    }
-
-    .char-legs {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-      margin-top: 0px;
-    }
-
-    .char-leg {
-      width: 18px;
-      height: 28px;
-      background: #1a1a1a;
-      border: 3px solid #000;
-      border-radius: 3px;
-    }
-
-    .char-leg:first-child {
-      animation: leg-l 0.4s infinite alternate ease-in-out;
-    }
-    .char-leg:last-child {
-      animation: leg-r 0.4s infinite alternate ease-in-out;
-    }
-
-    @keyframes leg-l {
-      0%   { transform: rotate(-20deg); }
-      100% { transform: rotate(10deg); }
-    }
-    @keyframes leg-r {
-      0%   { transform: rotate(20deg); }
-      100% { transform: rotate(-10deg); }
-    }
-
-    /* ── Roblox blocks animation layer ── */
-    .blocks-layer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 900;
-      overflow: hidden;
-    }
-
-    .rblock {
-      position: absolute;
-      border: 2px solid rgba(0,0,0,0.4);
-      border-radius: 4px;
-      animation: block-fall linear forwards;
-    }
-
-    @keyframes block-fall {
-      0%   { transform: translateY(-40px) rotate(0deg); opacity: 1; }
-      80%  { opacity: 1; }
-      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-    }
-
-    /* ── Shake ── */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%     { transform: translateX(-12px); }
-      40%     { transform: translateX(12px); }
-      60%     { transform: translateX(-8px); }
-      80%     { transform: translateX(8px); }
-    }
-    .shaking { animation: shake 0.4s ease; }
-
-    /* ── Pop correct ── */
-    @keyframes pop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.14); }
-      70%  { transform: scale(0.96); }
-      100% { transform: scale(1); }
-    }
-    .popping { animation: pop 0.45s ease; }
-
-    /* ── Minute earned overlay ── */
-    .earned-overlay {
-      position: fixed;
-      inset: 0;
-      background: #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      z-index: 1200;
-      animation: overlayIn 0.4s cubic-bezier(.34,1.56,.64,1);
-    }
-
-    .earned-overlay.hidden { display: none; }
-
-    @keyframes overlayIn {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-
-    .earned-badge {
-      background: var(--roblox-red);
-      border: 4px solid #ff6666;
-      border-radius: 16px;
-      padding: 12px 28px;
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      box-shadow: 0 0 40px rgba(232,35,42,0.6);
-      animation: badge-pulse 0.8s infinite alternate;
-    }
-
-    @keyframes badge-pulse {
-      from { box-shadow: 0 0 20px rgba(232,35,42,0.4); }
-      to   { box-shadow: 0 0 50px rgba(232,35,42,0.9); }
-    }
-
-    .earned-title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #fff;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      line-height: 1.3;
-      padding: 0 20px;
-      text-shadow: 2px 2px 0 var(--roblox-red);
-    }
-
-    .earned-total {
-      font-size: 1.2rem;
-      color: var(--roblox-yellow);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .earned-continue {
-      margin-top: 8px;
-      background: var(--roblox-red);
-      border: 3px solid #ff6666;
-      border-radius: 8px;
-      padding: 16px 44px;
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: #fff;
-      cursor: pointer;
-      font-family: 'Arial Black', Arial, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      box-shadow: 0 6px 0 #8b0000;
-      transition: transform 0.08s, box-shadow 0.08s;
-    }
-
-    .earned-continue:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #8b0000;
-    }
-
-    /* ── PIN modal ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    .modal-overlay.hidden { display: none; }
-
-    .modal-box {
-      background: var(--roblox-gray);
-      border: 3px solid var(--roblox-red);
-      border-radius: 14px;
-      padding: 28px 24px 24px;
-      text-align: center;
-      width: 90%;
-      max-width: 340px;
-      box-shadow: 0 0 40px rgba(232,35,42,0.3), 0 20px 60px rgba(0,0,0,0.6);
-    }
-
-    .modal-title {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
-    }
-
-    .modal-sub {
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .pin-dots {
-      font-size: 2rem;
-      letter-spacing: 14px;
-      margin-bottom: 16px;
-      color: var(--roblox-red);
-    }
-
-    .modal-numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .mpb {
-      border: 2px solid #444;
-      border-radius: 8px;
-      height: 58px;
-      font-size: 1.5rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Arial Black', Arial, sans-serif;
-      background: #2d2d2d;
-      color: #fff;
-      box-shadow: 0 4px 0 #111;
-      transition: transform 0.07s, box-shadow 0.07s;
-    }
-
-    .mpb:active { transform: translateY(3px); box-shadow: 0 1px 0 #111; }
-    .mpb.m-cancel { background: #E8232A; border-color: #ff4444; box-shadow: 0 4px 0 #8b0000; }
-    .mpb.m-del    { background: #555; border-color: #777; box-shadow: 0 4px 0 #222; }
-
-    .pin-error {
-      font-size: 0.9rem;
-      color: var(--roblox-red);
-      min-height: 22px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* ── Responsive ── */
-    @media (max-height: 700px) {
-      .header-minutes { font-size: 2.4rem; }
-      .question-text  { font-size: 3rem; }
-      .answer-box     { font-size: 2.8rem; min-height: 60px; }
-      .pad-btn        { height: 66px; font-size: 1.9rem; }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+    :root{
+      --red:#E8232A;--dark:#1a1a1a;--gray:#2d2d2d;--white:#fff;
+      --yellow:#FFD700;--green:#00b06a;--blue:#0077FF;
+      --common:#9e9e9e;--rare:#4fc3f7;--epic:#ce93d8;--secret:#ff9800;--og:#FFD700;
+    }
+    body{
+      font-family:'Arial Black','Arial Bold',Arial,sans-serif;
+      background:#0d0d0d;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;
+      padding:14px 12px 32px;gap:12px;
+      background-image:radial-gradient(ellipse at top,#1a0a1a 0%,#0d0d0d 60%);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
+    .logo{font-size:1.3rem;font-weight:900;color:#fff;line-height:1.1;}
+    .logo .accent{color:var(--red);}
+    .logo .sub{font-size:0.65rem;color:#555;letter-spacing:3px;display:block;text-transform:uppercase;}
+    .collection-btn{
+      background:linear-gradient(135deg,#1a1a2e,#2d1a3d);
+      border:2px solid #5a3a7a;color:#ce93d8;
+      border-radius:10px;padding:10px 16px;
+      font-size:0.8rem;font-weight:900;cursor:pointer;
+      font-family:inherit;text-transform:uppercase;letter-spacing:1px;
+      transition:all 0.2s;
+    }
+    .collection-btn:active{transform:scale(0.96);background:#3d1a5a;}
+
+    /* ── HEADER ── */
+    .header-card{
+      background:var(--gray);border:3px solid var(--red);
+      border-radius:12px;padding:12px 28px;text-align:center;
+      box-shadow:0 0 24px rgba(232,35,42,0.4),0 6px 18px rgba(0,0,0,0.5);
+      width:100%;max-width:480px;
+    }
+    .header-label{font-size:0.8rem;color:#aaa;text-transform:uppercase;letter-spacing:2px;margin-bottom:2px;}
+    .header-minutes{font-size:3.2rem;font-weight:900;color:var(--yellow);line-height:1;text-shadow:0 0 20px rgba(255,215,0,0.5);}
+    .header-sublabel{font-size:0.85rem;color:#888;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ── XP ── */
+    .progress-card{
+      background:var(--gray);border:2px solid #444;border-radius:12px;
+      padding:12px 20px 14px;text-align:center;
+      box-shadow:0 4px 16px rgba(0,0,0,0.4);width:100%;max-width:480px;
+    }
+    .progress-label{font-size:0.8rem;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+    .xp-bar-wrap{background:#111;border-radius:8px;height:28px;border:2px solid #555;overflow:hidden;position:relative;}
+    .xp-bar-fill{height:100%;background:linear-gradient(90deg,#E8232A,#ff6b35);border-radius:6px;transition:width 0.5s cubic-bezier(.34,1.56,.64,1);position:relative;}
+    .xp-bar-fill::after{content:'';position:absolute;top:3px;left:6px;right:6px;height:6px;background:rgba(255,255,255,0.25);border-radius:3px;}
+    .xp-circles{display:flex;justify-content:center;gap:10px;margin-top:10px;}
+    .xp-dot{width:28px;height:28px;border-radius:4px;border:2px solid #555;background:#111;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;}
+    .xp-dot.lit{background:var(--red);border-color:var(--red);box-shadow:0 0 12px rgba(232,35,42,0.6);}
+
+    /* ── QUESTION ── */
+    .question-card{background:var(--gray);border:2px solid #444;border-radius:14px;padding:24px 24px 20px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,0.4);width:100%;max-width:480px;}
+    .question-text{font-size:4rem;font-weight:900;color:#fff;margin-bottom:16px;letter-spacing:2px;line-height:1.1;text-shadow:2px 2px 0 #000;}
+    .answer-box{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:72px;background:#111;border:4px solid #555;border-radius:10px;font-size:3.4rem;font-weight:900;color:#fff;padding:6px 22px;transition:border-color 0.25s,background 0.25s,color 0.25s;font-family:'Arial Black',Arial,sans-serif;}
+    .answer-box.correct{border-color:var(--green);background:#003322;color:var(--green);box-shadow:0 0 18px rgba(0,176,106,0.4);}
+    .answer-box.wrong{border-color:var(--red);background:#330000;color:var(--red);box-shadow:0 0 18px rgba(232,35,42,0.4);}
+    .feedback-text{margin-top:10px;font-size:1.3rem;font-weight:900;min-height:32px;color:#aaa;text-transform:uppercase;letter-spacing:1px;}
+    .feedback-text.correct{color:var(--green);}
+    .feedback-text.wrong{color:var(--red);}
+
+    /* ── NUMPAD ── */
+    .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:380px;}
+    .pad-btn{border:none;border-radius:8px;padding:0;height:80px;font-size:2.2rem;font-weight:900;cursor:pointer;font-family:'Arial Black',Arial,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,0.5);transition:transform 0.08s,box-shadow 0.08s;color:#fff;-webkit-appearance:none;border:2px solid transparent;}
+    .pad-btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,0.5);}
+    .pad-btn.num{background:#2d2d2d;border-color:#555;color:#eee;box-shadow:0 6px 0 #111;}
+    .pad-btn.backspace{background:#E8232A;border-color:#ff4444;color:white;font-size:1.8rem;box-shadow:0 6px 0 #8b0000;}
+    .pad-btn.check{background:var(--green);border-color:#00e88a;color:white;font-size:2rem;box-shadow:0 6px 0 #006040;}
+    .parent-btn{background:transparent;border:2px solid #333;color:#555;border-radius:8px;padding:10px 24px;font-size:0.8rem;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .parent-btn:active{border-color:#666;color:#888;}
+
+    /* ── PARTICLES ── */
+    .blocks-layer{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden;}
+    .rblock{position:absolute;border:2px solid rgba(0,0,0,0.4);border-radius:4px;animation:block-fall linear forwards;}
+    @keyframes block-fall{0%{transform:translateY(-40px) rotate(0deg);opacity:1;}80%{opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+    /* ── ANIMS ── */
+    @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-12px);}40%{transform:translateX(12px);}60%{transform:translateX(-8px);}80%{transform:translateX(8px);}}
+    .shaking{animation:shake 0.4s ease;}
+    @keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.14);}70%{transform:scale(0.96);}100%{transform:scale(1);}}
+    .popping{animation:pop 0.45s ease;}
+
+    /* ══════════════════════════════════
+       GACHA OVERLAY
+    ══════════════════════════════════ */
+    .gacha-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,0.97);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:16px;z-index:1200;
+    }
+    .gacha-overlay.hidden{display:none;}
+
+    .gacha-header{font-size:1rem;font-weight:900;color:#666;text-transform:uppercase;letter-spacing:4px;}
+
+    /* Slot window */
+    .gacha-slot-window{
+      width:300px;height:160px;
+      background:#0a0a0a;border-radius:20px;
+      border:3px solid #333;
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;position:relative;
+      transition:border-color 0.3s,box-shadow 0.3s;
+    }
+    .slot-inner{display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .slot-emoji-big{font-size:4rem;line-height:1;transition:opacity 0.05s;}
+    .slot-char-name{font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:1px;text-align:center;max-width:260px;}
+    .slot-rarity-pill{font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:2px 10px;border-radius:50px;margin-top:2px;}
+
+    /* Reveal card */
+    .reveal-card{
+      width:300px;border-radius:20px;padding:24px 20px;
+      text-align:center;position:relative;overflow:hidden;
+      animation:revealPop 0.5s cubic-bezier(.34,1.56,.64,1);
+    }
+    .reveal-card.hidden{display:none;}
+    @keyframes revealPop{from{transform:scale(0.4) rotate(-8deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+
+    .new-badge{
+      position:absolute;top:12px;right:12px;
+      background:#E8232A;color:white;
+      font-size:0.65rem;font-weight:900;
+      padding:3px 8px;border-radius:50px;
+      text-transform:uppercase;letter-spacing:1px;
+      animation:badgePulse 0.5s infinite alternate;
+    }
+    .new-badge.hidden{display:none;}
+    @keyframes badgePulse{from{transform:scale(0.95);opacity:0.8;}to{transform:scale(1.05);opacity:1;}}
+
+    .reveal-emoji-big{font-size:5.5rem;line-height:1;display:block;margin-bottom:12px;}
+    .reveal-char-name{font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;}
+    .reveal-rarity-badge{font-size:0.8rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:4px 14px;border-radius:50px;display:inline-block;margin-bottom:10px;color:#000;}
+    .reveal-bonus{font-size:1rem;color:#FFD700;font-weight:900;margin-bottom:8px;animation:badgePulse 0.6s infinite alternate;}
+    .reveal-bonus.hidden{display:none;}
+    .reveal-desc{font-size:0.75rem;color:#888;font-style:italic;margin-bottom:16px;line-height:1.5;padding:0 8px;}
+
+    .collect-btn{
+      background:var(--red);border:3px solid #ff5555;
+      border-radius:10px;padding:14px;
+      font-size:1.1rem;font-weight:900;color:#fff;
+      cursor:pointer;font-family:inherit;
+      text-transform:uppercase;letter-spacing:2px;
+      box-shadow:0 5px 0 #8b0000;
+      transition:transform 0.08s,box-shadow 0.08s;
+      width:100%;
+    }
+    .collect-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8b0000;}
+
+    .gacha-total{font-size:0.9rem;color:#FFD700;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+
+    /* ══════════════════════════════════
+       COLLECTION SCREEN
+    ══════════════════════════════════ */
+    .coll-overlay{
+      position:fixed;inset:0;background:#080808;
+      z-index:1500;overflow-y:auto;padding:20px 14px 40px;
+    }
+    .coll-overlay.hidden{display:none;}
+    .coll-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .coll-title{font-size:1.3rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;}
+    .coll-close-btn{background:var(--red);border:none;color:#fff;border-radius:8px;padding:10px 16px;font-size:0.85rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;}
+    .coll-stats{text-align:center;color:#555;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:480px;margin:0 auto;}
+    .rarity-header{
+      grid-column:1/-1;font-size:0.75rem;font-weight:900;
+      text-transform:uppercase;letter-spacing:2px;
+      padding:8px 0 4px;display:flex;align-items:center;gap:8px;
+    }
+    .rarity-line{flex:1;height:1px;background:#222;}
+    .cc{
+      background:#111;border:2px solid #222;border-radius:12px;
+      padding:12px 6px;text-align:center;
+      display:flex;flex-direction:column;align-items:center;gap:5px;
+      position:relative;
+    }
+    .cc.unlocked{border-color:var(--cc,#555);box-shadow:0 0 10px var(--cg,transparent);}
+    .cc.locked{opacity:0.25;filter:grayscale(1);}
+    .cc-emoji{font-size:2.2rem;line-height:1;}
+    .cc-name{font-size:0.58rem;color:#777;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;}
+    .cc-dot{width:6px;height:6px;border-radius:50%;}
+    .cc-cnt{position:absolute;top:5px;right:7px;font-size:0.6rem;color:#666;font-weight:900;}
+
+    /* ── PIN MODAL ── */
+    .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:2000;}
+    .pin-overlay.hidden{display:none;}
+    .pin-box{background:var(--gray);border:3px solid var(--red);border-radius:14px;padding:28px 24px 24px;text-align:center;width:90%;max-width:340px;box-shadow:0 0 40px rgba(232,35,42,0.3);}
+    .pin-title{font-size:1.4rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+    .pin-sub{font-size:0.8rem;color:#888;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
+    .pin-dots{font-size:1.8rem;letter-spacing:12px;margin-bottom:14px;color:var(--red);}
+    .pin-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+    .mpb{border:2px solid #444;border-radius:8px;height:56px;font-size:1.4rem;font-weight:700;cursor:pointer;font-family:'Arial Black',Arial,sans-serif;background:#2d2d2d;color:#fff;box-shadow:0 4px 0 #111;transition:transform 0.07s,box-shadow 0.07s;}
+    .mpb:active{transform:translateY(3px);box-shadow:0 1px 0 #111;}
+    .mpb.m-cancel{background:#E8232A;border-color:#ff4444;box-shadow:0 4px 0 #8b0000;}
+    .mpb.m-del{background:#555;border-color:#777;box-shadow:0 4px 0 #222;}
+    .pin-err{font-size:0.85rem;color:var(--red);min-height:20px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+
+    @media(max-height:700px){.header-minutes{font-size:2.4rem;}.question-text{font-size:3rem;}.answer-box{font-size:2.8rem;min-height:60px;}.pad-btn{height:66px;font-size:1.9rem;}}
   </style>
 </head>
 <body>
 
-  <!-- Blocks layer -->
-  <div class="blocks-layer" id="blocksLayer"></div>
+<div class="blocks-layer" id="blocksLayer"></div>
 
-  <!-- Minute earned overlay -->
-  <div class="earned-overlay hidden" id="earnedOverlay">
-    <!-- Roblox character dancing -->
-    <div class="roblox-char">
-      <div class="char-head">
-        <div class="char-eye-l"></div>
-        <div class="char-eye-r"></div>
-        <div class="char-smile"></div>
-      </div>
-      <div class="char-body"></div>
-      <div class="char-legs">
-        <div class="char-leg"></div>
-        <div class="char-leg"></div>
-      </div>
-    </div>
-    <div class="earned-badge">🏆 Level Up!</div>
-    <div class="earned-title">GG James! 🎮<br>Je verdiende<br>1 minuut!</div>
-    <div class="earned-total" id="earnedTotal"></div>
-    <button class="earned-continue" onclick="closeEarned()">Play again!</button>
-  </div>
+<!-- ══ GACHA OVERLAY ══ -->
+<div class="gacha-overlay hidden" id="gachaOverlay">
+  <div class="gacha-header" id="gachaHeader">🎰 Spawning Brainrot...</div>
 
-  <!-- Parent PIN modal -->
-  <div class="modal-overlay hidden" id="pinModal">
-    <div class="modal-box">
-      <div class="modal-title">🔐 Ouder Reset</div>
-      <div class="modal-sub">Voer PIN in</div>
-      <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
-      <div class="modal-numpad" id="pinPad"></div>
-      <div class="pin-error" id="pinError"></div>
+  <div class="gacha-slot-window" id="slotWindow">
+    <div class="slot-inner">
+      <div class="slot-emoji-big" id="slotEmoji">❓</div>
+      <div class="slot-char-name" id="slotName">Scanning...</div>
+      <div class="slot-rarity-pill" id="slotPill"></div>
     </div>
   </div>
 
-  <!-- Roblox topbar -->
-  <div class="roblox-topbar">
-    <div class="roblox-logo">ROB<span>O</span>X<span style="color:#fff">🎮</span> SOMMEN</div>
+  <div class="reveal-card hidden" id="revealCard">
+    <div class="new-badge hidden" id="newBadge">⭐ NEW!</div>
+    <span class="reveal-emoji-big" id="revealEmoji">❓</span>
+    <div class="reveal-char-name" id="revealName">???</div>
+    <div class="reveal-rarity-badge" id="revealRarity">Common</div>
+    <div class="reveal-bonus hidden" id="revealBonus">🎁 +3 BONUS MINUTEN!</div>
+    <div class="reveal-desc" id="revealDesc"></div>
+    <button class="collect-btn" onclick="closeGacha()">COLLECT! 👊</button>
   </div>
 
-  <!-- Header -->
-  <div class="header-card">
-    <div class="header-label">⏱ Schermtijd verdiend</div>
-    <div class="header-minutes" id="minutesDisplay">0</div>
-    <div class="header-sublabel" id="minutesLabel">minuten</div>
+  <div class="gacha-total" id="gachaTotal"></div>
+</div>
+
+<!-- ══ COLLECTION OVERLAY ══ -->
+<div class="coll-overlay hidden" id="collOverlay">
+  <div class="coll-top">
+    <div class="coll-title">🧠 Brainrot Collectie</div>
+    <button class="coll-close-btn" onclick="closeCollection()">✕ Sluiten</button>
   </div>
+  <div class="coll-stats" id="collStats"></div>
+  <div class="coll-grid" id="collGrid"></div>
+</div>
 
-  <!-- XP Progress -->
-  <div class="progress-card">
-    <div class="progress-label">XP – Nog <span id="leftCount">3</span> voor 1 minuut</div>
-    <div class="xp-bar-wrap">
-      <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
-    </div>
-    <div class="xp-circles" id="xpCircles"></div>
+<!-- ══ PIN MODAL ══ -->
+<div class="pin-overlay hidden" id="pinOverlay">
+  <div class="pin-box">
+    <div class="pin-title">🔐 Ouder Reset</div>
+    <div class="pin-sub">Voer PIN in</div>
+    <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
+    <div class="pin-numpad" id="pinPad"></div>
+    <div class="pin-err" id="pinErr"></div>
   </div>
+</div>
 
-  <!-- Question -->
-  <div class="question-card" id="questionCard">
-    <div class="question-text" id="questionText">…</div>
-    <div class="answer-box" id="answerBox">_</div>
-    <div class="feedback-text" id="feedbackText"></div>
+<!-- ══ MAIN UI ══ -->
+<div class="topbar">
+  <div class="logo">
+    🧠 <span class="accent">BRAIN</span>ROT
+    <span class="sub">Sommen × Gacha</span>
   </div>
+  <button class="collection-btn" onclick="openCollection()">📦 Collectie</button>
+</div>
 
-  <!-- Numpad -->
-  <div class="numpad" id="numpad"></div>
+<div class="header-card">
+  <div class="header-label">⏱ Schermtijd verdiend</div>
+  <div class="header-minutes" id="minutesDisplay">0</div>
+  <div class="header-sublabel" id="minutesLabel">minuten</div>
+</div>
 
-  <!-- Parent button -->
-  <button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
+<div class="progress-card">
+  <div class="progress-label">XP — Nog <span id="leftCount">3</span> voor 1 min + SPAWN 🎰</div>
+  <div class="xp-bar-wrap">
+    <div class="xp-bar-fill" id="xpFill" style="width:0%"></div>
+  </div>
+  <div class="xp-circles" id="xpCircles"></div>
+</div>
+
+<div class="question-card">
+  <div class="question-text" id="qText">…</div>
+  <div class="answer-box" id="ansBox">_</div>
+  <div class="feedback-text" id="fbText"></div>
+</div>
+
+<div class="numpad" id="numpad"></div>
+<button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
 
 <script>
-// ── State ─────────────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════
+   BRAINROT DATA
+══════════════════════════════════════════ */
+const RARITIES = {
+  common: { label:'Common',      color:'#9e9e9e', bg:'#111',    border:'#333',    glow:'transparent',              bonus:0 },
+  rare:   { label:'💙 Rare',     color:'#4fc3f7', bg:'#061420', border:'#4fc3f7', glow:'rgba(79,195,247,0.3)',     bonus:0 },
+  epic:   { label:'💜 Epic',     color:'#ce93d8', bg:'#0e0618', border:'#ce93d8', glow:'rgba(206,147,216,0.35)',   bonus:0 },
+  secret: { label:'🔥 Secret',   color:'#ff9800', bg:'#1a0900', border:'#ff9800', glow:'rgba(255,152,0,0.45)',     bonus:1 },
+  og:     { label:'⭐ OG',       color:'#FFD700', bg:'#1a1200', border:'#FFD700', glow:'rgba(255,215,0,0.5)',      bonus:3 },
+};
+
+const CHARS = [
+  // COMMON
+  { id:'noobini',   name:'Noobini Pizzanini',   emoji:'🍕👾',   r:'common', desc:'Eeuwige noob van Roblox. Eet alleen pizza. Heeft geen skills maar wel een hart van goud.' },
+  { id:'lirili',    name:'Lirili Larila',        emoji:'🦒🦅',   r:'common', desc:'Giraf met het hoofd van een arend. Gilt door de bossen. Niemand weet waarom.' },
+  { id:'trippi',    name:'Trippi Troppi',         emoji:'🦛🌺',   r:'common', desc:'Nijlpaard omringd door bloemen. Lijkt relaxed maar is eigenlijk gevaarlijk.' },
+  { id:'tungx3',   name:'Tung Tung Tung Sahur', emoji:'🥁💀',   r:'common', desc:'Drumsticks met lege oogkassen. Trommelt door de nacht tot de ochtend.' },
+  { id:'gangfoot',  name:'Gangster Footera',      emoji:'🦶😤',   r:'common', desc:'Gigantische teen in trainingspak. Loopt de straten onveilig.' },
+  { id:'skibidi',   name:'Skibidi Toilet',        emoji:'🚽😈',   r:'common', desc:'Een hoofd in een toiletpot. Zegt alleen maar skibidi. Niet verder vragen.' },
+  { id:'boneca',    name:'Boneca Ambalabu',       emoji:'🎎🐸',   r:'common', desc:'Kikker-pop met lege blik. Staart altijd in je ziel.' },
+  { id:'pipiawi',   name:'Pipi Avocado',          emoji:'🥑🐦',   r:'common', desc:'Kleine vogel met avocado-kop. Valt altijd van de boom.' },
+  // RARE
+  { id:'cappuccino',name:'Cappuccino Assassino', emoji:'☕🗡️',  r:'rare',   desc:'Overdag barista. \'s Nachts killer. Zijn cappuccino heeft altijd perfecte crema.' },
+  { id:'chimpa',    name:'Chimpanzini Bananini', emoji:'🐒🍌',  r:'rare',   desc:'Chimpansee gevangen in een banaan. Wordt door aliens ontvoerd vanwege zeldzaamheid.' },
+  { id:'ballerina', name:'Ballerina Cappuccina', emoji:'👯☕',  r:'rare',   desc:'Danst op cappuccino-muziek. Niemand begrijpt haar kunst. Ze vindt het prima.' },
+  { id:'bombard',   name:'Bombardiro Crocodilo', emoji:'🐊✈️',  r:'rare',   desc:'Een krokodil die letterlijk een bommenwerper is. Het gevaarlijkste vliegtuig van Napels.' },
+  { id:'sigma',     name:'Sigma Boy',            emoji:'😎💎',  r:'rare',   desc:'Sigma grindset. Geen vrienden nodig. Alleen maar winnen.' },
+  { id:'glorbo',    name:'Glorbo Fruttodrillo',  emoji:'🐊🍉',  r:'rare',   desc:'Krokodil-watermeloen hybride. Leeft op het strand. Geen zorgen.' },
+  // EPIC
+  { id:'tralaler',  name:'Tralalero Tralala',    emoji:'🦈👟',  r:'epic',   desc:'Een haai met Nike schoenen. Zwemt op het land. Niemand stelt vragen.' },
+  { id:'frigo',     name:'Frigo Camelo',         emoji:'🧊🐪',  r:'epic',   desc:'Kameel gevangen in een koelkast. Steekt rustig de straat over. Altijd.' },
+  { id:'cocofanto', name:'Cocofanto Elefanto',   emoji:'🥥🐘',  r:'epic',   desc:'Olifant gemaakt van kokosnoot. Op eeuwige vakantie bij een waterval.' },
+  { id:'girafa',    name:'Girafa Celestre',      emoji:'🦒🌌',  r:'epic',   desc:'Ruimtegiraffe in een watermeloen. Reist door sterrenstelsels. Vindt alles prima.' },
+  // SECRET
+  { id:'dragon',    name:'Dragon Cannelloni',    emoji:'🐉🍝',  r:'secret', desc:'Pasta-draak die steden verwoest met kokende béchamel. Vliegt boven Napels en spuwt boiling ricotta. +1 min bonus!' },
+  { id:'spaghett',  name:'Spaghetti Tualetti',   emoji:'🍝🚽',  r:'secret', desc:'Spaghetti die uit een toilet komt. Onverwacht heerlijk. Waarschijnlijk. +1 min bonus!' },
+  { id:'sixty7',    name:'67',                   emoji:'6️⃣7️⃣', r:'secret', desc:'Het getal 67. Toegevoegd tijdens het Extinct Event. Niemand weet waarom het bestaat. +1 min bonus!' },
+  // OG (ULTRA RARE)
+  { id:'strawberry',name:'Strawberry Elephant', emoji:'🍓🐘',  r:'og',     desc:'DE allerzeldzaamste brainrot. 1 op 100 kwadriloen kans. JIJ BENT EEN ABSOLUTE LEGENDE. +3 bonus minuten! 🌟🌟🌟' },
+];
+
+/* ══════════════════════════════════════════
+   GACHA ROLL
+══════════════════════════════════════════ */
+function rollChar() {
+  const r = Math.random();
+  let rarity;
+  if     (r < 0.60) rarity = 'common';
+  else if(r < 0.85) rarity = 'rare';
+  else if(r < 0.95) rarity = 'epic';
+  else if(r < 0.99) rarity = 'secret';
+  else               rarity = 'og';
+  const pool = CHARS.filter(c => c.r === rarity);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
 let totalMinutes = parseInt(localStorage.getItem('jamesMinutes') || '0');
 let streak       = parseInt(localStorage.getItem('jamesStreak')  || '0');
+let collection   = JSON.parse(localStorage.getItem('jamesCollection') || '{}');
 let typedAnswer  = '';
 let currentQ     = null;
 let locked       = false;
 let pinBuffer    = '';
+let pendingChar  = null;
 
-const PIN  = '1234';
-const GOAL = 3;
+const PIN = '1234', GOAL = 3;
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
-buildNumpad();
-buildPinPad();
-renderXP();
-renderHeader();
-nextQuestion();
+buildNumpad(); buildPinPad(); renderXP(); renderHeader(); nextQuestion();
 
-// ── Persistence ───────────────────────────────────────────────────────────────
 function save() {
-  localStorage.setItem('jamesMinutes', totalMinutes);
-  localStorage.setItem('jamesStreak',  streak);
+  localStorage.setItem('jamesMinutes',    totalMinutes);
+  localStorage.setItem('jamesStreak',     streak);
+  localStorage.setItem('jamesCollection', JSON.stringify(collection));
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════
+   HEADER & XP
+══════════════════════════════════════════ */
 function renderHeader() {
   document.getElementById('minutesDisplay').textContent = totalMinutes;
-  document.getElementById('minutesLabel').textContent =
-    totalMinutes === 1 ? 'minuut' : 'minuten';
+  document.getElementById('minutesLabel').textContent = totalMinutes === 1 ? 'minuut' : 'minuten';
 }
-
-// ── XP bar + dots ─────────────────────────────────────────────────────────────
 function renderXP() {
-  const pct = (streak / GOAL) * 100;
-  document.getElementById('xpBarFill').style.width = pct + '%';
-
+  document.getElementById('xpFill').style.width = (streak/GOAL*100) + '%';
   const circles = document.getElementById('xpCircles');
   circles.innerHTML = '';
-  for (let i = 0; i < GOAL; i++) {
-    const d = document.createElement('div');
-    d.className = 'xp-dot' + (i < streak ? ' lit' : '');
-    d.textContent = i < streak ? '🎮' : '';
+  for(let i=0;i<GOAL;i++){
+    const d=document.createElement('div');
+    d.className='xp-dot'+(i<streak?' lit':'');
+    d.textContent=i<streak?'🧠':'';
     circles.appendChild(d);
   }
   document.getElementById('leftCount').textContent = GOAL - streak;
 }
 
-// ── Question ──────────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════
+   QUESTION
+══════════════════════════════════════════ */
 function nextQuestion() {
-  typedAnswer = '';
-  locked = false;
+  typedAnswer=''; locked=false;
+  document.getElementById('ansBox').textContent='_';
+  document.getElementById('ansBox').className='answer-box';
+  document.getElementById('fbText').textContent='';
+  document.getElementById('fbText').className='feedback-text';
 
-  const answerBox  = document.getElementById('answerBox');
-  const feedbackEl = document.getElementById('feedbackText');
-  answerBox.textContent  = '_';
-  answerBox.className    = 'answer-box';
-  feedbackEl.textContent = '';
-  feedbackEl.className   = 'feedback-text';
-
-  const isPlus = Math.random() < 0.5;
-  let a, b;
-  if (isPlus) {
-    a = rand(1, 19);
-    b = rand(1, 20 - a);
-  } else {
-    a = rand(2, 20);
-    b = rand(1, a - 1);
-  }
-
-  currentQ = { a, b, op: isPlus ? '+' : '−', answer: isPlus ? a + b : a - b };
-  document.getElementById('questionText').textContent =
-    `${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
+  const plus = Math.random()<0.5;
+  let a,b;
+  if(plus){a=rand(1,19);b=rand(1,20-a);}
+  else{a=rand(2,20);b=rand(1,a-1);}
+  currentQ={a,b,op:plus?'+':'−',ans:plus?a+b:a-b};
+  document.getElementById('qText').textContent=`${a} ${currentQ.op} ${b} = ?`;
 }
+function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn;}
 
-function rand(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// ── Numpad ────────────────────────────────────────────────────────────────────
-function buildNumpad() {
-  const pad  = document.getElementById('numpad');
-  const keys = [7,8,9, 4,5,6, 1,2,3, '⌫', 0, '✓'];
-
-  keys.forEach(k => {
-    const btn = document.createElement('button');
-    btn.className   = 'pad-btn';
-    btn.textContent = k;
-
-    if (k === '⌫') {
-      btn.classList.add('backspace');
-      btn.addEventListener('click', doBackspace);
-    } else if (k === '✓') {
-      btn.classList.add('check');
-      btn.addEventListener('click', doCheck);
-    } else {
-      btn.classList.add('n' + k);
-      btn.addEventListener('click', () => doDigit(String(k)));
-    }
+/* ══════════════════════════════════════════
+   NUMPAD
+══════════════════════════════════════════ */
+function buildNumpad(){
+  const pad=document.getElementById('numpad');
+  [7,8,9,4,5,6,1,2,3,'⌫',0,'✓'].forEach(k=>{
+    const btn=document.createElement('button');
+    btn.className='pad-btn'; btn.textContent=k;
+    if(k==='⌫'){btn.classList.add('backspace');btn.addEventListener('click',doBksp);}
+    else if(k==='✓'){btn.classList.add('check');btn.addEventListener('click',doCheck);}
+    else{btn.classList.add('num');btn.addEventListener('click',()=>doDigit(String(k)));}
     pad.appendChild(btn);
   });
 }
-
-function doDigit(d) {
-  if (locked) return;
-  if (typedAnswer.length >= 2) return;
-  typedAnswer += d;
-  renderAnswer();
+function doDigit(d){if(locked||typedAnswer.length>=2)return;typedAnswer+=d;refreshAns();}
+function doBksp(){if(locked)return;typedAnswer=typedAnswer.slice(0,-1);refreshAns();}
+function refreshAns(){
+  const b=document.getElementById('ansBox');
+  b.textContent=typedAnswer||'_'; b.className='answer-box';
 }
+function doCheck(){
+  if(locked||!typedAnswer)return; locked=true;
+  const given=parseInt(typedAnswer,10);
+  const box=document.getElementById('ansBox');
+  const fb=document.getElementById('fbText');
 
-function doBackspace() {
-  if (locked) return;
-  typedAnswer = typedAnswer.slice(0, -1);
-  renderAnswer();
-}
-
-function renderAnswer() {
-  const box = document.getElementById('answerBox');
-  box.textContent = typedAnswer || '_';
-  box.className   = 'answer-box';
-}
-
-function doCheck() {
-  if (locked || !typedAnswer) return;
-  locked = true;
-
-  const given = parseInt(typedAnswer, 10);
-  const box   = document.getElementById('answerBox');
-  const fb    = document.getElementById('feedbackText');
-
-  if (given === currentQ.answer) {
-    box.className = 'answer-box correct popping';
-    fb.className  = 'feedback-text correct';
-    fb.textContent = pickRandom(CORRECT_MSGS);
-
-    launchBlocks(30);
-
-    streak++;
-    save();
-    renderXP();
-
-    if (streak >= GOAL) {
-      streak = 0;
-      totalMinutes++;
-      save();
-      renderXP();
-      renderHeader();
-      setTimeout(showEarned, 1100);
+  if(given===currentQ.ans){
+    box.className='answer-box correct popping';
+    fb.className='feedback-text correct';
+    fb.textContent=pickRnd(OK_MSGS);
+    launchBlocks(28);
+    streak++; save(); renderXP();
+    if(streak>=GOAL){
+      streak=0; totalMinutes++; save(); renderXP(); renderHeader();
+      setTimeout(showGacha,1100);
     } else {
       renderHeader();
-      setTimeout(nextQuestion, 1400);
+      setTimeout(nextQuestion,1400);
+    }
+  } else {
+    box.className='answer-box wrong shaking';
+    fb.className='feedback-text wrong';
+    fb.textContent=pickRnd(FAIL_MSGS);
+    setTimeout(()=>{
+      box.classList.remove('shaking');
+      typedAnswer=''; box.textContent='_'; box.className='answer-box';
+      fb.textContent=''; fb.className='feedback-text'; locked=false;
+    },1500);
+  }
+}
+
+const OK_MSGS=['🎮 GG! Goed zo!','⚡ PRO MOVE!','🏆 EPIC WIN!','🎯 HEADSHOT!','💎 NOOB CRUSH!','🚀 OP! Geweldig!','🧠 BRAINROT PRO!','⭐ LEGENDARY!','💪 TOO EASY!','😎 CLUTCH PLAY!'];
+const FAIL_MSGS=['😅 Try again!','🙈 Bijna! Nog een keer!','🎮 Respawn! Opnieuw!','💀 Oeps! Nog een poging!','🔄 Reset! Kom op!'];
+function pickRnd(a){return a[Math.floor(Math.random()*a.length)];}
+
+/* ══════════════════════════════════════════
+   GACHA SYSTEM
+══════════════════════════════════════════ */
+function showGacha(){
+  launchBlocks(35);
+  pendingChar = rollChar();
+
+  const overlay=document.getElementById('gachaOverlay');
+  const slotWin=document.getElementById('slotWindow');
+  const revCard=document.getElementById('revealCard');
+
+  overlay.classList.remove('hidden');
+  slotWin.style.display='';
+  revCard.classList.add('hidden');
+  document.getElementById('gachaHeader').textContent='🎰 Spawning Brainrot...';
+  document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+
+  // Reset slot window styling
+  slotWin.style.borderColor='#333';
+  slotWin.style.boxShadow='none';
+
+  let count=0, totalSpins=20, delay=70;
+
+  function spin(){
+    const c=CHARS[Math.floor(Math.random()*CHARS.length)];
+    const r=RARITIES[c.r];
+    document.getElementById('slotEmoji').textContent=c.emoji;
+    document.getElementById('slotName').textContent=c.name;
+    const pill=document.getElementById('slotPill');
+    pill.textContent=r.label; pill.style.background=r.color; pill.style.color='#000'; pill.style.fontWeight='900';
+
+    // Change slot glow as we slow down
+    if(count > totalSpins-6){
+      slotWin.style.borderColor=r.color;
+      slotWin.style.boxShadow=`0 0 20px ${r.glow}`;
     }
 
-  } else {
-    box.className = 'answer-box wrong shaking';
-    fb.className  = 'feedback-text wrong';
-    fb.textContent = pickRandom(WRONG_MSGS);
-
-    setTimeout(() => {
-      box.classList.remove('shaking');
-      typedAnswer = '';
-      box.textContent = '_';
-      box.className   = 'answer-box';
-      fb.textContent  = '';
-      fb.className    = 'feedback-text';
-      locked = false;
-    }, 1500);
+    count++;
+    if(count < totalSpins){
+      if(count > totalSpins-8) delay += 40;
+      setTimeout(spin, delay);
+    } else {
+      setTimeout(()=>showReveal(pendingChar), 350);
+    }
   }
+  spin();
 }
 
-const CORRECT_MSGS = [
-  '🎮 GG! Goed zo!',
-  '⚡ PRO MOVE!',
-  '🏆 EPIC WIN!',
-  '🎯 HEADSHOT!',
-  '💎 NOOB CRUSH!',
-  '🚀 OP! Geweldig!',
-  '🎲 NICE ONE!',
-  '⭐ LEGENDARY!',
-  '💪 TOO EASY!',
-  '😎 CLUTCH PLAY!'
-];
+function showReveal(char){
+  const r=RARITIES[char.r];
+  const isNew=!collection[char.id];
 
-const WRONG_MSGS = [
-  '😅 Try again!',
-  '🙈 Bijna! Nog een keer!',
-  '🎮 Respawn! Opnieuw!',
-  '💀 Oeps! Probeer nog eens!',
-  '🔄 Reset! Nog een poging?'
-];
+  collection[char.id]=(collection[char.id]||0)+1;
+  if(r.bonus>0) totalMinutes+=r.bonus;
+  save(); renderHeader();
 
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  document.getElementById('slotWindow').style.display='none';
+  document.getElementById('gachaHeader').textContent =
+    char.r==='og'    ? '🌟🌟🌟 ULTRA LEGENDARY OG!! 🌟🌟🌟' :
+    char.r==='secret'? '🔥🔥 SECRET SPAWN!! 🔥🔥' :
+    char.r==='epic'  ? '💜 EPIC SPAWN! 💜' :
+    char.r==='rare'  ? '💙 Rare Spawn!' : '✅ Gespawnd!';
+
+  const card=document.getElementById('revealCard');
+  card.style.background=r.bg;
+  card.style.border=`3px solid ${r.border}`;
+  card.style.boxShadow=`0 0 50px ${r.glow}`;
+  card.classList.remove('hidden');
+
+  document.getElementById('revealEmoji').textContent=char.emoji;
+  document.getElementById('revealName').textContent=char.name;
+  const rb=document.getElementById('revealRarity');
+  rb.textContent=r.label; rb.style.background=r.color; rb.style.color='#000';
+
+  const bonusEl=document.getElementById('revealBonus');
+  if(r.bonus>0){
+    bonusEl.textContent=`🎁 +${r.bonus} BONUS MINUT${r.bonus>1?'EN':''}!`;
+    bonusEl.classList.remove('hidden');
+  } else { bonusEl.classList.add('hidden'); }
+
+  document.getElementById('revealDesc').textContent=char.desc;
+  const nb=document.getElementById('newBadge');
+  isNew ? nb.classList.remove('hidden') : nb.classList.add('hidden');
+  document.getElementById('gachaTotal').textContent=`Total: ${totalMinutes} ${totalMinutes===1?'minuut':'minuten'} ⏱️`;
+
+  if(char.r==='og')     launchBlocks(100);
+  else if(char.r==='secret') launchBlocks(60);
+  else if(char.r==='epic')   launchBlocks(35);
 }
 
-// ── Roblox blocks celebration ─────────────────────────────────────────────────
-function launchBlocks(n) {
-  const layer  = document.getElementById('blocksLayer');
-  // Roblox color palette
-  const colors = [
-    '#E8232A', '#FFD700', '#0077FF', '#00b06a',
-    '#ff6b35', '#9b59b6', '#1abc9c', '#e74c3c',
-    '#f39c12', '#2ecc71', '#3498db', '#ffffff'
-  ];
-
-  for (let i = 0; i < n; i++) {
-    setTimeout(() => {
-      const el   = document.createElement('div');
-      el.className = 'rblock';
-      const size = rand(10, 26);
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      el.style.cssText = `
-        left: ${Math.random() * 100}vw;
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        border-color: rgba(0,0,0,0.5);
-        animation-duration: ${(Math.random() * 1.6 + 0.8).toFixed(2)}s;
-        animation-delay: 0s;
-      `;
-      layer.appendChild(el);
-      setTimeout(() => el.remove(), 3000);
-    }, i * 30);
-  }
-}
-
-// ── Earned overlay ────────────────────────────────────────────────────────────
-function showEarned() {
-  launchBlocks(60);
-  document.getElementById('earnedTotal').textContent =
-    `Totaal: ${totalMinutes} ${totalMinutes === 1 ? 'minuut' : 'minuten'} 🎮`;
-  document.getElementById('earnedOverlay').classList.remove('hidden');
-}
-
-function closeEarned() {
-  document.getElementById('earnedOverlay').classList.add('hidden');
+function closeGacha(){
+  document.getElementById('gachaOverlay').classList.add('hidden');
   nextQuestion();
 }
 
-// ── PIN Modal ─────────────────────────────────────────────────────────────────
-function buildPinPad() {
-  const pad  = document.getElementById('pinPad');
-  const keys = [1,2,3, 4,5,6, 7,8,9, '✕', 0, '⌫'];
+/* ══════════════════════════════════════════
+   COLLECTION
+══════════════════════════════════════════ */
+function openCollection(){
+  renderCollection();
+  document.getElementById('collOverlay').classList.remove('hidden');
+}
+function closeCollection(){
+  document.getElementById('collOverlay').classList.add('hidden');
+}
+function renderCollection(){
+  const grid=document.getElementById('collGrid');
+  grid.innerHTML='';
+  const unlocked=Object.keys(collection).length;
+  document.getElementById('collStats').textContent=`${unlocked} / ${CHARS.length} gespawnd 🧬`;
 
-  keys.forEach(k => {
-    const btn = document.createElement('button');
-    btn.className   = 'mpb';
-    btn.textContent = k;
+  const order=['og','secret','epic','rare','common'];
+  const labels={og:'⭐ OG — Ultiem zeldzaam',secret:'🔥 Secret',epic:'💜 Epic',rare:'💙 Rare',common:'⚪ Common'};
 
-    if (k === '✕') {
-      btn.classList.add('m-cancel');
-      btn.addEventListener('click', closePin);
-    } else if (k === '⌫') {
-      btn.classList.add('m-del');
-      btn.addEventListener('click', pinBackspace);
-    } else {
-      btn.addEventListener('click', () => pinDigit(String(k)));
-    }
-    pad.appendChild(btn);
+  order.forEach(rk=>{
+    const chars=CHARS.filter(c=>c.r===rk);
+    const rv=RARITIES[rk];
+
+    const hdr=document.createElement('div');
+    hdr.className='rarity-header';
+    hdr.style.color=rv.color;
+    hdr.innerHTML=`<span>${labels[rk]}</span><div class="rarity-line"></div>`;
+    grid.appendChild(hdr);
+
+    chars.forEach(char=>{
+      const isUnlocked=!!collection[char.id];
+      const cnt=collection[char.id]||0;
+      const card=document.createElement('div');
+      card.className='cc '+(isUnlocked?'unlocked':'locked');
+      if(isUnlocked){
+        card.style.setProperty('--cc',rv.border);
+        card.style.setProperty('--cg',rv.glow);
+      }
+      card.innerHTML=`
+        <div class="cc-emoji">${isUnlocked?char.emoji:'❓'}</div>
+        <div class="cc-name">${isUnlocked?char.name:'???'}</div>
+        <div class="cc-dot" style="background:${rv.color}"></div>
+        ${cnt>1?`<div class="cc-cnt">×${cnt}</div>`:''}
+      `;
+      card.title=isUnlocked?char.desc:'Nog niet gespawnd';
+      grid.appendChild(card);
+    });
   });
 }
 
-function openPin() {
-  pinBuffer = '';
-  renderPinDots();
-  document.getElementById('pinError').textContent = '';
-  document.getElementById('pinModal').classList.remove('hidden');
+/* ══════════════════════════════════════════
+   PARTICLES
+══════════════════════════════════════════ */
+function launchBlocks(n){
+  const layer=document.getElementById('blocksLayer');
+  const colors=['#E8232A','#FFD700','#0077FF','#00b06a','#ff6b35','#9b59b6','#1abc9c','#ce93d8','#ff9800','#4fc3f7','#fff','#f39c12'];
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='rblock';
+      const sz=rand(8,24);
+      el.style.cssText=`left:${Math.random()*100}vw;width:${sz}px;height:${sz}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-color:rgba(0,0,0,0.4);animation-duration:${(Math.random()*1.6+0.7).toFixed(2)}s;`;
+      layer.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    },i*25);
+  }
 }
 
-function closePin() {
-  document.getElementById('pinModal').classList.add('hidden');
-  pinBuffer = '';
+/* ══════════════════════════════════════════
+   PIN
+══════════════════════════════════════════ */
+function buildPinPad(){
+  const pad=document.getElementById('pinPad');
+  [1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].forEach(k=>{
+    const btn=document.createElement('button');
+    btn.className='mpb'; btn.textContent=k;
+    if(k==='✕'){btn.classList.add('m-cancel');btn.addEventListener('click',closePin);}
+    else if(k==='⌫'){btn.classList.add('m-del');btn.addEventListener('click',pinBksp);}
+    else{btn.addEventListener('click',()=>pinDigit(String(k)));}
+    pad.appendChild(btn);
+  });
 }
-
-function pinDigit(d) {
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += d;
-  renderPinDots();
-  if (pinBuffer.length === 4) setTimeout(checkPin, 150);
+function openPin(){pinBuffer='';renderPinDots();document.getElementById('pinErr').textContent='';document.getElementById('pinOverlay').classList.remove('hidden');}
+function closePin(){document.getElementById('pinOverlay').classList.add('hidden');pinBuffer='';}
+function pinDigit(d){if(pinBuffer.length>=4)return;pinBuffer+=d;renderPinDots();if(pinBuffer.length===4)setTimeout(checkPin,150);}
+function pinBksp(){pinBuffer=pinBuffer.slice(0,-1);renderPinDots();document.getElementById('pinErr').textContent='';}
+function renderPinDots(){
+  const f='● '.repeat(pinBuffer.length).trim();
+  const e='○ '.repeat(4-pinBuffer.length).trim();
+  document.getElementById('pinDots').textContent=[f,e].filter(Boolean).join(' ');
 }
-
-function pinBackspace() {
-  pinBuffer = pinBuffer.slice(0, -1);
-  renderPinDots();
-  document.getElementById('pinError').textContent = '';
-}
-
-function renderPinDots() {
-  const filled = '● '.repeat(pinBuffer.length).trim();
-  const empty  = '○ '.repeat(4 - pinBuffer.length).trim();
-  document.getElementById('pinDots').textContent =
-    [filled, empty].filter(Boolean).join(' ');
-}
-
-function checkPin() {
-  if (pinBuffer === PIN) {
-    streak       = 0;
-    totalMinutes = 0;
-    save();
-    renderXP();
-    renderHeader();
-    closePin();
-    nextQuestion();
-    const fb = document.getElementById('feedbackText');
-    fb.className   = 'feedback-text correct';
-    fb.textContent = '✅ Minuten gereset!';
-    setTimeout(() => { fb.textContent = ''; fb.className = 'feedback-text'; }, 2000);
+function checkPin(){
+  if(pinBuffer===PIN){
+    streak=0;totalMinutes=0;collection={};
+    save();renderXP();renderHeader();closePin();nextQuestion();
+    const fb=document.getElementById('fbText');
+    fb.className='feedback-text correct';fb.textContent='✅ Alles gereset!';
+    setTimeout(()=>{fb.textContent='';fb.className='feedback-text';},2000);
   } else {
-    document.getElementById('pinError').textContent = '❌ WRONG PIN – try again';
-    pinBuffer = '';
-    renderPinDots();
+    document.getElementById('pinErr').textContent='❌ WRONG PIN';
+    pinBuffer='';renderPinDots();
   }
 }
 </script>
