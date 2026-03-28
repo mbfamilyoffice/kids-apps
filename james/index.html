@@ -180,7 +180,7 @@
 <!-- ══ PACK SELECT ══ -->
 <div class="pack-overlay hidden" id="packOverlay">
   <div class="pack-title">🎰 Kies je pack!</div>
-  <div class="pack-sub">Je verdiende 1 minuut + 1 spawn</div>
+  <div class="pack-sub">Je verdiende 5 minuten — spawn time! 🎰</div>
   <div class="pack-grid">
     <button class="pack-btn brainrot" onclick="startGacha('brainrot')">
       <div class="pack-icon">🧠</div>
@@ -267,7 +267,7 @@
   <div class="header-sublabel" id="minutesLabel">minuten</div>
 </div>
 <div class="progress-card">
-  <div class="progress-label">XP — Nog <span id="leftCount">3</span> voor 1 min + 🎰 pack</div>
+  <div class="progress-label">XP — Nog <span id="leftCount">3</span> sommen • Spawn bij <span id="spawnAt">5</span> min 🎰</div>
   <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
   <div class="xp-circles" id="xpCircles"></div>
 </div>
@@ -394,7 +394,7 @@ let locked       = false;
 let pinBuffer    = '';
 let activeUniverse = null;
 let collTab      = 'all';
-const PIN='1234',GOAL=3;
+const PIN='1234',GOAL=3,SPAWN_EVERY=5;
 
 buildNumpad(); buildPinPad(); renderXP(); renderHeader(); nextQuestion();
 
@@ -410,6 +410,8 @@ function save(){
 function renderHeader(){
   document.getElementById('minutesDisplay').textContent=totalMinutes;
   document.getElementById('minutesLabel').textContent=totalMinutes===1?'minuut':'minuten';
+  const nextSpawn=SPAWN_EVERY-(totalMinutes%SPAWN_EVERY);
+  document.getElementById('spawnAt').textContent=nextSpawn===SPAWN_EVERY?SPAWN_EVERY:nextSpawn;
 }
 function renderXP(){
   document.getElementById('xpFill').style.width=(streak/GOAL*100)+'%';
@@ -470,7 +472,8 @@ function doCheck(){
     streak++;save();renderXP();
     if(streak>=GOAL){
       streak=0;totalMinutes++;save();renderXP();renderHeader();
-      setTimeout(showPackSelect,1100);
+      if(totalMinutes%SPAWN_EVERY===0){setTimeout(showPackSelect,1100);}
+      else{setTimeout(nextQuestion,1400);}
     }else{renderHeader();setTimeout(nextQuestion,1400);}
   }else{
     box.className='answer-box wrong shaking';
