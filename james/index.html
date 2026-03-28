@@ -240,12 +240,159 @@
     .mpb.m-del{background:#333;border-color:#555;box-shadow:0 3px 0 #111;}
     .pin-err{font-size:0.8rem;color:#E8232A;min-height:18px;font-weight:700;text-transform:uppercase;}
 
+    /* ══════════════════════════════════
+       ONBOARDING SLIDES
+    ══════════════════════════════════ */
+    .onboard-overlay{position:fixed;inset:0;background:#050508;z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+    .onboard-overlay.hidden{display:none;}
+
+    .onboard-slide{display:none;flex-direction:column;align-items:center;text-align:center;gap:14px;max-width:340px;width:100%;animation:slideIn 0.4s ease;}
+    .onboard-slide.active{display:flex;}
+    @keyframes slideIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
+
+    .onboard-big-emoji{font-size:5rem;line-height:1;}
+    .onboard-chars{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:4px 0;}
+    .onboard-char-img{width:72px;height:72px;border-radius:12px;object-fit:cover;border:3px solid #333;background:#111;}
+    .onboard-char-img.og{border-color:#fbbf24;box-shadow:0 0 14px rgba(251,191,36,0.5);}
+    .onboard-char-img.secret{border-color:#fb923c;box-shadow:0 0 10px rgba(251,146,60,0.4);}
+    .onboard-title{font-size:1.6rem;font-weight:900;color:#fff;line-height:1.2;}
+    .onboard-title span{color:#E8232A;}
+    .onboard-text{font-size:1rem;color:#aaa;line-height:1.6;font-family:Arial,sans-serif;font-weight:normal;}
+    .onboard-text strong{color:#fff;font-family:'Arial Black',Arial,sans-serif;}
+    .onboard-example{background:#111;border:2px solid #222;border-radius:14px;padding:14px 18px;font-size:2rem;font-weight:900;color:#fff;letter-spacing:2px;}
+    .onboard-rarity-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+    .onboard-rarity-pill{padding:5px 12px;border-radius:50px;font-size:0.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#000;}
+
+    /* Dots */
+    .onboard-dots{display:flex;gap:8px;justify-content:center;}
+    .onboard-dot{width:8px;height:8px;border-radius:50%;background:#222;transition:all 0.3s;}
+    .onboard-dot.active{background:#E8232A;width:24px;border-radius:4px;}
+
+    /* Nav buttons */
+    .onboard-nav{display:flex;gap:10px;width:100%;max-width:340px;}
+    .onboard-skip{flex:1;background:transparent;border:2px solid #1a1a1a;color:#333;border-radius:10px;padding:14px;font-size:0.8rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .onboard-next{flex:2;background:#E8232A;border:2px solid #ff4444;color:#fff;border-radius:10px;padding:14px;font-size:1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 0 #8b0000;}
+    .onboard-next:active{transform:translateY(3px);box-shadow:0 1px 0 #8b0000;}
+    .onboard-start{flex:1;background:linear-gradient(135deg,#E8232A,#ff6b35);border:none;color:#fff;border-radius:10px;padding:16px;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0000;animation:startPulse 1s ease infinite alternate;}
+    @keyframes startPulse{from{box-shadow:0 4px 0 #8b0000,0 0 0 rgba(232,35,42,0);}to{box-shadow:0 4px 0 #8b0000,0 0 20px rgba(232,35,42,0.5);}}
+
     @media(max-height:700px){.header-minutes{font-size:2.2rem;}.q-text{font-size:2.8rem;}.ans-box{font-size:2.5rem;min-height:54px;}.pad-btn{height:62px;font-size:1.7rem;}}
   </style>
 </head>
 <body>
 
 <div class="particles" id="particles"></div>
+
+<!-- ══ ONBOARDING ══ -->
+<div class="onboard-overlay" id="onboardOverlay">
+
+  <!-- Slide 1: Welkom -->
+  <div class="onboard-slide active" id="slide0">
+    <div class="onboard-big-emoji">🎮</div>
+    <div class="onboard-title">Hé James!<br><span>Welkom!</span></div>
+    <div class="onboard-text">
+      Dit is jouw <strong>eigen gacha game</strong>.<br>
+      Jij kunt super coole characters verzamelen —<br>
+      van Pokémon tot Brawl Stars tot Brainrot!
+    </div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://images.pokemontcg.io/base1/4_hires.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/dragon.jpg" onerror="this.style.display='none'" alt="">
+    </div>
+    <div class="onboard-text">Maar je moet ze <strong>verdienen</strong> 💪</div>
+  </div>
+
+  <!-- Slide 2: Hoe werkt het -->
+  <div class="onboard-slide" id="slide1">
+    <div class="onboard-big-emoji">🧮</div>
+    <div class="onboard-title">Zo werkt het!</div>
+    <div class="onboard-text"><strong>Stap 1:</strong> Los een sommetje op!</div>
+    <div class="onboard-example">7 + 6 = ?</div>
+    <div class="onboard-text">
+      Los <strong>3 sommen</strong> goed op<br>
+      en je verdient <strong>1 minuut</strong> schermtijd! ⏱️<br><br>
+      Na <strong>5 minuten</strong> mag je<br>
+      een pack openen! 🎰
+    </div>
+  </div>
+
+  <!-- Slide 3: De packs -->
+  <div class="onboard-slide" id="slide2">
+    <div class="onboard-big-emoji">🎴</div>
+    <div class="onboard-title">Kies je pack!</div>
+    <div class="onboard-text">Er zijn <strong>3 packs</strong> om uit te kiezen:</div>
+    <div class="onboard-chars">
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://mbfamilyoffice.github.io/kids-apps/james/img/bombard.jpg" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#7c3aed;margin-top:4px;font-weight:900;text-transform:uppercase;">🧠 Brainrot</div>
+      </div>
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://images.pokemontcg.io/base1/4_hires.png" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#dc2626;margin-top:4px;font-weight:900;text-transform:uppercase;">🃏 Pokémon</div>
+      </div>
+      <div style="text-align:center">
+        <img class="onboard-char-img" src="https://cdn.brawlify.com/brawler-bs/Leon.png" onerror="this.style.display='none'" alt="">
+        <div style="font-size:0.6rem;color:#d97706;margin-top:4px;font-weight:900;text-transform:uppercase;">⭐ Brawl Stars</div>
+      </div>
+    </div>
+    <div class="onboard-text">
+      Elke keer mag je zelf kiezen!<br>
+      Jij bent de baas. 😎
+    </div>
+  </div>
+
+  <!-- Slide 4: Zeldzaamheid -->
+  <div class="onboard-slide" id="slide3">
+    <div class="onboard-big-emoji">✨</div>
+    <div class="onboard-title">Hoe zeldzaam<br>is jouw card?</div>
+    <div class="onboard-rarity-row">
+      <div class="onboard-rarity-pill" style="background:#6b7280;color:#fff;">Common</div>
+      <div class="onboard-rarity-pill" style="background:#38bdf8;">Rare</div>
+      <div class="onboard-rarity-pill" style="background:#a78bfa;">Epic</div>
+      <div class="onboard-rarity-pill" style="background:#fb923c;">Legendary</div>
+      <div class="onboard-rarity-pill" style="background:#fbbf24;">⭐ Ultra</div>
+    </div>
+    <div class="onboard-text">
+      Ultra is het <strong>allerzeldzaamst</strong>!<br>
+      Soms krijg je er <strong>extra minuten</strong> bij 🎁<br><br>
+      En als je iets zeldzaams krijgt —<br>
+      stuur de link naar je vrienden! 🔗
+    </div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og" src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://cdn.brawlify.com/brawler-bs/Kaze.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og" src="https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Pikachu_Illustrator_card.jpg/200px-Pikachu_Illustrator_card.jpg" onerror="this.style.display='none'" alt="">
+    </div>
+  </div>
+
+  <!-- Slide 5: Start! -->
+  <div class="onboard-slide" id="slide4">
+    <div class="onboard-big-emoji">🚀</div>
+    <div class="onboard-title">Ben je er klaar voor?</div>
+    <div class="onboard-chars">
+      <img class="onboard-char-img og"     src="https://mbfamilyoffice.github.io/kids-apps/james/img/strawbel.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Spike.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://mbfamilyoffice.github.io/kids-apps/james/img/dragon.jpg" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img secret" src="https://cdn.brawlify.com/brawler-bs/Leon.png" onerror="this.style.display='none'" alt="">
+      <img class="onboard-char-img og"     src="https://cdn.brawlify.com/brawler-bs/Kaze.png" onerror="this.style.display='none'" alt="">
+    </div>
+    <div class="onboard-text">
+      <strong>83 characters</strong> wachten op jou.<br>
+      Wie spawn jij als eerste?<br><br>
+      Doe je best bij de sommen —<br>
+      en verzamel ze allemaal! 🏆
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="onboard-dots" id="onboardDots"></div>
+  <div class="onboard-nav" id="onboardNav">
+    <button class="onboard-skip" onclick="finishOnboarding()">Overslaan</button>
+    <button class="onboard-next" id="onboardNextBtn" onclick="onboardNext()">Volgende →</button>
+  </div>
+</div>
 
 <!-- ══ PACK SELECT ══ -->
 <div class="pack-overlay hidden" id="packOverlay">
@@ -568,7 +715,9 @@ const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
   if(d){try{viewCollection=JSON.parse(atob(d));setTimeout(()=>{openCollection();if(n){document.getElementById('viewBannerTitle').textContent=`🎮 ${decodeURIComponent(n)} zijn collectie`;}document.getElementById('viewBanner').style.display='';document.getElementById('shareBtn').textContent='🔗 Maak jouw eigen collectie!';},200);}catch(e){}}
 })();
 
-buildNumpad();buildPinPad();renderXP();renderHeader();nextQuestion();
+buildNumpad();buildPinPad();renderXP();renderHeader();
+// Show onboarding if first time
+if(!localStorage.getItem('jamesOnboarded')){showOnboarding();}else{nextQuestion();}
 
 function save(){
   localStorage.setItem('jamesMinutes',   totalMinutes);
@@ -879,6 +1028,42 @@ function launchParticles(n){
       layer.appendChild(el);setTimeout(()=>el.remove(),2800);
     },i*22);
   }
+}
+
+/* ── ONBOARDING ── */
+const TOTAL_SLIDES = 5;
+let currentSlide = 0;
+
+function showOnboarding(){
+  document.getElementById('onboardOverlay').classList.remove('hidden');
+  renderOnboardDots();
+}
+function renderOnboardDots(){
+  const dots=document.getElementById('onboardDots');dots.innerHTML='';
+  for(let i=0;i<TOTAL_SLIDES;i++){
+    const d=document.createElement('div');
+    d.className='onboard-dot'+(i===currentSlide?' active':'');
+    dots.appendChild(d);
+  }
+  const btn=document.getElementById('onboardNextBtn');
+  btn.textContent=currentSlide===TOTAL_SLIDES-1?'🚀 Start!' :'Volgende →';
+  btn.className=currentSlide===TOTAL_SLIDES-1?'onboard-start':'onboard-next';
+}
+function onboardNext(){
+  if(currentSlide<TOTAL_SLIDES-1){
+    document.getElementById('slide'+currentSlide).classList.remove('active');
+    currentSlide++;
+    document.getElementById('slide'+currentSlide).classList.add('active');
+    renderOnboardDots();
+    if(currentSlide===TOTAL_SLIDES-1) launchParticles(30);
+  } else {
+    finishOnboarding();
+  }
+}
+function finishOnboarding(){
+  localStorage.setItem('jamesOnboarded','1');
+  document.getElementById('onboardOverlay').classList.add('hidden');
+  nextQuestion();
 }
 
 /* ── PIN ── */
