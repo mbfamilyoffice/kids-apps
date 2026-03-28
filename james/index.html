@@ -706,6 +706,7 @@ let collection   = JSON.parse(localStorage.getItem('jamesCollection')||'{}');
 let pityCount    = JSON.parse(localStorage.getItem('jamesPity')||'{"brainrot":0,"pokemon":0,"brawl":0}');
 let typedAnswer=null,currentQ=null,locked=false,pinBuffer='',activeUniverse=null,collTab='all';
 let viewCollection=null;
+let currentSlide=0;
 const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
 
 // Check view mode from URL
@@ -716,8 +717,12 @@ const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
 })();
 
 buildNumpad();buildPinPad();renderXP();renderHeader();
-// Show onboarding if first time
-if(!localStorage.getItem('jamesOnboarded')){showOnboarding();}else{nextQuestion();}
+// Onboarding vars & functions defined below in script, called after DOM ready
+window.addEventListener('DOMContentLoaded',()=>{});
+// Show onboarding if first time — called after all functions defined
+setTimeout(()=>{
+  if(!localStorage.getItem('jamesOnboarded')){showOnboarding();}else{nextQuestion();}
+},0);
 
 function save(){
   localStorage.setItem('jamesMinutes',   totalMinutes);
@@ -1032,7 +1037,6 @@ function launchParticles(n){
 
 /* ── ONBOARDING ── */
 const TOTAL_SLIDES = 5;
-let currentSlide = 0;
 
 function showOnboarding(){
   document.getElementById('onboardOverlay').classList.remove('hidden');
