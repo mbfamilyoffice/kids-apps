@@ -144,6 +144,20 @@
     .tab-btn.t-pokemon.active{border-color:#e74c3c;background:#1a0505;color:#ff8a80;}
     .tab-btn.t-brawl.active{border-color:#f39c12;background:#1a1000;color:#FFD700;}
 
+    /* Universe progress bars */
+    .uni-progress{max-width:480px;margin:0 auto 14px;display:flex;flex-direction:column;gap:8px;}
+    .uni-prog-row{display:flex;align-items:center;gap:10px;}
+    .uni-prog-label{font-size:0.7rem;font-weight:900;color:#555;text-transform:uppercase;letter-spacing:1px;width:80px;flex-shrink:0;}
+    .uni-prog-bar{flex:1;background:#111;border-radius:50px;height:10px;overflow:hidden;border:1px solid #222;}
+    .uni-prog-fill{height:100%;border-radius:50px;transition:width 0.5s ease;}
+    .uni-prog-count{font-size:0.65rem;color:#444;font-weight:900;width:36px;text-align:right;flex-shrink:0;}
+
+    /* Pity indicator */
+    .pity-row{display:flex;gap:8px;justify-content:center;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;flex-wrap:wrap;}
+    .pity-pill{background:#111;border:1px solid #222;border-radius:50px;padding:4px 10px;font-size:0.6rem;color:#444;font-weight:900;text-transform:uppercase;letter-spacing:1px;}
+    .pity-pill.warn{border-color:#ff9800;color:#ff9800;}
+    .pity-pill.hot{border-color:#FFD700;color:#FFD700;animation:bpulse 0.5s infinite alternate;}
+
     /* Share button */
     .share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:480px;margin:0 auto 14px;background:linear-gradient(135deg,#1a2e1a,#0d1a0d);border:2px solid #00b06a;color:#00b06a;border-radius:12px;padding:14px;font-size:0.85rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
     .share-btn:active{transform:scale(0.97);}
@@ -249,6 +263,8 @@
     <button class="coll-close" onclick="closeCollection()">✕ Sluiten</button>
   </div>
   <div class="coll-stats" id="collStats"></div>
+  <div class="uni-progress" id="uniProgress"></div>
+  <div class="pity-row" id="pityRow"></div>
   <button class="share-btn" id="shareBtn" onclick="shareCollection()">🔗 Deel mijn collectie met vrienden!</button>
   <div class="coll-tabs">
     <button class="tab-btn t-all active" onclick="switchTab('all')">Alles</button>
@@ -402,18 +418,52 @@ const ALL_CHARS = {
 };
 
 /* ══════════════════════════════════════════
+   IMAGES — for key rare+ characters
+══════════════════════════════════════════ */
+const CHAR_IMG = {
+  // Brainrot
+  strawbel: 'https://static.wikia.nocookie.net/italian-brainrot/images/8/8e/Strawberry_Elephant.png/revision/latest?cb=20250501000000',
+  dragon:   'https://static.wikia.nocookie.net/italian-brainrot/images/d/dc/Dragon_Cannelloni.webp/revision/latest?cb=20250401000000',
+  tralal:   'https://static.wikia.nocookie.net/italian-brainrot/images/7/7d/Tralalero_Tralala.webp/revision/latest/scale-to-width-down/200?cb=20250312043106',
+  bombard:  'https://static.wikia.nocookie.net/italian-brainrot/images/1/1c/Bombardiro_Crocodilo.webp/revision/latest/scale-to-width-down/200?cb=20250311143244',
+  cappass:  'https://static.wikia.nocookie.net/italian-brainrot/images/6/6e/Cappuccino_Assassino.webp/revision/latest/scale-to-width-down/200?cb=20250312023916',
+  frigo:    'https://static.wikia.nocookie.net/italian-brainrot/images/2/2e/Frigo_Camelo.webp/revision/latest/scale-to-width-down/200?cb=20250312043741',
+  // Pokémon
+  pikaill:  'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Pikachu_Illustrator_card.jpg/200px-Pikachu_Illustrator_card.jpg',
+  charshad: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Charizard_%281st_Edition%29_card.jpg/200px-Charizard_%281st_Edition%29_card.jpg',
+  charizrd: 'https://images.pokemontcg.io/base1/4_hires.png',
+  lugia:    'https://images.pokemontcg.io/neo1/9_hires.png',
+  mewtwo:   'https://images.pokemontcg.io/base1/10_hires.png',
+  gengar:   'https://images.pokemontcg.io/base1/5_hires.png',
+  pikachu:  'https://images.pokemontcg.io/base1/58_hires.png',
+  // Brawl Stars
+  spike:    'https://cdn.brawlify.com/brawler-bs/Spike.png',
+  crow:     'https://cdn.brawlify.com/brawler-bs/Crow.png',
+  leon:     'https://cdn.brawlify.com/brawler-bs/Leon.png',
+  sandy:    'https://cdn.brawlify.com/brawler-bs/Sandy.png',
+  amber:    'https://cdn.brawlify.com/brawler-bs/Amber.png',
+  kaze:     'https://cdn.brawlify.com/brawler-bs/Kaze.png',
+  sirius:   'https://cdn.brawlify.com/brawler-bs/Sirius.png',
+  mortis:   'https://cdn.brawlify.com/brawler-bs/Mortis.png',
+  tara:     'https://cdn.brawlify.com/brawler-bs/Tara.png',
+  gene:     'https://cdn.brawlify.com/brawler-bs/Gene.png',
+  buzz:     'https://cdn.brawlify.com/brawler-bs/Buzz.png',
+};
+
+/* ══════════════════════════════════════════
    STATE
 ══════════════════════════════════════════ */
 let totalMinutes = parseInt(localStorage.getItem('jamesMinutes')||'0');
 let streak       = parseInt(localStorage.getItem('jamesStreak') ||'0');
 let collection   = JSON.parse(localStorage.getItem('jamesCollection')||'{}');
+let pityCount    = JSON.parse(localStorage.getItem('jamesPity')||'{"brainrot":0,"pokemon":0,"brawl":0}');
 let typedAnswer  = '';
 let currentQ     = null;
 let locked       = false;
 let pinBuffer    = '';
 let activeUniverse = null;
 let collTab      = 'all';
-const PIN='1234',GOAL=3,SPAWN_EVERY=5;
+const PIN='1234',GOAL=3,SPAWN_EVERY=5,PITY_RARE=5,PITY_EPIC=12,PITY_SECRET=25;
 
 buildNumpad(); buildPinPad(); renderXP(); renderHeader(); nextQuestion();
 
@@ -421,6 +471,7 @@ function save(){
   localStorage.setItem('jamesMinutes',   totalMinutes);
   localStorage.setItem('jamesStreak',    streak);
   localStorage.setItem('jamesCollection',JSON.stringify(collection));
+  localStorage.setItem('jamesPity',      JSON.stringify(pityCount));
 }
 
 /* ══════════════════════════════════════════
@@ -522,15 +573,27 @@ function startGacha(universe){
    GACHA
 ══════════════════════════════════════════ */
 function rollChar(universe){
+  const pity=pityCount[universe]||0;
   const r=Math.random();
   let rarity;
-  if(r<0.60)rarity='common';
-  else if(r<0.85)rarity='rare';
-  else if(r<0.95)rarity='epic';
-  else if(r<0.99)rarity='secret';
-  else rarity='og';
+
+  // Pity overrides: guaranteed minimum rarity after dry streaks
+  if(pity>=PITY_SECRET)      rarity='secret';
+  else if(pity>=PITY_EPIC)   rarity='epic';
+  else if(pity>=PITY_RARE)   rarity='rare';
+  else {
+    if(r<0.60)      rarity='common';
+    else if(r<0.85) rarity='rare';
+    else if(r<0.95) rarity='epic';
+    else if(r<0.99) rarity='secret';
+    else            rarity='og';
+  }
+
+  // Update pity counter
+  if(rarity==='common') pityCount[universe]=(pity+1);
+  else                  pityCount[universe]=0; // reset on any rare+
+
   const pool=ALL_CHARS[universe].filter(c=>c.r===rarity);
-  // fallback: pick highest available rarity
   if(!pool.length){
     for(const rv of['secret','epic','rare','common']){
       const p2=ALL_CHARS[universe].filter(c=>c.r===rv);
@@ -593,7 +656,18 @@ function showReveal(char){
   const ub=document.getElementById('uniBadge');
   ub.textContent=uni.label;ub.style.background=uni.bg;ub.style.color=uni.color;
 
-  document.getElementById('revEmoji').textContent=char.emoji;
+  const imgUrl=CHAR_IMG[char.id];
+  const revEmojiEl=document.getElementById('revEmoji');
+  if(imgUrl){
+    revEmojiEl.textContent='';
+    revEmojiEl.style.fontSize='0';
+    // Use img inside the emoji span
+    revEmojiEl.innerHTML=`<img src="${imgUrl}" onerror="this.parentNode.textContent='${char.emoji}';this.parentNode.style.fontSize='5rem';" style="width:120px;height:120px;object-fit:contain;border-radius:12px;display:block;margin:0 auto 4px;">`;
+  } else {
+    revEmojiEl.innerHTML='';
+    revEmojiEl.textContent=char.emoji;
+    revEmojiEl.style.fontSize='5rem';
+  }
   document.getElementById('revName').textContent=char.name;
   const rb=document.getElementById('revRarity');rb.textContent=rv.label;rb.style.background=rv.color;rb.style.color='#000';
 
@@ -669,6 +743,41 @@ function renderCollection(){
   const unlocked=Object.keys(displayColl).length;
   document.getElementById('collStats').textContent=`${unlocked} / ${allFlat.length} gespawnd 🧬`;
   document.getElementById('viewBanner').style.display=viewCollection?'':'none';
+
+  // Universe progress bars
+  const prog=document.getElementById('uniProgress');prog.innerHTML='';
+  const uniConf=[
+    {key:'brainrot',label:'🧠 Brainrot',color:'#9b59b6'},
+    {key:'pokemon', label:'🃏 Pokémon', color:'#e74c3c'},
+    {key:'brawl',   label:'⭐ Brawl',   color:'#f39c12'},
+  ];
+  uniConf.forEach(u=>{
+    const total=ALL_CHARS[u.key].length;
+    const got=ALL_CHARS[u.key].filter(c=>displayColl[c.id]).length;
+    const pct=Math.round(got/total*100);
+    const row=document.createElement('div');row.className='uni-prog-row';
+    row.innerHTML=`
+      <div class="uni-prog-label">${u.label}</div>
+      <div class="uni-prog-bar"><div class="uni-prog-fill" style="width:${pct}%;background:${u.color};"></div></div>
+      <div class="uni-prog-count">${got}/${total}</div>
+    `;
+    prog.appendChild(row);
+  });
+
+  // Pity indicators (only when not in view mode)
+  const pityRow=document.getElementById('pityRow');pityRow.innerHTML='';
+  if(!viewCollection){
+    uniConf.forEach(u=>{
+      const p=pityCount[u.key]||0;
+      const isHot=p>=PITY_SECRET;
+      const isWarn=p>=PITY_EPIC&&!isHot;
+      const pill=document.createElement('div');
+      pill.className='pity-pill'+(isHot?' hot':isWarn?' warn':'');
+      const next=isHot?'🔥 RARE GUARANTEED!':isWarn?`Epic in ${PITY_SECRET-p}`:p>=PITY_RARE?`Epic in ${PITY_EPIC-p}`:`Rare in ${PITY_RARE-p}`;
+      pill.textContent=`${u.label.split(' ')[0]} ${next}`;
+      pityRow.appendChild(pill);
+    });
+  }
 
   const universes=collTab==='all'
     ?['brainrot','pokemon','brawl']
@@ -752,7 +861,7 @@ function renderPinDots(){
 }
 function checkPin(){
   if(pinBuffer===PIN){
-    streak=0;totalMinutes=0;collection={};save();renderXP();renderHeader();closePin();nextQuestion();
+    streak=0;totalMinutes=0;collection={};pityCount={brainrot:0,pokemon:0,brawl:0};save();renderXP();renderHeader();closePin();nextQuestion();
     const fb=document.getElementById('fbText');fb.className='feedback-text correct';fb.textContent='✅ Alles gereset!';
     setTimeout(()=>{fb.textContent='';fb.className='feedback-text';},2000);
   }else{document.getElementById('pinErr').textContent='❌ WRONG PIN';pinBuffer='';renderPinDots();}
