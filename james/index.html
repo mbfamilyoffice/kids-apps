@@ -498,8 +498,8 @@
 <!-- ══ PIN ══ -->
 <div class="pin-overlay hidden" id="pinOverlay">
   <div class="pin-box">
-    <div class="pin-title">🔐 Ouder Reset</div>
-    <div class="pin-sub">Voer PIN in</div>
+    <div class="pin-title" id="pinTitle">🔐 Ouder Reset</div>
+    <div class="pin-sub" id="pinSub">Voer PIN in</div>
     <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
     <div class="pin-numpad" id="pinPad"></div>
     <div class="pin-err" id="pinErr"></div>
@@ -785,13 +785,8 @@ function save(){
 }
 
 /* ── RESET MINUTEN (collectie blijft intact) ── */
-function resetMinutes(){
-  if(!confirm('Minuten resetten naar 0? Je collectie blijft staan.'))return;
-  totalMinutes=0;streak=0;
-  save();renderXP();renderHeader();
-  const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='⏱️ Minuten gereset!';
-  setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
-}
+function resetMinutes(){openPin('minutes');}
+
 
 /* ── HEADER & XP ── */
 function renderHeader(){
@@ -1138,6 +1133,7 @@ function finishOnboarding(){
 }
 
 /* ── PIN ── */
+let pinMode='full'; // 'full' = alles reset | 'minutes' = alleen minuten
 function buildPinPad(){
   const pad=document.getElementById('pinPad');
   [1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].forEach(k=>{
@@ -1148,17 +1144,31 @@ function buildPinPad(){
     pad.appendChild(btn);
   });
 }
-function openPin(){pinBuffer='';renderPinDots();document.getElementById('pinErr').textContent='';document.getElementById('pinOverlay').classList.remove('hidden');}
+function openPin(mode='full'){
+  pinMode=mode;
+  pinBuffer='';renderPinDots();
+  document.getElementById('pinErr').textContent='';
+  document.getElementById('pinTitle').textContent=mode==='minutes'?'⏱️ Reset Minuten':'🔐 Ouder Reset';
+  document.getElementById('pinSub').textContent=mode==='minutes'?'Voer ouder-PIN in':'Voer PIN in';
+  document.getElementById('pinOverlay').classList.remove('hidden');
+}
 function closePin(){document.getElementById('pinOverlay').classList.add('hidden');pinBuffer='';}
 function pinDigit(d){if(pinBuffer.length>=4)return;pinBuffer+=d;renderPinDots();if(pinBuffer.length===4)setTimeout(checkPin,150);}
 function pinBksp(){pinBuffer=pinBuffer.slice(0,-1);renderPinDots();document.getElementById('pinErr').textContent='';}
 function renderPinDots(){const f='● '.repeat(pinBuffer.length).trim();const e='○ '.repeat(4-pinBuffer.length).trim();document.getElementById('pinDots').textContent=[f,e].filter(Boolean).join(' ');}
 function checkPin(){
   if(pinBuffer===PIN){
-    streak=0;totalMinutes=0;collection={};pityCount={brainrot:0,pokemon:0,brawl:0};
-    save();renderXP();renderHeader();closePin();nextQuestion();
-    const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='✅ Alles gereset!';
-    setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+    if(pinMode==='minutes'){
+      totalMinutes=0;streak=0;
+      save();renderXP();renderHeader();closePin();
+      const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='⏱️ Minuten gereset!';
+      setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+    } else {
+      streak=0;totalMinutes=0;collection={};pityCount={brainrot:0,pokemon:0,brawl:0};
+      save();renderXP();renderHeader();closePin();nextQuestion();
+      const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='✅ Alles gereset!';
+      setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+    }
   }else{document.getElementById('pinErr').textContent='❌ WRONG PIN';pinBuffer='';renderPinDots();}
 }
 </script>
