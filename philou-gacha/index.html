@@ -14,6 +14,7 @@
     .logo span{color:#e91e8c;}
     .logo .sub{font-size:0.55rem;color:#333;letter-spacing:3px;display:block;text-transform:uppercase;}
     .coll-open-btn{background:#111;border:2px solid #2a2a3a;color:#9b7dce;border-radius:10px;padding:9px 13px;font-size:0.72rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+    .reset-min-btn{background:#111;border:2px solid #3a2a1a;color:#e8a030;border-radius:10px;padding:9px 13px;font-size:0.72rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
 
     /* ── HEADER ── */
     .header-card{background:#111;border:2px solid #e91e8c;border-radius:12px;padding:10px 24px;text-align:center;box-shadow:0 0 20px rgba(233,30,140,0.3);width:100%;max-width:480px;}
@@ -509,6 +510,7 @@
 <div class="topbar">
   <div class="logo">🎮 PHILOU<span> SOMMEN</span><span class="sub">Gacha × Reken</span></div>
   <button class="coll-open-btn" onclick="openCollection()">📦 Collectie</button>
+  <button class="reset-min-btn" onclick="resetMinutes()">🔄 Reset min</button>
 </div>
 <div class="header-card">
   <div class="header-label">⏱ Schermtijd verdiend</div>
@@ -780,6 +782,15 @@ function save(){
   localStorage.setItem('philouStreak',    streak);
   localStorage.setItem('philouCollection',JSON.stringify(collection));
   localStorage.setItem('philouPity',      JSON.stringify(pityCount));
+}
+
+/* ── RESET MINUTEN (collectie blijft intact) ── */
+function resetMinutes(){
+  if(!confirm('Minuten resetten naar 0? Je collectie blijft staan.'))return;
+  totalMinutes=0;streak=0;
+  save();renderXP();renderHeader();
+  const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='⏱️ Minuten gereset!';
+  setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
 }
 
 /* ── HEADER & XP ── */
