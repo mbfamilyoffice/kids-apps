@@ -549,6 +549,7 @@
 <!-- VIA 10 STAP-KAART -->
 <div class="via10-card hidden" id="via10Card">
   <div class="via10-title" id="via10Title">💡 Eerst terug naar 10, dan de rest eraf</div>
+
   <div class="via10-formula" id="via10Formula"></div>
   <div class="via10-hint" id="via10Hint"></div>
 </div>
@@ -861,25 +862,20 @@ function nextQuestion(){
     document.getElementById('qText').textContent=`${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
 
   }else if(roll<0.66){
-    // ── TYPE 2: Via-10 (sprong over de 10) ──
-    const plus=Math.random()<0.5;let a,b2,ok=false;
-    if(plus){
-      a=rand(2,9);const minB=11-a,maxB=9;
-      if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
-    }else{
-      a=rand(11,18);const minB=a-9,maxB=Math.min(9,a-1);
-      if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
-    }
+    // ── TYPE 2: Via-10 — ALLEEN aftrekken (sprong over de 10) ──
+    // bijv. 14 − 6: eerst −4 terug naar 10, dan nog −2
+    let a,b2,ok=false;
+    a=rand(11,18);const minB=a-9,maxB=Math.min(9,a-1);
+    if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
     if(ok){
-      currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2,via10:true,plus};
+      currentQ={a,b:b2,op:'−',ans:a-b2,via10:true,plus:false};
       via10Mode=true;
-      if(plus){const step1=10-a,step2=b2-step1;via10Steps=[step1,step2,a+b2];}
-      else{const step1=a-10,step2=b2-step1;via10Steps=[step1,step2,a-b2];}
+      const step1=a-10,step2=b2-step1;
+      via10Steps=[step1,step2,a-b2];
     }else{
       // fallback normaal
-      const p2=Math.random()<0.5;let aa,bb;
-      if(p2){aa=rand(1,19);bb=rand(1,20-aa);}else{aa=rand(2,20);bb=rand(1,aa-1);}
-      currentQ={a:aa,b:bb,op:p2?'+':'−',ans:p2?aa+bb:aa-bb};
+      const aa=rand(2,20),bb=rand(1,aa-1);
+      currentQ={a:aa,b:bb,op:'−',ans:aa-bb};
     }
     document.getElementById('qText').textContent=`${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
     if(via10Mode){
