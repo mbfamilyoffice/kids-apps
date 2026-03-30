@@ -294,6 +294,17 @@
     .onboard-start{flex:1;background:linear-gradient(135deg,#E8232A,#ff6b35);border:none;color:#fff;border-radius:10px;padding:16px;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #8b0000;animation:startPulse 1s ease infinite alternate;}
     @keyframes startPulse{from{box-shadow:0 4px 0 #8b0000,0 0 0 rgba(232,35,42,0);}to{box-shadow:0 4px 0 #8b0000,0 0 20px rgba(232,35,42,0.5);}}
 
+    /* ── VIA 10 CARD ── */
+    .via10-card{background:#111;border:2px solid #FFD700;border-radius:14px;padding:16px 20px 14px;text-align:center;width:100%;max-width:480px;box-shadow:0 0 20px rgba(255,215,0,0.15);}
+    .via10-card.hidden{display:none;}
+    .via10-title{font-size:0.78rem;color:#FFD700;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+    .via10-formula{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:10px;line-height:1;}
+    .via10-box{display:inline-flex;align-items:center;justify-content:center;min-width:52px;min-height:52px;background:#0a0a0a;border:3px solid #333;border-radius:8px;font-size:1.9rem;font-weight:900;color:#888;transition:all 0.2s;}
+    .via10-box.active{border-color:#FFD700;box-shadow:0 0 14px rgba(255,215,0,0.5);color:#FFD700;}
+    .via10-box.correct{border-color:#00b06a;background:#001a0f;color:#00b06a;}
+    .via10-box.wrong{border-color:#E8232A;background:#1a0000;color:#E8232A;animation:shake 0.35s ease;}
+    .via10-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:1px;font-family:Arial,sans-serif;font-weight:normal;}
+
     @media(max-height:700px){.header-minutes{font-size:2.2rem;}.q-text{font-size:2.8rem;}.ans-box{font-size:2.5rem;min-height:54px;}.pad-btn{height:62px;font-size:1.7rem;}}
   </style>
 </head>
@@ -527,6 +538,14 @@
   <div class="ans-box" id="ansBox">_</div>
   <div class="fb-text" id="fbText"></div>
 </div>
+
+<!-- VIA 10 STAP-KAART -->
+<div class="via10-card hidden" id="via10Card">
+  <div class="via10-title" id="via10Title">💡 Eerst terug naar 10, dan de rest eraf</div>
+  <div class="via10-formula" id="via10Formula"></div>
+  <div class="via10-hint" id="via10Hint"></div>
+</div>
+
 <div class="numpad" id="numpad"></div>
 <button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
 
@@ -802,30 +821,47 @@ function renderXP(){
   document.getElementById('leftCount').textContent=GOAL-streak;
 }
 
+/* ── VIA 10 STATE ── */
+let via10Mode=false,via10Step=0,via10Steps=[];
+
 /* ── QUESTION ── */
 function nextQuestion(){
-  typedAnswer='';locked=false;
+  typedAnswer='';locked=false;via10Mode=false;via10Step=0;via10Steps=[];
   const b=document.getElementById('ansBox');b.textContent='_';b.className='ans-box';
   const f=document.getElementById('fbText');f.textContent='';f.className='fb-text';
+  f.style.color='';f.style.fontSize='';f.style.opacity='';
+  document.getElementById('via10Card').classList.add('hidden');
+  document.getElementById('ansBox').parentElement.style.display='';
+  document.getElementById('ansBox').style.display='';
 
   // 35% kans op "sprong over de 10" som
-  let via10=false;
   if(Math.random()<0.35){
-    const plus=Math.random()<0.5;let a,b2;
+    const plus=Math.random()<0.5;let a,b2,ok=false;
     if(plus){
-      // a + b > 10, beide getallen 2-9
-      a=rand(2,9);
-      const minB=11-a,maxB=9;
-      if(minB<=maxB){b2=rand(minB,maxB);via10=true;}
-      else{a=rand(1,19);b2=rand(1,20-a);}
+      a=rand(2,9);const minB=11-a,maxB=9;
+      if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
     }else{
-      // a - b < 10, via tienerzone
-      a=rand(11,18);
-      const minB=a-9,maxB=Math.min(9,a-1);
-      if(minB<=maxB){b2=rand(minB,maxB);via10=true;}
-      else{a=rand(2,20);b2=rand(1,a-1);}
+      a=rand(11,18);const minB=a-9,maxB=Math.min(9,a-1);
+      if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
     }
-    currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
+    if(ok){
+      currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2,via10:true,plus};
+      via10Mode=true;
+      // Stappen berekenen
+      if(plus){
+        // a + b = a + (10-a) + (b-(10-a)) → stap1=10-a, stap2=b-(10-a), antwoord=a+b
+        const step1=10-a,step2=b2-step1;
+        via10Steps=[step1,step2,a+b2];
+      }else{
+        // a - b = a - (a-10) - (b-(a-10)) → stap1=a-10, stap2=b-(a-10), antwoord=a-b
+        const step1=a-10,step2=b2-step1;
+        via10Steps=[step1,step2,a-b2];
+      }
+    }else{
+      // fallback normaal
+      if(plus){a=rand(1,19);b2=rand(1,20-a);}else{a=rand(2,20);b2=rand(1,a-1);}
+      currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
+    }
   }else{
     const plus=Math.random()<0.5;let a,b2;
     if(plus){a=rand(1,19);b2=rand(1,20-a);}else{a=rand(2,20);b2=rand(1,a-1);}
@@ -833,15 +869,59 @@ function nextQuestion(){
   }
 
   document.getElementById('qText').textContent=`${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
-  // Hint voor sprong-over-10 sommen
-  if(via10){
-    f.className='fb-text';
-    f.style.color='#FFD700';
-    f.style.fontSize='0.75rem';
-    f.textContent='💡 Via de 10!';
-    f.style.opacity='0.6';
+  if(via10Mode){
+    // Verberg normaal antwoord-vak, toon via10 kaart
+    document.getElementById('ansBox').style.display='none';
+    document.getElementById('via10Card').classList.remove('hidden');
+    renderVia10(false);
+  }
+}
+
+/* ── VIA 10 RENDER ── */
+function renderVia10(showHint){
+  const a=currentQ.a,b=currentQ.b,plus=currentQ.plus;
+  const [s1,s2,ans]=via10Steps;
+  const formula=document.getElementById('via10Formula');
+  formula.innerHTML='';
+
+  if(!plus){
+    // Aftrekken: a - b = a - □ - □ = □
+    formula.innerHTML=`
+      <span>${a}</span><span>−</span>
+      ${makeBox(0,s1)}<span>−</span>
+      ${makeBox(1,s2)}<span>=</span>
+      ${makeBox(2,ans)}
+    `;
+    const h=`Hoeveel moet eraf om 10 te maken? Dan de rest.`;
+    document.getElementById('via10Hint').textContent=via10Step===0?h:via10Step===1?'Hoeveel blijft er dan nog over van de '+b+'?':'';
   }else{
-    f.style.opacity='';f.style.fontSize='';f.style.color='';
+    // Optellen: a + b = a + □ + □ = □
+    formula.innerHTML=`
+      <span>${a}</span><span>+</span>
+      ${makeBox(0,s1)}<span>+</span>
+      ${makeBox(1,s2)}<span>=</span>
+      ${makeBox(2,ans)}
+    `;
+    const h=`Hoeveel mist er nog aan 10?`;
+    document.getElementById('via10Hint').textContent=via10Step===0?h:via10Step===1?'Hoeveel van de '+b+' blijft er nog over?':'';
+  }
+
+  // Klik-handlers op boxes
+  formula.querySelectorAll('.via10-box[data-step]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const s=parseInt(el.dataset.step);
+      if(s===via10Step)el.focus&&el.focus();
+    });
+  });
+}
+
+function makeBox(step,value){
+  if(step<via10Step){
+    return `<div class="via10-box correct">${via10Steps[step]}</div>`;
+  }else if(step===via10Step){
+    return `<div class="via10-box active" id="activeBox" data-step="${step}">?</div>`;
+  }else{
+    return `<div class="via10-box" data-step="${step}">?</div>`;
   }
 }
 function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn;}
@@ -859,11 +939,49 @@ function buildNumpad(){
 }
 function doDigit(d){if(locked||typedAnswer.length>=2)return;typedAnswer+=d;refreshAns();}
 function doBksp(){if(locked)return;typedAnswer=typedAnswer.slice(0,-1);refreshAns();}
-function refreshAns(){const b=document.getElementById('ansBox');b.textContent=typedAnswer||'_';b.className='ans-box';}
+function refreshAns(){
+  if(via10Mode){
+    const ab=document.getElementById('activeBox');
+    if(ab)ab.textContent=typedAnswer||'?';
+    return;
+  }
+  const b=document.getElementById('ansBox');b.textContent=typedAnswer||'_';b.className='ans-box';
+}
 function doCheck(){
-  if(locked||!typedAnswer)return;locked=true;
+  if(locked||!typedAnswer)return;
   const given=parseInt(typedAnswer,10);
-  const box=document.getElementById('ansBox'),fb=document.getElementById('fbText');
+  const fb=document.getElementById('fbText');
+
+  if(via10Mode){
+    const correct=via10Steps[via10Step];
+    if(given===correct){
+      via10Step++;
+      typedAnswer='';
+      renderVia10(false);
+      if(via10Step>=3){
+        // Alle 3 goed — som compleet!
+        locked=true;
+        fb.className='fb-text correct';fb.textContent=pickRnd(OK_MSGS);
+        launchParticles(28);streak++;save();renderXP();
+        if(streak>=GOAL){streak=0;totalMinutes++;save();renderXP();renderHeader();
+          if(totalMinutes%SPAWN_EVERY===0)setTimeout(showPackSelect,1100);else setTimeout(nextQuestion,1400);}
+        else{renderHeader();setTimeout(nextQuestion,1400);}
+      }
+      // anders: wacht op volgende invoer
+    }else{
+      // Fout antwoord op een tussenstap
+      const abox=document.getElementById('activeBox');
+      if(abox){abox.classList.add('wrong');abox.textContent=given;
+        setTimeout(()=>{abox.classList.remove('wrong');abox.textContent='?';},900);}
+      fb.className='fb-text wrong';fb.textContent=pickRnd(FAIL_MSGS);
+      typedAnswer='';
+      setTimeout(()=>{fb.textContent='';fb.className='fb-text';},1200);
+    }
+    return;
+  }
+
+  locked=true;
+  const box=document.getElementById('ansBox');
   if(given===currentQ.ans){
     box.className='ans-box correct popping';fb.className='fb-text correct';fb.textContent=pickRnd(OK_MSGS);
     launchParticles(28);streak++;save();renderXP();
