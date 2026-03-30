@@ -835,12 +835,15 @@ function nextQuestion(){
   document.getElementById('ansBox').style.display='';
 
   // 35% kans op "sprong over de 10" som
-  if(Math.random()<0.35){
+  if(Math.random()<0.40){
+    // 50/50 optellen of aftrekken via-10
     const plus=Math.random()<0.5;let a,b2,ok=false;
     if(plus){
+      // bijv. 7 + 5 = 12 (resultaat > 10, beide < 10)
       a=rand(2,9);const minB=11-a,maxB=9;
       if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
     }else{
+      // bijv. 14 - 6 = 8 (a uit 11-18, b zodanig dat uitkomst < 10)
       a=rand(11,18);const minB=a-9,maxB=Math.min(9,a-1);
       if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
     }
@@ -849,12 +852,12 @@ function nextQuestion(){
       via10Mode=true;
       // Stappen berekenen
       if(plus){
-        // a + b = a + (10-a) + (b-(10-a)) → stap1=10-a, stap2=b-(10-a), antwoord=a+b
-        const step1=10-a,step2=b2-step1;
+        // bijv. 7 + 5: eerst +3 naar 10, dan +2 de rest → [3, 2, 12]
+        const step1=10-a, step2=b2-step1;
         via10Steps=[step1,step2,a+b2];
       }else{
-        // a - b = a - (a-10) - (b-(a-10)) → stap1=a-10, stap2=b-(a-10), antwoord=a-b
-        const step1=a-10,step2=b2-step1;
+        // bijv. 14 - 6: eerst -4 terug naar 10, dan nog -2 de rest → [4, 2, 8]
+        const step1=a-10, step2=b2-step1;
         via10Steps=[step1,step2,a-b2];
       }
     }else{
@@ -885,25 +888,35 @@ function renderVia10(showHint){
   formula.innerHTML='';
 
   if(!plus){
-    // Aftrekken: a - b = a - □ - □ = □
+    // Aftrekken: bijv. 14 − 6 = 14 − □ − □ = □
+    // Stap 1: hoeveel eraf naar 10? (=a-10)
+    // Stap 2: hoeveel blijft er dan nog over van b? (=b-(a-10))
+    // Stap 3: antwoord
     formula.innerHTML=`
-      <span>${a}</span><span>−</span>
-      ${makeBox(0,s1)}<span>−</span>
-      ${makeBox(1,s2)}<span>=</span>
+      <span>${a}</span><span style="color:#aaa">−</span>
+      ${makeBox(0,s1)}<span style="color:#aaa">−</span>
+      ${makeBox(1,s2)}<span style="color:#aaa">=</span>
       ${makeBox(2,ans)}
     `;
-    const h=`Hoeveel moet eraf om 10 te maken? Dan de rest.`;
-    document.getElementById('via10Hint').textContent=via10Step===0?h:via10Step===1?'Hoeveel blijft er dan nog over van de '+b+'?':'';
+    document.getElementById('via10Hint').textContent=
+      via10Step===0?`Hoeveel moet eraf om 10 te maken?`:
+      via10Step===1?`Hoeveel van de ${b} blijft er nog over?`:
+      ``;
   }else{
-    // Optellen: a + b = a + □ + □ = □
+    // Optellen: bijv. 7 + 5 = 7 + □ + □ = □
+    // Stap 1: hoeveel er bij naar 10? (=10-a)
+    // Stap 2: hoeveel van b blijft er over? (=b-(10-a))
+    // Stap 3: antwoord
     formula.innerHTML=`
-      <span>${a}</span><span>+</span>
-      ${makeBox(0,s1)}<span>+</span>
-      ${makeBox(1,s2)}<span>=</span>
+      <span>${a}</span><span style="color:#aaa">+</span>
+      ${makeBox(0,s1)}<span style="color:#aaa">+</span>
+      ${makeBox(1,s2)}<span style="color:#aaa">=</span>
       ${makeBox(2,ans)}
     `;
-    const h=`Hoeveel mist er nog aan 10?`;
-    document.getElementById('via10Hint').textContent=via10Step===0?h:via10Step===1?'Hoeveel van de '+b+' blijft er nog over?':'';
+    document.getElementById('via10Hint').textContent=
+      via10Step===0?`Hoeveel moet er bij om 10 te maken?`:
+      via10Step===1?`Hoeveel van de ${b} blijft er nog over?`:
+      ``;
   }
 
   // Klik-handlers op boxes
