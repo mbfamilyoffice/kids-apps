@@ -807,10 +807,42 @@ function nextQuestion(){
   typedAnswer='';locked=false;
   const b=document.getElementById('ansBox');b.textContent='_';b.className='ans-box';
   const f=document.getElementById('fbText');f.textContent='';f.className='fb-text';
-  const plus=Math.random()<0.5;let a,b2;
-  if(plus){a=rand(1,19);b2=rand(1,20-a);}else{a=rand(2,20);b2=rand(1,a-1);}
-  currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
-  document.getElementById('qText').textContent=`${a} ${currentQ.op} ${b2} = ?`;
+
+  // 35% kans op "sprong over de 10" som
+  let via10=false;
+  if(Math.random()<0.35){
+    const plus=Math.random()<0.5;let a,b2;
+    if(plus){
+      // a + b > 10, beide getallen 2-9
+      a=rand(2,9);
+      const minB=11-a,maxB=9;
+      if(minB<=maxB){b2=rand(minB,maxB);via10=true;}
+      else{a=rand(1,19);b2=rand(1,20-a);}
+    }else{
+      // a - b < 10, via tienerzone
+      a=rand(11,18);
+      const minB=a-9,maxB=Math.min(9,a-1);
+      if(minB<=maxB){b2=rand(minB,maxB);via10=true;}
+      else{a=rand(2,20);b2=rand(1,a-1);}
+    }
+    currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
+  }else{
+    const plus=Math.random()<0.5;let a,b2;
+    if(plus){a=rand(1,19);b2=rand(1,20-a);}else{a=rand(2,20);b2=rand(1,a-1);}
+    currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
+  }
+
+  document.getElementById('qText').textContent=`${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
+  // Hint voor sprong-over-10 sommen
+  if(via10){
+    f.className='fb-text';
+    f.style.color='#FFD700';
+    f.style.fontSize='0.75rem';
+    f.textContent='💡 Via de 10!';
+    f.style.opacity='0.6';
+  }else{
+    f.style.opacity='';f.style.fontSize='';f.style.color='';
+  }
 }
 function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn;}
 
