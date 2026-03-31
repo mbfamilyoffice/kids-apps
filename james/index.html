@@ -312,6 +312,28 @@
     .split-en{font-size:1rem;color:#555;font-weight:900;text-transform:uppercase;letter-spacing:2px;}
     .split-hint{font-size:0.72rem;color:#555;text-transform:uppercase;letter-spacing:1px;font-family:Arial,sans-serif;font-weight:normal;}
 
+    /* ── INSTELLINGEN OVERLAY ── */
+    .settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:2100;}
+    .settings-overlay.hidden{display:none;}
+    .settings-box{background:#111;border:3px solid #333;border-radius:16px;padding:24px 22px;width:90%;max-width:340px;}
+    .settings-title{font-size:1.1rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;text-align:center;}
+    .settings-sub{font-size:0.68rem;color:#555;text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:18px;font-family:Arial,sans-serif;font-weight:normal;}
+    .settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1a1a1a;}
+    .settings-row:last-of-type{border-bottom:none;}
+    .settings-label{display:flex;flex-direction:column;gap:2px;}
+    .settings-label-main{font-size:0.9rem;font-weight:900;color:#fff;}
+    .settings-label-sub{font-size:0.62rem;color:#555;font-family:Arial,sans-serif;font-weight:normal;}
+    /* Toggle switch */
+    .toggle{position:relative;width:48px;height:26px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:#333;border-radius:50px;cursor:pointer;transition:background 0.2s;}
+    .toggle-slider:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform 0.2s;}
+    .toggle input:checked + .toggle-slider{background:#00b06a;}
+    .toggle input:checked + .toggle-slider:before{transform:translateX(22px);}
+    .settings-warn{font-size:0.7rem;color:#E8232A;text-align:center;min-height:18px;margin-top:8px;font-family:Arial,sans-serif;font-weight:normal;}
+    .settings-save{display:block;width:100%;margin-top:14px;background:#00b06a;border:2px solid #00e88a;border-radius:10px;padding:13px;font-size:0.95rem;font-weight:900;color:#fff;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:2px;box-shadow:0 4px 0 #004d30;}
+    .settings-save:active{transform:translateY(3px);box-shadow:0 1px 0 #004d30;}
+
     @media(max-height:700px){.header-minutes{font-size:2.2rem;}.q-text{font-size:2.8rem;}.ans-box{font-size:2.5rem;min-height:54px;}.pad-btn{height:62px;font-size:1.7rem;}}
   </style>
 </head>
@@ -524,6 +546,44 @@
   </div>
 </div>
 
+<!-- ══ INSTELLINGEN ══ -->
+<div class="settings-overlay hidden" id="settingsOverlay">
+  <div class="settings-box">
+    <div class="settings-title">⚙️ Instellingen</div>
+    <div class="settings-sub">Kies welke sommen James oefent</div>
+    <div class="settings-row">
+      <div class="settings-label">
+        <div class="settings-label-main">➕ Basis sommen</div>
+        <div class="settings-label-sub">Optellen & aftrekken t/m 20</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="tog-basis" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">
+        <div class="settings-label-main">➖ Via-10 aftrekken</div>
+        <div class="settings-label-sub">Sprong over de 10 methode</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="tog-via10" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">
+        <div class="settings-label-main">✂️ Getallen splitsen</div>
+        <div class="settings-label-sub">Tientallen & eenheden</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="tog-split" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">
+        <div class="settings-label-main">✖️ Tafels t/m 5</div>
+        <div class="settings-label-sub">1×1 t/m 5×10</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="tog-tafels"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="settings-warn" id="settingsWarn"></div>
+    <button class="settings-save" onclick="saveSettings()">✅ Opslaan</button>
+  </div>
+</div>
+
 <!-- ══ MAIN ══ -->
 <div class="topbar">
   <div class="logo">🎮 JAMES<span> SOMMEN</span><span class="sub">Gacha × Reken</span></div>
@@ -562,7 +622,10 @@
 </div>
 
 <div class="numpad" id="numpad"></div>
-<button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
+<div style="display:flex;gap:10px;justify-content:center;">
+  <button class="parent-btn" onclick="openPin()">🔐 ouder reset</button>
+  <button class="parent-btn" onclick="openPin('settings')" style="color:#aaa;border-color:#222;">⚙️ instellingen</button>
+</div>
 
 <script>
 /* ══════════════════════════════════════════
@@ -821,6 +884,34 @@ function save(){
 /* ── RESET MINUTEN (collectie blijft intact) ── */
 function resetMinutes(){openPin('minutes');}
 
+/* ── INSTELLINGEN ── */
+let settings={basis:true,via10:true,split:true,tafels:false};
+(function(){const s=localStorage.getItem('jamesSettings');if(s)try{settings=Object.assign(settings,JSON.parse(s));}catch(e){}})();
+
+function openSettings(){
+  document.getElementById('tog-basis').checked=settings.basis;
+  document.getElementById('tog-via10').checked=settings.via10;
+  document.getElementById('tog-split').checked=settings.split;
+  document.getElementById('tog-tafels').checked=settings.tafels;
+  document.getElementById('settingsWarn').textContent='';
+  document.getElementById('settingsOverlay').classList.remove('hidden');
+}
+function saveSettings(){
+  const b=document.getElementById('tog-basis').checked;
+  const v=document.getElementById('tog-via10').checked;
+  const s=document.getElementById('tog-split').checked;
+  const t=document.getElementById('tog-tafels').checked;
+  if(!b&&!v&&!s&&!t){document.getElementById('settingsWarn').textContent='Zet minimaal 1 categorie aan!';return;}
+  settings={basis:b,via10:v,split:s,tafels:t};
+  localStorage.setItem('jamesSettings',JSON.stringify(settings));
+  document.getElementById('settingsOverlay').classList.add('hidden');
+  // Toon bevestiging
+  const fb=document.getElementById('fbText');
+  fb.className='fb-text correct';fb.textContent='⚙️ Instellingen opgeslagen!';
+  setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+  nextQuestion();
+}
+
 
 /* ── HEADER & XP ── */
 function renderHeader(){
@@ -852,18 +943,25 @@ function nextQuestion(){
   document.getElementById('ansBox').parentElement.style.display='';
   document.getElementById('ansBox').style.display='';
 
-  const roll=Math.random();
+  // Bouw lijst van actieve types op basis van settings
+  const activeTypes=[];
+  if(settings.basis)activeTypes.push('basis');
+  if(settings.via10)activeTypes.push('via10');
+  if(settings.split)activeTypes.push('split');
+  if(settings.tafels)activeTypes.push('tafels');
+  if(!activeTypes.length)activeTypes.push('basis'); // fallback
 
-  if(roll<0.33){
+  const type=activeTypes[Math.floor(Math.random()*activeTypes.length)];
+
+  if(type==='basis'){
     // ── TYPE 1: Normaal optellen/aftrekken ──
     const plus=Math.random()<0.5;let a,b2;
     if(plus){a=rand(1,19);b2=rand(1,20-a);}else{a=rand(2,20);b2=rand(1,a-1);}
     currentQ={a,b:b2,op:plus?'+':'−',ans:plus?a+b2:a-b2};
     document.getElementById('qText').textContent=`${currentQ.a} ${currentQ.op} ${currentQ.b} = ?`;
 
-  }else if(roll<0.66){
-    // ── TYPE 2: Via-10 — ALLEEN aftrekken (sprong over de 10) ──
-    // bijv. 14 − 6: eerst −4 terug naar 10, dan nog −2
+  }else if(type==='via10'){
+    // ── TYPE 2: Via-10 — ALLEEN aftrekken ──
     let a,b2,ok=false;
     a=rand(11,18);const minB=a-9,maxB=Math.min(9,a-1);
     if(minB<=maxB){b2=rand(minB,maxB);ok=true;}
@@ -873,7 +971,6 @@ function nextQuestion(){
       const step1=a-10,step2=b2-step1;
       via10Steps=[step1,step2,a-b2];
     }else{
-      // fallback normaal
       const aa=rand(2,20),bb=rand(1,aa-1);
       currentQ={a:aa,b:bb,op:'−',ans:aa-bb};
     }
@@ -884,20 +981,22 @@ function nextQuestion(){
       renderVia10(false);
     }
 
-  }else{
+  }else if(type==='split'){
     // ── TYPE 3: Splitsen ──
-    // Getallen 11–99, splits in tientallen + eenheden
-    // Niveau 7j: focus 10-99
     const n=rand(11,99);
-    const tens=Math.floor(n/10)*10, ones=n%10;
+    const tens=Math.floor(n/10)*10,ones=n%10;
     currentQ={a:n,b:0,op:'',ans:n,split:true};
-    splitMode=true;
-    splitSteps=[tens,ones]; // 2 vakjes
-    splitStep=0;
+    splitMode=true;splitSteps=[tens,ones];splitStep=0;
     document.getElementById('qText').textContent=`Splits het getal`;
     document.getElementById('ansBox').style.display='none';
     document.getElementById('splitCard').classList.remove('hidden');
     renderSplit();
+
+  }else if(type==='tafels'){
+    // ── TYPE 4: Tafels t/m 5 ──
+    const tafel=rand(1,5),factor=rand(1,10);
+    currentQ={a:tafel,b:factor,op:'×',ans:tafel*factor};
+    document.getElementById('qText').textContent=`${tafel} × ${factor} = ?`;
   }
 }
 
@@ -1390,8 +1489,10 @@ function openPin(mode='full'){
   pinMode=mode;
   pinBuffer='';renderPinDots();
   document.getElementById('pinErr').textContent='';
-  document.getElementById('pinTitle').textContent=mode==='minutes'?'⏱️ Reset Minuten':'🔐 Ouder Reset';
-  document.getElementById('pinSub').textContent=mode==='minutes'?'Voer ouder-PIN in':'Voer PIN in';
+  document.getElementById('pinTitle').textContent=
+    mode==='minutes'?'⏱️ Reset Minuten':
+    mode==='settings'?'⚙️ Instellingen':'🔐 Ouder Reset';
+  document.getElementById('pinSub').textContent='Voer ouder-PIN in';
   document.getElementById('pinOverlay').classList.remove('hidden');
 }
 function closePin(){document.getElementById('pinOverlay').classList.add('hidden');pinBuffer='';}
@@ -1400,14 +1501,17 @@ function pinBksp(){pinBuffer=pinBuffer.slice(0,-1);renderPinDots();document.getE
 function renderPinDots(){const f='● '.repeat(pinBuffer.length).trim();const e='○ '.repeat(4-pinBuffer.length).trim();document.getElementById('pinDots').textContent=[f,e].filter(Boolean).join(' ');}
 function checkPin(){
   if(pinBuffer===PIN){
+    closePin();
     if(pinMode==='minutes'){
       totalMinutes=0;streak=0;
-      save();renderXP();renderHeader();closePin();
+      save();renderXP();renderHeader();
       const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='⏱️ Minuten gereset!';
       setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
+    } else if(pinMode==='settings'){
+      openSettings();
     } else {
       streak=0;totalMinutes=0;collection={};pityCount={brainrot:0,pokemon:0,brawl:0};
-      save();renderXP();renderHeader();closePin();nextQuestion();
+      save();renderXP();renderHeader();nextQuestion();
       const fb=document.getElementById('fbText');fb.className='fb-text correct';fb.textContent='✅ Alles gereset!';
       setTimeout(()=>{fb.textContent='';fb.className='fb-text';},2000);
     }
