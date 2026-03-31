@@ -985,8 +985,8 @@ function nextQuestion(){
     }
 
   }else if(type==='split'){
-    // ── TYPE 3: Splitsen ──
-    const n=rand(11,99);
+    // ── TYPE 3: Splitsen ── (geen ronde getallen zoals 10,20,30...)
+    let n;do{n=rand(12,99);}while(n%10===0);
     const tens=Math.floor(n/10)*10,ones=n%10;
     currentQ={a:n,b:0,op:'',ans:n,split:true};
     splitMode=true;splitSteps=[tens,ones];splitStep=0;
