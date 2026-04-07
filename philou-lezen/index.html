@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📚 Philou's Leescoach</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;touch-action:manipulation;}
+html{overscroll-behavior:none;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff5f9;color:#333;min-height:100vh;overflow-x:hidden;}
+
+/* TOP BAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;box-shadow:0 2px 12px rgba(233,30,140,0.12);display:flex;align-items:center;justify-content:space-between;padding:12px 20px;height:60px;}
+.brand{font-size:1.2rem;font-weight:800;color:#e91e8c;}
+.brand span{color:#333;}
+.xp-pill{background:linear-gradient(135deg,#e91e8c,#ff6eb4);color:#fff;border-radius:50px;padding:6px 16px;font-size:0.9rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+.back-btn{background:none;border:2px solid #e91e8c;color:#e91e8c;border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;}
+
+/* PAGES */
+.page{display:none;padding:76px 16px 40px;max-width:720px;margin:0 auto;}
+.page.active{display:block;}
+
+/* HOME */
+.home-hero{font-size:3.5rem;text-align:center;margin-bottom:8px;}
+.home-title{font-size:1.8rem;font-weight:800;color:#e91e8c;text-align:center;margin-bottom:4px;}
+.home-sub{font-size:1rem;color:#999;text-align:center;margin-bottom:24px;}
+.text-cards{display:flex;flex-direction:column;gap:14px;}
+.text-card{background:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 3px 14px rgba(233,30,140,0.08);cursor:pointer;transition:all 0.2s;border:3px solid transparent;}
+.text-card:hover,.text-card:active{transform:translateY(-2px);border-color:#e91e8c;}
+.text-card .tc-icon{font-size:2.4rem;flex-shrink:0;}
+.text-card .tc-info h3{font-size:1.05rem;font-weight:700;color:#333;}
+.text-card .tc-info p{font-size:0.85rem;color:#999;margin-top:2px;}
+.text-card .tc-info .tc-type{font-size:0.7rem;background:#fce4ec;color:#e91e8c;padding:2px 8px;border-radius:50px;font-weight:600;display:inline-block;margin-top:4px;}
+.tc-badge{margin-left:auto;flex-shrink:0;background:#e91e8c;color:#fff;border-radius:50px;padding:3px 10px;font-size:0.75rem;font-weight:600;}
+.tc-badge.done{background:#4caf50;}
+
+/* PHASE INDICATOR */
+.phase-bar{display:flex;gap:4px;margin-bottom:20px;}
+.phase-step{flex:1;height:6px;border-radius:50px;background:#f0e0e8;}
+.phase-step.active{background:#e91e8c;}
+.phase-step.done{background:#4caf50;}
+.phase-label{text-align:center;font-size:0.78rem;font-weight:700;color:#e91e8c;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
+
+/* TEXT DISPLAY */
+.text-title{font-size:1.6rem;font-weight:800;color:#e91e8c;text-align:center;margin-bottom:4px;}
+.text-subtitle{font-size:0.95rem;color:#999;text-align:center;font-style:italic;margin-bottom:20px;}
+.text-content{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);line-height:1.8;font-size:1rem;margin-bottom:20px;}
+.text-content p{margin-bottom:12px;}
+.text-content h4{color:#e91e8c;font-size:1rem;margin-bottom:6px;margin-top:14px;}
+.text-content .highlight-word{background:#fce4ec;border-radius:4px;padding:1px 4px;cursor:pointer;border-bottom:2px dashed #e91e8c;}
+.text-content .ref-word{background:#e3f2fd;border-radius:4px;padding:1px 4px;cursor:pointer;border-bottom:2px dashed #1976d2;}
+.text-content .signal-word{background:#fff3e0;border-radius:4px;padding:1px 4px;cursor:pointer;border-bottom:2px dashed #ff9800;}
+
+/* WORD POPUP */
+.word-popup{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:3px solid #e91e8c;border-radius:16px 16px 0 0;padding:20px;box-shadow:0 -4px 20px rgba(0,0,0,0.1);z-index:200;transform:translateY(100%);transition:transform 0.3s ease;}
+.word-popup.show{transform:translateY(0);}
+.word-popup .wp-word{font-size:1.2rem;font-weight:800;color:#e91e8c;}
+.word-popup .wp-meaning{font-size:0.95rem;color:#555;margin-top:6px;line-height:1.6;}
+.word-popup .wp-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#999;}
+
+/* QUESTIONS */
+.question-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:16px;}
+.q-label{font-size:0.7rem;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.q-text{font-size:1.1rem;font-weight:700;color:#333;margin-bottom:14px;line-height:1.5;}
+.q-hint{font-size:0.82rem;color:#e91e8c;font-style:italic;margin-bottom:12px;padding:8px 12px;background:#fce4ec;border-radius:8px;}
+.q-options{display:flex;flex-direction:column;gap:8px;}
+.q-option{padding:14px 16px;border-radius:10px;border:2px solid #eee;font-size:0.95rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;position:relative;}
+.q-option:hover{border-color:#e91e8c;background:#fce4ec;}
+.q-option.selected{border-color:#e91e8c;background:#fce4ec;font-weight:600;}
+.q-option.correct{border-color:#4caf50;background:#e8f5e9;color:#2e7d32;}
+.q-option.wrong{border-color:#f44336;background:#ffebee;color:#c62828;text-decoration:line-through;}
+.q-option.eliminated{opacity:0.3;text-decoration:line-through;pointer-events:none;}
+.q-option .strike-btn{margin-left:auto;background:none;border:1px solid #ddd;border-radius:50%;width:24px;height:24px;font-size:0.7rem;cursor:pointer;color:#999;flex-shrink:0;}
+.q-option .strike-btn:hover{background:#f44336;color:#fff;border-color:#f44336;}
+
+/* STRATEGY STEPS */
+.strategy-steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.strat-step{padding:6px 12px;border-radius:50px;font-size:0.7rem;font-weight:600;border:2px solid #eee;color:#999;transition:all 0.2s;}
+.strat-step.active{border-color:#e91e8c;color:#e91e8c;background:#fce4ec;}
+.strat-step.done{border-color:#4caf50;color:#4caf50;background:#e8f5e9;}
+
+/* INPUT */
+.text-input{width:100%;padding:14px;border-radius:10px;border:2px solid #eee;font-size:1rem;font-family:inherit;resize:vertical;min-height:60px;transition:border-color 0.2s;}
+.text-input:focus{outline:none;border-color:#e91e8c;}
+
+/* BUTTONS */
+.btn{display:block;width:100%;padding:14px;border-radius:12px;border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;text-align:center;}
+.btn-primary{background:linear-gradient(135deg,#e91e8c,#ff6eb4);color:#fff;box-shadow:0 4px 12px rgba(233,30,140,0.3);}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 1px 4px rgba(233,30,140,0.3);}
+.btn-secondary{background:#fff;color:#e91e8c;border:2px solid #e91e8c;}
+.btn-small{width:auto;display:inline-block;padding:8px 20px;font-size:0.85rem;}
+
+/* FEEDBACK */
+.feedback{padding:14px;border-radius:10px;margin-bottom:16px;font-size:0.95rem;font-weight:600;display:none;}
+.feedback.correct{display:block;background:#e8f5e9;color:#2e7d32;border:2px solid #4caf50;}
+.feedback.wrong{display:block;background:#ffebee;color:#c62828;border:2px solid #f44336;}
+.feedback.info{display:block;background:#e3f2fd;color:#1565c0;border:2px solid #42a5f5;}
+
+/* SCORE SCREEN */
+.score-circle{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;margin:20px auto;color:#fff;}
+.score-circle.great{background:linear-gradient(135deg,#4caf50,#66bb6a);}
+.score-circle.good{background:linear-gradient(135deg,#ff9800,#ffb74d);}
+.score-circle.try{background:linear-gradient(135deg,#e91e8c,#ff6eb4);}
+.score-detail{text-align:center;font-size:0.9rem;color:#888;margin-bottom:6px;}
+
+/* ALINEA HIGHLIGHT */
+.text-content .alinea{padding:8px;border-radius:8px;transition:background 0.3s;}
+.text-content .alinea.lit{background:#fce4ec;border-left:3px solid #e91e8c;}
+
+@media(max-width:500px){
+  .home-title{font-size:1.4rem;}
+  .text-title{font-size:1.3rem;}
+  .text-content{font-size:0.95rem;padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" id="backBtn" onclick="goHome()">←</button>
+  <div class="brand">📚 Philou's <span>Leescoach</span></div>
+  <div class="xp-pill">⭐ <span id="xpDisplay">0</span> punten</div>
+</div>
+
+<!-- WORD POPUP -->
+<div class="word-popup" id="wordPopup">
+  <button class="wp-close" onclick="closePopup()">✕</button>
+  <div class="wp-word" id="wpWord"></div>
+  <div class="wp-meaning" id="wpMeaning"></div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="pageHome">
+  <div class="home-hero">📚</div>
+  <div class="home-title">Philou's Leescoach</div>
+  <div class="home-sub">Word een echte leesprof! 💪</div>
+  <div class="text-cards" id="textCards"></div>
+</div>
+
+<!-- READING -->
+<div class="page" id="pageReading">
+  <div class="phase-bar" id="phaseBar"></div>
+  <div class="phase-label" id="phaseLabel"></div>
+  <div id="phaseContent"></div>
+</div>
+
+<!-- SCORE -->
+<div class="page" id="pageScore">
+  <div style="text-align:center;padding-top:20px;">
+    <div style="font-size:3rem;">🎉</div>
+    <div class="text-title" style="margin-top:8px;">Klaar!</div>
+    <div class="score-circle" id="scoreCircle"></div>
+    <div class="score-detail" id="scoreDetail"></div>
+    <div id="scoreBreakdown" style="margin:20px 0;"></div>
+    <button class="btn btn-primary" onclick="goHome()" style="margin-top:20px;">← Terug naar teksten</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════
+   TEKSTEN — M6+ niveau, diverse tekstsoorten
+══════════════════════════════ */
+const TEXTS = [
+  {
+    id: 'bijen',
+    title: 'De wereld zonder bijen',
+    subtitle: 'Een weettekst over het belang van bijen',
+    icon: '🐝',
+    type: 'weettekst',
+    typeFull: 'Dit is een weettekst — je leert iets nieuws over de natuur.',
+    difficulty: 'M6',
+    content: `
+      <div class="alinea" data-idx="0">
+      <h4>Waarom zijn bijen zo belangrijk?</h4>
+      <p>Bijen zijn <span class="highlight-word" data-word="bestuivers" data-meaning="Dieren of insecten die stuifmeel van de ene bloem naar de andere brengen, zodat planten vruchten kunnen maken.">bestuivers</span>. Dat betekent dat <span class="ref-word" data-ref="bijen" data-q="Waar verwijst 'ze' naar in deze zin?">ze</span> stuifmeel van de ene bloem naar de andere brengen. <span class="signal-word" data-signal="oorzaak-gevolg" data-meaning="'Daardoor' geeft een gevolg aan — wat er gebeurt doordat bijen stuifmeel verspreiden.">Daardoor</span> kunnen planten vruchten en zaden maken. Zonder bijen zouden veel planten niet meer groeien.</p>
+      </div>
+
+      <div class="alinea" data-idx="1">
+      <h4>Wat gaat er mis?</h4>
+      <p>De laatste jaren gaat het niet goed met de bijen. <span class="highlight-word" data-word="pesticiden" data-meaning="Chemische middelen die boeren gebruiken om ongedierte te bestrijden, maar die ook schadelijk zijn voor bijen.">Pesticiden</span> die boeren gebruiken zijn schadelijk voor bijen. <span class="signal-word" data-signal="opsomming" data-meaning="'Daarnaast' is een signaalwoord dat aangeeft dat er nóg een reden volgt.">Daarnaast</span> verdwijnen steeds meer bloemrijke weilanden, waardoor bijen minder voedsel vinden. <span class="signal-word" data-signal="opsomming" data-meaning="'Ook' geeft aan dat er een derde probleem bij komt.">Ook</span> worden bijenvolken ziek door een klein beestje: de <span class="highlight-word" data-word="varroamijt" data-meaning="Een klein parasietje (kleiner dan 2 mm) dat op bijen leeft en ze ziek maakt.">varroamijt</span>.</p>
+      </div>
+
+      <div class="alinea" data-idx="2">
+      <h4>Wat kunnen wij doen?</h4>
+      <p>Gelukkig kan iedereen helpen. Je kunt bijvoorbeeld wilde bloemen in je tuin zaaien. <span class="signal-word" data-signal="opsomming" data-meaning="'Bovendien' geeft een extra punt aan — nog iets dat je kunt doen.">Bovendien</span> kun je een bijenhotel maken. Dat is een huisje met gaatjes waar wilde bijen in kunnen wonen. <span class="signal-word" data-signal="conclusie" data-meaning="'Kortom' geeft een samenvatting/conclusie aan — de belangrijkste boodschap.">Kortom</span>: <span class="ref-word" data-ref="iedereen" data-q="Waar verwijst 'we' naar?">we</span> hebben de bijen nodig, en <span class="ref-word" data-ref="de bijen" data-q="Waar verwijst 'zij' naar in deze zin?">zij</span> hebben ons nodig.</p>
+      </div>
+    `,
+    words: {
+      'bestuivers': 'Dieren of insecten die stuifmeel van de ene bloem naar de andere brengen.',
+      'pesticiden': 'Chemische middelen tegen ongedierte, maar ook schadelijk voor bijen.',
+      'varroamijt': 'Een klein parasietje dat op bijen leeft en ze ziek maakt.',
+    },
+    phase1: {
+      typeOptions: ['weettekst','verhaaltekst','doetekst','meningtekst'],
+      correctType: 'weettekst',
+      goalQuestion: 'Wat is het doel van deze tekst?',
+      goalOptions: ['Je vermaken met een spannend verhaal','Je iets leren over bijen en waarom ze belangrijk zijn','Je uitleggen hoe je een recept maakt','De mening van de schrijver over bloemen vertellen'],
+      correctGoal: 1,
+      predictQuestion: 'Bekijk de titel "De wereld zonder bijen". Wat denk je dat je gaat leren?',
+    },
+    phase2: {
+      mainIdea: 'Wat is de hoofdgedachte van deze tekst?',
+      mainOptions: ['Bijen maken honing','Bijen zijn belangrijk voor de natuur, maar het gaat niet goed met ze','Boeren gebruiken pesticiden','Je moet een bijenhotel maken'],
+      correctMain: 1,
+      alineaQuestions: [
+        {alinea:0, q:'Wat is de belangrijkste boodschap van dit stuk?', options:['Bijen eten stuifmeel','Bijen helpen planten om vruchten te maken','Bloemen zijn mooi','Bijen leven in korven'], correct:1},
+        {alinea:1, q:'Noem drie redenen waarom het slecht gaat met bijen.', options:['Pesticiden, minder bloemen, varroamijt','Pesticiden, te veel bijen, de winter','Klimaat, water, wind','Minder honing, ziektes, mensen'], correct:0},
+        {alinea:2, q:'Wat kun jij doen om bijen te helpen?', options:['Honing kopen','Bijen vangen','Wilde bloemen zaaien en een bijenhotel maken','Pesticiden gebruiken'], correct:2},
+      ],
+    },
+    phase3: [
+      {q:'De tekst zegt dat bijen bestuivers zijn. Wat betekent dat?', options:['Ze maken honing','Ze brengen stuifmeel van bloem naar bloem','Ze eten insecten','Ze bouwen nesten'], correct:1, alinea:0, hint:'Zoek het antwoord in de eerste alinea.'},
+      {q:'Waarom verdwijnen er steeds meer bijen? Welk antwoord is het MEEST volledig?', options:['Alleen door pesticiden','Door pesticiden, minder bloemen en de varroamijt','Omdat het te warm is','Door te veel bijenhouders'], correct:1, alinea:1, hint:'Let op: de tekst noemt DRIE oorzaken.'},
+      {q:'Wat bedoelt de schrijver met: "we hebben de bijen nodig, en zij hebben ons nodig"?', options:['Bijen willen bij mensen wonen','Mensen en bijen zijn van elkaar afhankelijk','Bijen maken honing voor mensen','Mensen moeten bijen als huisdier houden'], correct:1, alinea:2, hint:'Dit is een afgeleid niveau vraag — wat bedoelt de schrijver écht?'},
+      {q:'Welk signaalwoord in de tekst geeft een conclusie aan?', options:['Daardoor','Daarnaast','Kortom','Bovendien'], correct:2, alinea:2, hint:'Een conclusie is een samenvatting aan het eind.'},
+      {q:'Wat voor soort tekst is dit?', options:['Een verhaaltekst','Een doetekst','Een weettekst','Een meningtekst'], correct:2, alinea:-1, hint:'Denk na: leer je iets, moet je iets doen, of is het een mening?'},
+    ],
+  },
+  {
+    id: 'plastic',
+    title: 'Plastic soep in de oceaan',
+    subtitle: 'Een weettekst over milieuvervuiling',
+    icon: '🌊',
+    type: 'weettekst',
+    typeFull: 'Dit is een weettekst over een groot milieuprobleem.',
+    difficulty: 'M6',
+    content: `
+      <div class="alinea" data-idx="0">
+      <h4>De plastic soep</h4>
+      <p>In de oceaan drijft een enorme hoeveelheid plastic afval. Wetenschappers noemen dit de 'plastic soep'. <span class="ref-word" data-ref="de plastic soep" data-q="Waar verwijst 'Het' naar?">Het</span> is geen echte soep, <span class="signal-word" data-signal="tegenstelling" data-meaning="'Maar' geeft een tegenstelling aan — het is geen soep, maar het lijkt er wel op.">maar</span> het ziet eruit als een dikke laag rommel die op het water drijft. De grootste plastic soep ligt in de <span class="highlight-word" data-word="Stille Oceaan" data-meaning="De grootste oceaan ter wereld, tussen Azië en Amerika. Hier drijft de grootste verzameling plastic afval.">Stille Oceaan</span> en is drie keer zo groot als Frankrijk.</p>
+      </div>
+
+      <div class="alinea" data-idx="1">
+      <h4>Hoe komt het plastic daar?</h4>
+      <p>Veel plastic komt via rivieren in zee terecht. Mensen gooien afval op straat of in de natuur. <span class="signal-word" data-signal="oorzaak-gevolg" data-meaning="'Vervolgens' geeft een volgorde aan — wat er daarna gebeurt.">Vervolgens</span> spoelt de regen het plastic naar de rivieren, en de rivieren stromen naar de oceaan. <span class="signal-word" data-signal="toevoeging" data-meaning="'Daarnaast' voegt een extra oorzaak toe.">Daarnaast</span> verliezen schepen soms <span class="highlight-word" data-word="containers" data-meaning="Grote metalen bakken waarin spullen over zee worden vervoerd.">containers</span> op zee. Al dat plastic <span class="highlight-word" data-word="breekt af" data-meaning="Het plastic valt in steeds kleinere stukjes uiteen, maar verdwijnt nooit helemaal.">breekt af</span> in kleine stukjes, <span class="signal-word" data-signal="tegenstelling" data-meaning="'Maar' geeft aan dat het toch niet echt verdwijnt.">maar</span> verdwijnt nooit helemaal.</p>
+      </div>
+
+      <div class="alinea" data-idx="2">
+      <h4>Gevaar voor dieren</h4>
+      <p>Zeevogels, vissen en schildpadden denken dat plastic voedsel is. <span class="ref-word" data-ref="zeevogels, vissen en schildpadden" data-q="Waar verwijst 'Ze' naar?">Ze</span> eten het op en worden daar ziek van. Soms raken dieren <span class="highlight-word" data-word="verstrikt" data-meaning="Vastzitten in iets waar je niet meer uitkomt, zoals een net of ring van plastic.">verstrikt</span> in plastic zakken of ringen. <span class="signal-word" data-signal="gevolg" data-meaning="'Hierdoor' geeft het gevolg aan — wat er gebeurt doordat dieren plastic eten.">Hierdoor</span> sterven jaarlijks meer dan een miljoen zeevogels en honderdduizend zeezoogdieren.</p>
+      </div>
+    `,
+    words: {
+      'Stille Oceaan': 'De grootste oceaan ter wereld, tussen Azië en Amerika.',
+      'containers': 'Grote metalen bakken om spullen over zee te vervoeren.',
+      'breekt af': 'Valt in steeds kleinere stukjes uiteen.',
+      'verstrikt': 'Vastzitten in iets waar je niet meer uitkomt.',
+    },
+    phase1: {
+      typeOptions: ['weettekst','verhaaltekst','doetekst','meningtekst'],
+      correctType: 'weettekst',
+      goalQuestion: 'Wat is het doel van deze tekst?',
+      goalOptions: ['Een recept uitleggen','Informatie geven over plastic in de oceaan','Een spannend verhaal vertellen','De mening van de schrijver geven over vissen'],
+      correctGoal: 1,
+      predictQuestion: 'Bekijk de titel "Plastic soep in de oceaan". Wat denk je dat deze tekst gaat uitleggen?',
+    },
+    phase2: {
+      mainIdea: 'Wat is de hoofdgedachte van deze tekst?',
+      mainOptions: ['De oceaan is erg groot','Plastic in de oceaan is een groot probleem voor dieren en natuur','Schepen verliezen containers','Zeevogels eten vis'],
+      correctMain: 1,
+      alineaQuestions: [
+        {alinea:0, q:'Hoe groot is de plastic soep in de Stille Oceaan?', options:['Zo groot als Nederland','Drie keer zo groot als Frankrijk','Zo groot als Europa','Niemand weet het'], correct:1},
+        {alinea:1, q:'Hoe komt plastic in de oceaan terecht?', options:['Alleen via schepen','Via rivieren en schepen','Via vliegtuigen','Via de regen direct in de oceaan'], correct:1},
+        {alinea:2, q:'Waarom is plastic gevaarlijk voor dieren?', options:['Het is te zwaar','Ze denken dat het voedsel is en worden er ziek van','Het is te groot','Het smelt in de zon'], correct:1},
+      ],
+    },
+    phase3: [
+      {q:'Hoeveel zeevogels sterven jaarlijks door plastic?', options:['Duizend','Tienduizend','Meer dan een miljoen','Honderd'], correct:2, alinea:2, hint:'Zoek het precieze getal in de laatste alinea.'},
+      {q:'De tekst zegt dat plastic "afbreekt". Wat betekent dat precies?', options:['Het verdwijnt helemaal','Het valt in kleine stukjes maar verdwijnt nooit','Het lost op in water','Het wordt opgegeten door vissen'], correct:1, alinea:1, hint:'Let op het woordje "maar" in de zin.'},
+      {q:'Welke twee manieren noemt de tekst waarop plastic in zee komt?', options:['Via rivieren en schepen','Via rivieren en vliegtuigen','Via wind en regen','Via mensen en dieren'], correct:0, alinea:1, hint:'De tekst noemt twee routes. Zoek ze in alinea 2.'},
+      {q:'Wat voor soort tekst is dit?', options:['Verhaaltekst','Doetekst','Meningtekst','Weettekst'], correct:3, alinea:-1, hint:'Leer je iets nieuws, of is het een mening?'},
+      {q:'Welk signaalwoord geeft een tegenstelling aan in de tekst?', options:['Vervolgens','Maar','Daarnaast','Hierdoor'], correct:1, alinea:-1, hint:'Een tegenstelling zet twee dingen tegenover elkaar.'},
+    ],
+  },
+  {
+    id: 'voetbal',
+    title: 'Moet voetbal op school verplicht zijn?',
+    subtitle: 'Een meningtekst over sport op school',
+    icon: '⚽',
+    type: 'meningtekst',
+    typeFull: 'Dit is een meningtekst — de schrijver geeft zijn mening en probeert jou te overtuigen.',
+    difficulty: 'M6',
+    content: `
+      <div class="alinea" data-idx="0">
+      <h4>Bewegen is gezond</h4>
+      <p><span class="signal-word" data-signal="mening" data-meaning="'Ik vind' geeft aan dat dit de mening van de schrijver is, geen feit.">Ik vind</span> dat elke school verplicht voetbal moet aanbieden tijdens de gymles. Kinderen bewegen tegenwoordig veel te weinig. <span class="ref-word" data-ref="kinderen" data-q="Naar wie verwijst 'Ze'?">Ze</span> zitten urenlang achter een scherm en komen nauwelijks buiten. Voetbal is een perfecte manier om kinderen weer in beweging te krijgen.</p>
+      </div>
+
+      <div class="alinea" data-idx="1">
+      <h4>Voetbal is voor iedereen</h4>
+      <p><span class="signal-word" data-signal="toevoeging" data-meaning="'Bovendien' voegt een extra argument toe.">Bovendien</span> is voetbal een teamsport. Kinderen leren samenwerken, omgaan met winst en verlies, en ze maken nieuwe vrienden. <span class="signal-word" data-signal="tegenstelling" data-meaning="'Toch' geeft een tegenstelling aan — ondanks bezwaren.">Toch</span> zijn er mensen die zeggen dat niet iedereen van voetbal houdt. Dat klopt, <span class="signal-word" data-signal="tegenstelling" data-meaning="'Maar' weerlegt het bezwaar.">maar</span> <span class="highlight-word" data-word="dat geldt" data-meaning="Dat is ook zo, dat is ook het geval.">dat geldt</span> voor elk vak op school. Niet iedereen houdt van rekenen, en toch moet dat ook.</p>
+      </div>
+
+      <div class="alinea" data-idx="2">
+      <h4>Mijn conclusie</h4>
+      <p><span class="signal-word" data-signal="conclusie" data-meaning="'Al met al' geeft een samenvatting/conclusie aan.">Al met al</span> ben ik ervan overtuigd dat voetbal op school verplicht moet zijn. <span class="ref-word" data-ref="voetbal" data-q="Waar verwijst 'Het' naar?">Het</span> is gezond, leerzaam en leuk. Laten we ervoor zorgen dat alle kinderen de kans krijgen om te voetballen!</p>
+      </div>
+    `,
+    words: {
+      'dat geldt': 'Dat is ook zo, dat is ook het geval.',
+    },
+    phase1: {
+      typeOptions: ['weettekst','verhaaltekst','doetekst','meningtekst'],
+      correctType: 'meningtekst',
+      goalQuestion: 'Wat is het doel van deze tekst?',
+      goalOptions: ['Je iets leren over voetbalregels','De schrijver wil je overtuigen dat voetbal verplicht moet zijn','Een spannend verhaal over een wedstrijd vertellen','Uitleggen hoe je moet voetballen'],
+      correctGoal: 1,
+      predictQuestion: 'Bekijk de titel "Moet voetbal op school verplicht zijn?". Wat verwacht je?',
+    },
+    phase2: {
+      mainIdea: 'Wat is de hoofdgedachte van de schrijver?',
+      mainOptions: ['Voetbal is saai','Voetbal moet verplicht zijn op school omdat het gezond en leerzaam is','Kinderen moeten minder rekenen','Sport is niet belangrijk'],
+      correctMain: 1,
+      alineaQuestions: [
+        {alinea:0, q:'Waarom vindt de schrijver dat kinderen moeten voetballen?', options:['Omdat voetbal gratis is','Omdat kinderen te weinig bewegen','Omdat de schrijver voetbalcoach is','Omdat het regent'], correct:1},
+        {alinea:1, q:'Hoe weerlegt de schrijver het bezwaar "niet iedereen houdt van voetbal"?', options:['Hij zegt dat het niet waar is','Hij vergelijkt het met rekenen — dat moet ook, of je het leuk vindt of niet','Hij negeert het','Hij wordt boos'], correct:1},
+        {alinea:2, q:'Noem drie argumenten die de schrijver geeft.', options:['Gezond, leerzaam, leuk','Gratis, makkelijk, snel','Stoer, populair, leuk','Verplicht, streng, belangrijk'], correct:0},
+      ],
+    },
+    phase3: [
+      {q:'Is dit een feit of een mening: "Voetbal moet verplicht zijn op school"?', options:['Feit — het is bewezen','Mening — het is wat de schrijver vindt','Feit — alle scholen doen het al','Geen van beide'], correct:1, alinea:0, hint:'Let op het signaalwoord "Ik vind" in de eerste alinea.'},
+      {q:'Welk signaalwoord geeft aan dat de schrijver een tegenargument weerlegt?', options:['Bovendien','Al met al','Toch / Maar','Ik vind'], correct:2, alinea:1, hint:'Zoek in de tweede alinea waar de schrijver een bezwaar bespreekt.'},
+      {q:'Waarom vergelijkt de schrijver voetbal met rekenen?', options:['Omdat rekenen ook een sport is','Om te laten zien dat je niet alles leuk hoeft te vinden om het te moeten doen','Omdat voetbal moeilijk is','Omdat de schrijver slecht is in rekenen'], correct:1, alinea:1, hint:'Lees de zin met "dat geldt voor elk vak" goed.'},
+      {q:'Wat voor soort tekst is dit?', options:['Weettekst','Verhaaltekst','Doetekst','Meningtekst'], correct:3, alinea:-1, hint:'Geeft de schrijver feiten of probeert hij je te overtuigen?'},
+      {q:'Wat is het sterkste argument van de schrijver?', options:['Voetbal is gratis','Kinderen bewegen te weinig en voetbal is gezond','Iedereen houdt van voetbal','De gymleraar wil het'], correct:1, alinea:0, hint:'Welk argument gaat over de gezondheid van kinderen?'},
+    ],
+  },
+];
+
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let currentText = null;
+let currentPhase = 0; // 0=pre, 1=during, 2=after
+let currentQuestion = 0;
+let xp = parseInt(localStorage.getItem('philouLeesXP') || '0');
+let completed = JSON.parse(localStorage.getItem('philouLeesCompleted') || '{}');
+let score = {phase1: 0, phase2: 0, phase3: 0, total: 0, max: 0};
+let prediction = '';
+let eliminatedOptions = new Set();
+let strategyStep = 0;
+
+function save() {
+  localStorage.setItem('philouLeesXP', xp);
+  localStorage.setItem('philouLeesCompleted', JSON.stringify(completed));
+}
+
+/* ══════════════════════════════
+   HOME
+══════════════════════════════ */
+function renderHome() {
+  document.getElementById('xpDisplay').textContent = xp;
+  const cards = document.getElementById('textCards');
+  cards.innerHTML = '';
+  TEXTS.forEach(t => {
+    const done = completed[t.id];
+    const card = document.createElement('div');
+    card.className = 'text-card' + (done ? ' done' : '');
+    card.innerHTML = `
+      <div class="tc-icon">${t.icon}</div>
+      <div class="tc-info">
+        <h3>${t.title}</h3>
+        <p>${t.subtitle}</p>
+        <span class="tc-type">${t.type} · ${t.difficulty}</span>
+      </div>
+      <span class="tc-badge ${done ? 'done' : ''}">${done ? '✅ ' + done + '%' : 'Start →'}</span>
+    `;
+    card.onclick = () => startText(t.id);
+    cards.appendChild(card);
+  });
+}
+
+/* ══════════════════════════════
+   START TEXT
+══════════════════════════════ */
+function startText(id) {
+  currentText = TEXTS.find(t => t.id === id);
+  currentPhase = 0;
+  currentQuestion = 0;
+  score = {phase1: 0, phase2: 0, phase3: 0, total: 0, max: 0};
+  prediction = '';
+  eliminatedOptions = new Set();
+  strategyStep = 0;
+  showPage('pageReading');
+  document.getElementById('backBtn').style.display = 'flex';
+  renderPhase();
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  showPage('pageHome');
+  document.getElementById('backBtn').style.display = 'none';
+  renderHome();
+}
+
+/* ══════════════════════════════
+   PHASES
+══════════════════════════════ */
+function renderPhase() {
+  const bar = document.getElementById('phaseBar');
+  bar.innerHTML = [0,1,2].map(i =>
+    `<div class="phase-step ${i < currentPhase ? 'done' : i === currentPhase ? 'active' : ''}"></div>`
+  ).join('');
+
+  const labels = ['Fase 1 — Vóór het lezen 🔍', 'Fase 2 — Tijdens het lezen 📖', 'Fase 3 — Vragen beantwoorden ✍️'];
+  document.getElementById('phaseLabel').textContent = labels[currentPhase];
+
+  if (currentPhase === 0) renderPhase1();
+  else if (currentPhase === 1) renderPhase2();
+  else renderPhase3();
+}
+
+/* ── FASE 1: VÓÓR HET LEZEN ── */
+function renderPhase1() {
+  const t = currentText;
+  const p1 = t.phase1;
+  const el = document.getElementById('phaseContent');
+  el.innerHTML = `
+    <div class="text-title">${t.title}</div>
+    <div class="text-subtitle">${t.subtitle}</div>
+
+    <div class="question-card">
+      <div class="q-label">Stap 1 — Voorspellen</div>
+      <div class="q-text">${p1.predictQuestion}</div>
+      <textarea class="text-input" id="predInput" placeholder="Schrijf hier wat je denkt..."></textarea>
+      <button class="btn btn-secondary btn-small" style="margin-top:10px;" onclick="savePrediction()">Opslaan ✓</button>
+    </div>
+
+    <div class="question-card" id="typeQ" style="display:none;">
+      <div class="q-label">Stap 2 — Tekstsoort herkennen</div>
+      <div class="q-text">Wat voor soort tekst denk je dat dit is?</div>
+      <div class="q-options" id="typeOptions"></div>
+    </div>
+
+    <div class="question-card" id="goalQ" style="display:none;">
+      <div class="q-label">Stap 3 — Tekstdoel bepalen</div>
+      <div class="q-text">${p1.goalQuestion}</div>
+      <div class="q-options" id="goalOptions"></div>
+    </div>
+
+    <button class="btn btn-primary" id="toPhase2Btn" style="display:none;margin-top:16px;" onclick="nextPhase()">Door naar de tekst 📖</button>
+  `;
+}
+
+function savePrediction() {
+  prediction = document.getElementById('predInput').value;
+  if (!prediction.trim()) return;
+  score.phase1++; score.total++; score.max++;
+  document.getElementById('typeQ').style.display = '';
+  const opts = document.getElementById('typeOptions');
+  currentText.phase1.typeOptions.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-option';
+    div.textContent = opt;
+    div.onclick = () => checkPhase1Type(i, div);
+    opts.appendChild(div);
+  });
+}
+
+function checkPhase1Type(idx, el) {
+  score.max++;
+  const correct = currentText.phase1.correctType === currentText.phase1.typeOptions[idx];
+  el.classList.add(correct ? 'correct' : 'wrong');
+  if (correct) score.phase1++; score.total += correct ? 1 : 0;
+  if (!correct) {
+    // Toon juiste
+    document.querySelectorAll('#typeOptions .q-option').forEach((o, i) => {
+      if (currentText.phase1.typeOptions[i] === currentText.phase1.correctType) o.classList.add('correct');
+    });
+  }
+  // Disable alle opties
+  document.querySelectorAll('#typeOptions .q-option').forEach(o => o.style.pointerEvents = 'none');
+  // Toon uitleg
+  const fb = document.createElement('div');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'info');
+  fb.textContent = correct ? `Goed! ${currentText.typeFull}` : `${currentText.typeFull}`;
+  document.getElementById('typeQ').appendChild(fb);
+  // Toon doel vraag
+  setTimeout(() => {
+    document.getElementById('goalQ').style.display = '';
+    const gopts = document.getElementById('goalOptions');
+    currentText.phase1.goalOptions.forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'q-option';
+      div.textContent = opt;
+      div.onclick = () => checkPhase1Goal(i, div);
+      gopts.appendChild(div);
+    });
+  }, 800);
+}
+
+function checkPhase1Goal(idx, el) {
+  score.max++;
+  const correct = idx === currentText.phase1.correctGoal;
+  el.classList.add(correct ? 'correct' : 'wrong');
+  if (correct) { score.phase1++; score.total++; }
+  document.querySelectorAll('#goalOptions .q-option').forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === currentText.phase1.correctGoal) o.classList.add('correct');
+  });
+  document.getElementById('toPhase2Btn').style.display = '';
+}
+
+/* ── FASE 2: TIJDENS HET LEZEN ── */
+function renderPhase2() {
+  const t = currentText;
+  const el = document.getElementById('phaseContent');
+  el.innerHTML = `
+    <div class="text-title">${t.title}</div>
+    <div class="text-content" id="textBody">${t.content}</div>
+
+    <div class="question-card">
+      <div class="q-label">Hoofdgedachte</div>
+      <div class="q-text">${t.phase2.mainIdea}</div>
+      <div class="q-options" id="mainOptions"></div>
+    </div>
+
+    <div id="alineaQuestions"></div>
+    <button class="btn btn-primary" id="toPhase3Btn" style="display:none;margin-top:16px;" onclick="nextPhase()">Door naar de vragen ✍️</button>
+  `;
+
+  // Setup word/ref/signal clicks
+  setupWordClicks();
+
+  // Main idea options
+  const mopts = document.getElementById('mainOptions');
+  t.phase2.mainOptions.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-option';
+    div.textContent = opt;
+    div.onclick = () => checkMainIdea(i, div);
+    mopts.appendChild(div);
+  });
+}
+
+function checkMainIdea(idx, el) {
+  score.max++;
+  const correct = idx === currentText.phase2.correctMain;
+  el.classList.add(correct ? 'correct' : 'wrong');
+  if (correct) { score.phase2++; score.total++; }
+  document.querySelectorAll('#mainOptions .q-option').forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === currentText.phase2.correctMain) o.classList.add('correct');
+  });
+  // Show alinea questions
+  renderAlineaQuestions(0);
+}
+
+let alineaIdx = 0;
+function renderAlineaQuestions(idx) {
+  alineaIdx = idx;
+  const qs = currentText.phase2.alineaQuestions;
+  if (idx >= qs.length) {
+    document.getElementById('toPhase3Btn').style.display = '';
+    return;
+  }
+  const q = qs[idx];
+  // Highlight alinea
+  document.querySelectorAll('.alinea').forEach(a => a.classList.remove('lit'));
+  const aEl = document.querySelector(`.alinea[data-idx="${q.alinea}"]`);
+  if (aEl) aEl.classList.add('lit');
+
+  const container = document.getElementById('alineaQuestions');
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.innerHTML = `
+    <div class="q-label">Alinea ${q.alinea + 1}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="q-options"></div>
+  `;
+  container.appendChild(card);
+  const opts = card.querySelector('.q-options');
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-option';
+    div.textContent = opt;
+    div.onclick = () => {
+      score.max++;
+      const c = i === q.correct;
+      div.classList.add(c ? 'correct' : 'wrong');
+      if (c) { score.phase2++; score.total++; }
+      opts.querySelectorAll('.q-option').forEach((o, j) => {
+        o.style.pointerEvents = 'none';
+        if (j === q.correct) o.classList.add('correct');
+      });
+      setTimeout(() => renderAlineaQuestions(idx + 1), 800);
+    };
+    opts.appendChild(div);
+  });
+}
+
+/* ── FASE 3: VRAGEN BEANTWOORDEN (5-stappen strategie) ── */
+function renderPhase3() {
+  currentQuestion = 0;
+  eliminatedOptions = new Set();
+  strategyStep = 0;
+  const el = document.getElementById('phaseContent');
+  el.innerHTML = `
+    <div class="text-title">${currentText.title}</div>
+    <div class="text-content" id="textBody3" style="font-size:0.9rem;max-height:200px;overflow-y:auto;margin-bottom:16px;">${currentText.content}</div>
+    <div id="strategyArea"></div>
+    <div id="questionArea"></div>
+  `;
+  setupWordClicks();
+  renderQuestion3();
+}
+
+function renderQuestion3() {
+  const qs = currentText.phase3;
+  if (currentQuestion >= qs.length) {
+    finishText();
+    return;
+  }
+  const q = qs[currentQuestion];
+  eliminatedOptions = new Set();
+  strategyStep = 0;
+
+  // Highlight relevant alinea
+  document.querySelectorAll('.alinea').forEach(a => a.classList.remove('lit'));
+  if (q.alinea >= 0) {
+    const aEl = document.querySelector(`#textBody3 .alinea[data-idx="${q.alinea}"]`);
+    if (aEl) aEl.classList.add('lit');
+  }
+
+  // Strategy steps
+  const strat = document.getElementById('strategyArea');
+  strat.innerHTML = `
+    <div class="strategy-steps" id="stratSteps">
+      <div class="strat-step active" data-s="0">1️⃣ Lees vraag</div>
+      <div class="strat-step" data-s="1">2️⃣ Lees antwoorden</div>
+      <div class="strat-step" data-s="2">3️⃣ Onbekend woord?</div>
+      <div class="strat-step" data-s="3">4️⃣ Zoek in tekst</div>
+      <div class="strat-step" data-s="4">5️⃣ Streep weg & kies</div>
+    </div>
+  `;
+
+  const area = document.getElementById('questionArea');
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="q-label">Vraag ${currentQuestion + 1} van ${qs.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-hint">💡 ${q.hint}</div>
+      <div class="q-options" id="q3Options"></div>
+      <div id="q3Feedback"></div>
+    </div>
+  `;
+
+  const opts = document.getElementById('q3Options');
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-option';
+    div.innerHTML = `
+      <span>${opt}</span>
+      <button class="strike-btn" onclick="event.stopPropagation();eliminateOption(${i},this)">✕</button>
+    `;
+    div.onclick = () => checkAnswer3(i, div);
+    opts.appendChild(div);
+  });
+
+  // Auto-advance strategy steps
+  setTimeout(() => advanceStrategy(1), 1500);
+  setTimeout(() => advanceStrategy(2), 3000);
+  setTimeout(() => advanceStrategy(3), 4500);
+  setTimeout(() => advanceStrategy(4), 6000);
+}
+
+function advanceStrategy(step) {
+  const steps = document.querySelectorAll('#stratSteps .strat-step');
+  steps.forEach((s, i) => {
+    if (i < step) s.classList.add('done'); s.classList.remove('active');
+    if (i === step) s.classList.add('active');
+  });
+  // Fix: re-check active
+  steps.forEach((s, i) => {
+    s.classList.remove('active');
+    if (i < step) s.classList.add('done');
+    if (i === step) s.classList.add('active');
+  });
+}
+
+function eliminateOption(idx, btn) {
+  const opts = document.querySelectorAll('#q3Options .q-option');
+  if (eliminatedOptions.has(idx)) {
+    eliminatedOptions.delete(idx);
+    opts[idx].classList.remove('eliminated');
+  } else {
+    eliminatedOptions.add(idx);
+    opts[idx].classList.add('eliminated');
+  }
+}
+
+function checkAnswer3(idx, el) {
+  if (eliminatedOptions.has(idx)) return;
+  const q = currentText.phase3[currentQuestion];
+  score.max++;
+  const correct = idx === q.correct;
+  el.classList.add(correct ? 'correct' : 'wrong');
+  if (correct) { score.phase3++; score.total++; }
+
+  // Disable all
+  document.querySelectorAll('#q3Options .q-option').forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    o.querySelector('.strike-btn').style.display = 'none';
+    if (i === q.correct) o.classList.add('correct');
+  });
+
+  // Feedback
+  const fb = document.getElementById('q3Feedback');
+  fb.innerHTML = correct
+    ? '<div class="feedback correct">✅ Goed! Je hebt het juiste antwoord gevonden.</div>'
+    : `<div class="feedback wrong">❌ Helaas. Het juiste antwoord was: "${q.options[q.correct]}"</div>`;
+
+  // Bonus XP voor wegstrepen
+  if (eliminatedOptions.size > 0 && correct) {
+    xp += 2; // Bonus voor strategie gebruik
+  }
+
+  currentQuestion++;
+  setTimeout(renderQuestion3, 1500);
+}
+
+/* ── FINISH ── */
+function finishText() {
+  const pct = Math.round(score.total / score.max * 100);
+  completed[currentText.id] = pct;
+  xp += Math.round(pct / 10);
+  save();
+
+  showPage('pageScore');
+  const circle = document.getElementById('scoreCircle');
+  circle.textContent = pct + '%';
+  circle.className = 'score-circle ' + (pct >= 80 ? 'great' : pct >= 60 ? 'good' : 'try');
+
+  document.getElementById('scoreDetail').innerHTML = `
+    ${pct >= 80 ? '🌟 Fantastisch!' : pct >= 60 ? '👍 Goed gedaan!' : '💪 Oefening baart kunst!'}<br>
+    Je hebt ${score.total} van ${score.max} punten gehaald.
+  `;
+
+  document.getElementById('scoreBreakdown').innerHTML = `
+    <div style="text-align:left;max-width:300px;margin:0 auto;">
+      <div style="margin-bottom:6px;">🔍 Fase 1 (vóór lezen): ${score.phase1} punten</div>
+      <div style="margin-bottom:6px;">📖 Fase 2 (tijdens lezen): ${score.phase2} punten</div>
+      <div style="margin-bottom:6px;">✍️ Fase 3 (vragen): ${score.phase3} punten</div>
+    </div>
+  `;
+
+  document.getElementById('xpDisplay').textContent = xp;
+}
+
+function nextPhase() {
+  currentPhase++;
+  renderPhase();
+}
+
+/* ── WORD/REF/SIGNAL CLICKS ── */
+function setupWordClicks() {
+  document.querySelectorAll('.highlight-word').forEach(el => {
+    el.onclick = () => showPopup(el.dataset.word, el.dataset.meaning, '#e91e8c');
+  });
+  document.querySelectorAll('.ref-word').forEach(el => {
+    el.onclick = () => showPopup('Verwijswoord: ' + el.textContent, `${el.dataset.q}\nAntwoord: "${el.dataset.ref}"`, '#1976d2');
+  });
+  document.querySelectorAll('.signal-word').forEach(el => {
+    el.onclick = () => showPopup('Signaalwoord: ' + el.textContent, `Type: ${el.dataset.signal}\n${el.dataset.meaning}`, '#ff9800');
+  });
+}
+
+function showPopup(word, meaning, color) {
+  document.getElementById('wpWord').textContent = word;
+  document.getElementById('wpWord').style.color = color || '#e91e8c';
+  document.getElementById('wpMeaning').textContent = meaning;
+  document.getElementById('wordPopup').classList.add('show');
+}
+function closePopup() {
+  document.getElementById('wordPopup').classList.remove('show');
+}
+
+/* ── INIT ── */
+renderHome();
+</script>
+</body>
+</html>
