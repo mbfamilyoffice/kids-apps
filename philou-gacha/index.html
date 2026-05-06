@@ -811,7 +811,7 @@ function nextQuestion(){
   const b=document.getElementById('ansBox');b.textContent='_';b.className='ans-box';
   const f=document.getElementById('fbText');f.textContent='';f.className='fb-text';
   const isKeer=Math.random()<0.5;let a,b2,op,ans;
-  if(isKeer){a=rand(2,16);b2=rand(2,16);op='×';ans=a*b2;}
+  if(isKeer){a=rand(1,10);b2=rand(1,12);op='×';ans=a*b2;}
   else{b2=rand(2,10);ans=rand(2,Math.min(10,Math.floor(100/b2)));a=b2*ans;op='÷';}
   currentQ={a,b:b2,op,ans};
   document.getElementById('qText').textContent=`${a} ${op} ${b2} = ?`;
