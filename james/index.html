@@ -996,10 +996,10 @@ function nextQuestion(){
     renderSplit();
 
   }else if(type==='tafels'){
-    // ── TYPE 4: Tafels t/m 5 ──
-    // Tweede getal = de tafel (1-5), eerste getal = vermenigvuldiger (1-10)
+    // ── TYPE 4: Tafels t/m 12 ──
+    // Tweede getal = de tafel (1-12), eerste getal = vermenigvuldiger (1-10)
     // bijv. 6 × 2 = tafel van 2 ✅ | 2 × 6 = tafel van 6 ❌
-    const tafel=rand(1,5),vermenigvuldiger=rand(1,10);
+    const tafel=rand(1,12),vermenigvuldiger=rand(1,10);
     currentQ={a:vermenigvuldiger,b:tafel,op:'×',ans:tafel*vermenigvuldiger};
     document.getElementById('qText').textContent=`${vermenigvuldiger} × ${tafel} = ?`;
   }
